@@ -1,0 +1,282 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "Pellet Stock",
+  "description": {
+    "en": "Track your wood pellet stock: deliveries, consumption, autonomy, with a dashboard widget.",
+    "fr": "Suivez votre stock de pellets : livraisons, consommation et autonomie, avec un widget dédié."
+  },
+  "version": "0.1.0",
+  "docker_image": "ghcr.io/william-de71/gladys-pellet-stock:0.1.0",
+  "gladys_version": ">=5.2.0",
+  "categories": ["climate", "energy"],
+  "cover_image": "https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/cover.jpg",
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "How it works",
+        "fr": "Fonctionnement"
+      },
+      "description": {
+        "en": "Start by entering your current stock with the \"Correct the stock\" action below. Then add the \"Pellet stock\" widget to your dashboard: tap \"−1 bag\" each time you fill the stove, \"+1 bag\" for a bag bought on its own, and \"Pallet delivered\" when a pallet arrives. Counting the stock from time to time with \"Correct the stock\" is enough too: the bags missing are counted as consumed.",
+        "fr": "Commencez par indiquer votre stock actuel avec l'action « Corriger le stock » ci-dessous. Ajoutez ensuite le widget « Stock de pellets » à votre tableau de bord : appuyez sur « −1 sac » à chaque remplissage du poêle, sur « +1 sac » pour un sac acheté à l'unité, et sur « Palette livrée » à chaque palette livrée. Recompter le stock de temps en temps avec « Corriger le stock » suffit aussi : les sacs manquants sont comptés comme consommés."
+      }
+    },
+    {
+      "key": "bag_weight",
+      "type": "number",
+      "label": {
+        "en": "Bag weight (kg)",
+        "fr": "Poids d'un sac (kg)"
+      },
+      "description": {
+        "en": "Used to display the remaining weight. Most bags weigh 15 kg.",
+        "fr": "Sert à afficher le poids restant. La plupart des sacs pèsent 15 kg."
+      },
+      "required": false,
+      "default": 15,
+      "min": 1,
+      "max": 50
+    },
+    {
+      "key": "pallet_size",
+      "type": "number",
+      "label": {
+        "en": "Bags per pallet",
+        "fr": "Sacs par palette"
+      },
+      "description": {
+        "en": "Number of bags the \"Pallet delivered\" button adds. A pallet of 15 kg bags usually holds 66 or 72 bags.",
+        "fr": "Nombre de sacs ajoutés par le bouton « Palette livrée ». Une palette de sacs de 15 kg compte en général 66 ou 72 sacs."
+      },
+      "required": false,
+      "default": 66,
+      "min": 1,
+      "max": 200
+    },
+    {
+      "key": "low_stock_threshold",
+      "type": "number",
+      "label": {
+        "en": "Low stock threshold (bags)",
+        "fr": "Seuil de stock bas (sacs)"
+      },
+      "description": {
+        "en": "At or below this number of bags, the widget shows the stock in orange and reminds you to order.",
+        "fr": "À partir de ce nombre de sacs, le widget affiche le stock en orange et vous rappelle de commander."
+      },
+      "required": false,
+      "default": 10,
+      "min": 0,
+      "max": 1000
+    },
+    {
+      "key": "consumption_window",
+      "type": "number",
+      "label": {
+        "en": "Consumption window (days)",
+        "fr": "Période de calcul (jours)"
+      },
+      "description": {
+        "en": "The average daily consumption, hence the autonomy, is computed over this many past days. Shorter follows the weather faster, longer is steadier.",
+        "fr": "La consommation moyenne par jour, et donc l'autonomie, est calculée sur ce nombre de jours passés. Plus court suit plus vite la météo, plus long est plus stable."
+      },
+      "required": false,
+      "default": 14,
+      "min": 3,
+      "max": 90
+    }
+  ],
+  "actions": [
+    {
+      "key": "set_stock",
+      "label": {
+        "en": "Correct the stock",
+        "fr": "Corriger le stock"
+      },
+      "description": {
+        "en": "Enter the number of bags you actually counted.",
+        "fr": "Indiquez le nombre de sacs réellement comptés."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "bags",
+          "type": "number",
+          "label": {
+            "en": "Bags in stock",
+            "fr": "Sacs en stock"
+          },
+          "required": true,
+          "min": 0,
+          "max": 10000
+        }
+      ]
+    },
+    {
+      "key": "add_delivery",
+      "label": {
+        "en": "Record a delivery",
+        "fr": "Enregistrer une livraison"
+      },
+      "description": {
+        "en": "For a delivery that is not a full pallet.",
+        "fr": "Pour une livraison qui n'est pas une palette complète."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "bags",
+          "type": "number",
+          "label": {
+            "en": "Bags delivered",
+            "fr": "Sacs livrés"
+          },
+          "required": true,
+          "min": 1,
+          "max": 1000
+        }
+      ]
+    },
+    {
+      "key": "consume",
+      "label": {
+        "en": "Record a consumption",
+        "fr": "Déclarer une consommation"
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "bags",
+          "type": "number",
+          "label": {
+            "en": "Bags used",
+            "fr": "Sacs utilisés"
+          },
+          "required": true,
+          "default": 1,
+          "min": 1,
+          "max": 1000
+        }
+      ]
+    },
+    {
+      "key": "undo",
+      "label": {
+        "en": "Undo the last operation",
+        "fr": "Annuler la dernière opération"
+      },
+      "timeout_seconds": 15
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "consume_bags",
+      "label": {
+        "en": "Use pellet bags",
+        "fr": "Utiliser des sacs de pellets"
+      },
+      "description": {
+        "en": "Remove bags from the stock, e.g. when a button next to the stove is pressed.",
+        "fr": "Retire des sacs du stock, par exemple à l'appui sur un bouton placé près du poêle."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "bags",
+          "type": "number",
+          "label": {
+            "en": "Bags",
+            "fr": "Sacs"
+          },
+          "required": true,
+          "default": 1,
+          "min": 1,
+          "max": 1000
+        }
+      ],
+      "outputs": [
+        {
+          "key": "stock",
+          "type": "number",
+          "label": {
+            "en": "Bags left",
+            "fr": "Sacs restants"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "pellet_stock",
+      "label": {
+        "en": "Pellet stock",
+        "fr": "Stock de pellets"
+      },
+      "description": {
+        "en": "Stock, autonomy and consumption, with quick buttons.",
+        "fr": "Stock, autonomie et consommation, avec boutons rapides."
+      },
+      "icon": "package",
+      "settings": [
+        {
+          "key": "chart_period",
+          "type": "select",
+          "label": {
+            "en": "Chart period",
+            "fr": "Période du graphique"
+          },
+          "default": "90",
+          "options": [
+            {
+              "value": "30",
+              "label": {
+                "en": "1 month",
+                "fr": "1 mois"
+              }
+            },
+            {
+              "value": "90",
+              "label": {
+                "en": "3 months",
+                "fr": "3 mois"
+              }
+            },
+            {
+              "value": "365",
+              "label": {
+                "en": "1 year",
+                "fr": "1 an"
+              }
+            }
+          ]
+        },
+        {
+          "key": "show_buttons",
+          "type": "boolean",
+          "label": {
+            "en": "Show the buttons",
+            "fr": "Afficher les boutons"
+          },
+          "description": {
+            "en": "Turn off for a read-only wall display.",
+            "fr": "À désactiver pour un écran mural en lecture seule."
+          },
+          "default": true
+        }
+      ],
+      "action_timeout_seconds": 15
+    }
+  ]
+}

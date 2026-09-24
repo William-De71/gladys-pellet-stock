@@ -118,6 +118,20 @@
       "timeout_seconds": 15,
       "fields": [
         {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
           "key": "bags",
           "type": "number",
           "label": {
@@ -143,6 +157,20 @@
       "timeout_seconds": 15,
       "fields": [
         {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
           "key": "bags",
           "type": "number",
           "label": {
@@ -164,6 +192,20 @@
       "timeout_seconds": 15,
       "fields": [
         {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
           "key": "bags",
           "type": "number",
           "label": {
@@ -183,7 +225,74 @@
         "en": "Undo the last operation",
         "fr": "Annuler la dernière opération"
       },
-      "timeout_seconds": 15
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "add_stock",
+      "label": {
+        "en": "Add a stock",
+        "fr": "Ajouter un stock"
+      },
+      "description": {
+        "en": "To follow the pellets of another house: the new stock gets its own device, to add from the Discovery tab and put in a room of that house.",
+        "fr": "Pour suivre les pellets d'une autre maison : le nouveau stock a son propre appareil, à ajouter depuis l'onglet Découverte et à placer dans une pièce de cette maison."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Name",
+            "fr": "Nom"
+          },
+          "description": {
+            "en": "For instance the name of the house.",
+            "fr": "Par exemple le nom de la maison."
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "remove_stock",
+      "label": {
+        "en": "Remove a stock",
+        "fr": "Supprimer un stock"
+      },
+      "description": {
+        "en": "Removes an added stock and its history. The main stock cannot be removed.",
+        "fr": "Supprime un stock ajouté et son historique. Le stock principal ne peut pas être supprimé."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "required": true
+        }
+      ]
     }
   ],
   "scene_actions": [
@@ -199,6 +308,20 @@
       },
       "timeout_seconds": 15,
       "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
         {
           "key": "bags",
           "type": "number",
@@ -245,6 +368,49 @@
       },
       "icon": "package",
       "settings": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock. An added stock appears here once its device was added from the Discovery tab.",
+            "fr": "Laissez vide pour le stock principal. Un stock ajouté apparaît ici une fois son appareil ajouté depuis l'onglet Découverte."
+          },
+          "required": false
+        },
+        {
+          "key": "chart_view",
+          "type": "select",
+          "label": {
+            "en": "Chart",
+            "fr": "Graphique"
+          },
+          "description": {
+            "en": "Put two widgets side by side to see both.",
+            "fr": "Mettez deux widgets côte à côte pour voir les deux."
+          },
+          "default": "stock",
+          "options": [
+            {
+              "value": "stock",
+              "label": {
+                "en": "Stock over time",
+                "fr": "Évolution du stock"
+              }
+            },
+            {
+              "value": "consumption",
+              "label": {
+                "en": "Bags used per day",
+                "fr": "Sacs utilisés par jour"
+              }
+            }
+          ]
+        },
         {
           "key": "chart_period",
           "type": "select",

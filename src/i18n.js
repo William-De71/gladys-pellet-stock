@@ -20,6 +20,16 @@ const MESSAGES = {
     consumption_recorded: '{bags} bag(s) used — {stock} left.',
     inventory_recorded: 'Stock set to {stock} bag(s).',
     undo_done: 'Last operation undone — {stock} bag(s) in stock.',
+    unknown_stock: 'This stock no longer exists.',
+    invalid_stock_name: 'Enter a name of 1 to {max} characters.',
+    stock_name_taken: 'A stock is already named "{name}".',
+    too_many_stocks: 'At most {max} stocks.',
+    default_stock_kept: 'The main stock cannot be removed.',
+    stock_added:
+      'Stock "{name}" added: add its device from the Discovery tab, then enter its stock with "Correct the stock".',
+    stock_removed: 'Stock "{name}" removed. You can now delete its device from the Devices tab.',
+    widget_unknown_stock:
+      'The stock of this widget was removed: pick another one in the widget settings.',
     // Widget
     stock: 'Stock',
     autonomy: 'Autonomy',
@@ -41,6 +51,11 @@ const MESSAGES = {
     low_stock: 'Low stock',
     order_now: 'Time to order',
     chart_title: 'Stock (bags)',
+    chart_used_day: 'Bags used per day',
+    chart_used_day_short: 'bags/day',
+    chart_used_week: 'Bags used per week',
+    chart_used_week_short: 'bags/week',
+    bags_used: 'Bags used',
     empty_state:
       'No stock recorded yet. Tap "+1 bag" or "Pallet delivered", or set your current stock from the integration configuration ("Correct the stock").',
     button_consume: '−1 bag',
@@ -63,6 +78,17 @@ const MESSAGES = {
     consumption_recorded: '{bags} sac(s) utilisé(s) — il en reste {stock}.',
     inventory_recorded: 'Stock fixé à {stock} sac(s).',
     undo_done: 'Dernière opération annulée — {stock} sac(s) en stock.',
+    unknown_stock: "Ce stock n'existe plus.",
+    invalid_stock_name: 'Indiquez un nom de 1 à {max} caractères.',
+    stock_name_taken: "Un stock s'appelle déjà « {name} ».",
+    too_many_stocks: '{max} stocks au maximum.',
+    default_stock_kept: 'Le stock principal ne peut pas être supprimé.',
+    stock_added:
+      "Stock « {name} » ajouté : ajoutez son appareil depuis l'onglet Découverte, puis indiquez son stock avec « Corriger le stock ».",
+    stock_removed:
+      "Stock « {name} » supprimé. Vous pouvez maintenant supprimer son appareil dans l'onglet Appareils.",
+    widget_unknown_stock:
+      'Le stock de ce widget a été supprimé : choisissez-en un autre dans les réglages du widget.',
     stock: 'Stock',
     autonomy: 'Autonomie',
     per_day: 'Par jour',
@@ -83,6 +109,11 @@ const MESSAGES = {
     low_stock: 'Stock bas',
     order_now: 'Pensez à commander',
     chart_title: 'Stock (sacs)',
+    chart_used_day: 'Sacs utilisés par jour',
+    chart_used_day_short: 'sacs/jour',
+    chart_used_week: 'Sacs utilisés par semaine',
+    chart_used_week_short: 'sacs/semaine',
+    bags_used: 'Sacs utilisés',
     empty_state:
       "Aucun stock enregistré. Appuyez sur « +1 sac » ou « Palette livrée », ou indiquez votre stock actuel depuis la configuration de l'intégration (« Corriger le stock »).",
     button_consume: '−1 sac',

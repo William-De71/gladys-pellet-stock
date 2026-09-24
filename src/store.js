@@ -8,7 +8,7 @@
 // leaves the stock as the user last saw it — and the error reaches the toast.
 // -----------------------------------------------------------------------------
 
-import { LEDGER_CONFIG_KEY, WIDGET_KEY } from './constants.js';
+import { DEVICE_ID, LEDGER_CONFIG_KEY, WIDGET_KEY } from './constants.js';
 import { buildStates } from './device.js';
 import {
   computeStats,
@@ -20,17 +20,26 @@ import {
 } from './ledger.js';
 
 /**
- * @description Create the stock store.
+ * @description Create the store of one stock.
  * @param {object} params - The dependencies.
  * @param {object} params.gladys - The GladysIntegration instance.
  * @param {object} params.logger - The logger.
  * @param {Function} params.getConfig - Returns the normalized config.
  * @param {Function} [params.now] - Clock, injectable for the tests.
+ * @param {string} [params.stockId] - The stock id (its device), the default one when omitted.
+ * @param {string} [params.ledgerKey] - The config key of its ledger.
  * @returns {object} The store.
  * @example
  * const store = createStockStore({ gladys, logger, getConfig: () => config });
  */
-function createStockStore({ gladys, logger, getConfig, now = () => new Date() }) {
+function createStockStore({
+  gladys,
+  logger,
+  getConfig,
+  now = () => new Date(),
+  stockId = DEVICE_ID,
+  ledgerKey = LEDGER_CONFIG_KEY,
+}) {
   let ledger = createLedger();
   let queue = Promise.resolve();
   // Last value published per feature: the host API rate-limits states, and
@@ -63,7 +72,7 @@ function createStockStore({ gladys, logger, getConfig, now = () => new Date() })
    * @returns {Promise<void>}
    */
   async function publishStates({ force = false } = {}) {
-    const states = buildStates(gladys, getStats()).filter(
+    const states = buildStates(gladys, getStats(), stockId).filter(
       ({ device_feature_external_id: id, state }) => force || published.get(id) !== state,
     );
     if (states.length === 0) {
@@ -98,7 +107,7 @@ function createStockStore({ gladys, logger, getConfig, now = () => new Date() })
    * @returns {Promise<void>}
    */
   async function commit(next) {
-    await gladys.setConfig({ [LEDGER_CONFIG_KEY]: serializeLedger(next) });
+    await gladys.setConfig({ [ledgerKey]: serializeLedger(next) });
     ledger = next;
     await notifyChange();
   }
@@ -111,9 +120,9 @@ function createStockStore({ gladys, logger, getConfig, now = () => new Date() })
     load() {
       return enqueue(async () => {
         const config = await gladys.getConfig();
-        ledger = parseLedger(config[LEDGER_CONFIG_KEY]);
+        ledger = parseLedger(config[ledgerKey]);
         logger.info(
-          `Stock loaded: ${getStats().stock} bag(s), ${ledger.movements.length} movement(s)`,
+          `Stock "${stockId}" loaded: ${getStats().stock} bag(s), ${ledger.movements.length} movement(s)`,
         );
       });
     },

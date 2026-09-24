@@ -17,6 +17,10 @@ const CONFIG_KEYS = {
 // which a file in /data would not.
 const LEDGER_CONFIG_KEY = 'stock_ledger';
 
+// Key stored the same way: the stocks added next to the default one, as
+// `[{ id, name }]`. Each one keeps its ledger under `stock_ledger_<id>`.
+const STOCKS_CONFIG_KEY = 'stocks';
+
 const DEFAULTS = {
   // The common retail bag in France: 15 kg.
   bagWeight: 15,
@@ -39,6 +43,10 @@ const LIMITS = {
   // Upper bound of a single movement, to catch a typo (660 instead of 66).
   movementBags: { min: 1, max: 1000 },
   stockBags: { min: 0, max: 10000 },
+  // Fits the chart title (40) next to "· Stock (bags)".
+  stockName: { min: 1, max: 24 },
+  // Stocks added next to the default one.
+  extraStocks: { max: 9 },
 };
 
 // Movement types of the ledger.
@@ -63,9 +71,9 @@ const WIDGET_ACTIONS = {
   UNDO: 'undo',
 };
 
-// The single device of the integration and its features. There is no
-// hardware behind it, so its platform id is a fixed word: one integration
-// instance tracks one stock.
+// One device per stock. There is no hardware behind it: the default stock
+// has the fixed platform id below (the one of the single-stock versions, so
+// an existing device keeps its history), the added ones a random id.
 const DEVICE_TYPE = 'pellet';
 const DEVICE_ID = 'stock';
 const FEATURE_KEYS = {
@@ -82,6 +90,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export {
   CONFIG_KEYS,
   LEDGER_CONFIG_KEY,
+  STOCKS_CONFIG_KEY,
   DEFAULTS,
   LIMITS,
   MOVEMENT_TYPES,

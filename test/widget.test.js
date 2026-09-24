@@ -1,7 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { validateWidgetContent } from '@gladysassistant/integration-sdk';
-import { buildStockPoints, buildWidgetContent, readChartDays, stockColor } from '../src/widget.js';
+import {
+  buildConsumptionPoints,
+  buildStockPoints,
+  buildUnknownStockContent,
+  buildWidgetContent,
+  readChartDays,
+  readChartView,
+  stockColor,
+} from '../src/widget.js';
 import { computeStats, createLedger } from '../src/ledger.js';
 import { DEFAULTS } from '../src/constants.js';
 import { NOW, buildLedger, daysAgo } from './helpers/fixtures.js';
@@ -14,7 +22,7 @@ const config = { ...DEFAULTS };
  * @param {object} [options] - Settings and language.
  * @returns {object} The widget content.
  */
-function contentOf(ledger, { settings = {}, language = 'fr', overrides = {} } = {}) {
+function contentOf(ledger, { settings = {}, language = 'fr', overrides = {}, stockName } = {}) {
   const fullConfig = { ...config, ...overrides };
   return buildWidgetContent({
     ledger,
@@ -22,6 +30,7 @@ function contentOf(ledger, { settings = {}, language = 'fr', overrides = {} } = 
     config: fullConfig,
     settings,
     language,
+    stockName,
     now: NOW,
   });
 }
@@ -80,6 +89,11 @@ test('widget: four buttons, one per kind of movement, in that order', () => {
   assert.deepEqual(
     byType(content, 'button').find((button) => button.action.key === 'add_bag').action.params,
     { bags: 1 },
+  );
+  // All secondary: the core draws a primary button's icon too dark.
+  assert.deepEqual(
+    byType(content, 'button').map((button) => button.style),
+    ['secondary', 'secondary', 'secondary', 'secondary'],
   );
   // The arrows tell which way the stock goes.
   assert.deepEqual(
@@ -328,4 +342,95 @@ test('readChartDays / stockColor', () => {
   assert.equal(stockColor(0, 10), 'danger');
   assert.equal(stockColor(10, 10), 'warning');
   assert.equal(stockColor(11, 10), 'success');
+});
+
+test('widget: an added stock is named in the chart title', () => {
+  assert.equal(byType(contentOf(SEASON), 'chart')[0].title, 'Stock (sacs)');
+  const content = contentOf(SEASON, { stockName: 'x'.repeat(24) });
+  assert.equal(byType(content, 'chart')[0].title, `${'x'.repeat(24)} · Stock (sacs)`);
+  assert.deepEqual(validateWidgetContent(content), [], 'the longest name fits');
+});
+
+test('widget: a removed stock says so', () => {
+  const content = buildUnknownStockContent('fr');
+  assert.match(content.components[0].text, /supprimé/);
+  assert.deepEqual(validateWidgetContent(content), []);
+});
+
+test('widget: the consumption view is a bar chart of the bags used', () => {
+  const content = contentOf(SEASON, {
+    settings: { chart_view: 'consumption', chart_period: '30' },
+  });
+  const [chart] = byType(content, 'chart');
+  assert.equal(chart.chart_type, 'bar');
+  assert.equal(chart.title, 'Sacs utilisés par jour');
+  assert.equal(chart.annotations, undefined);
+  // 14 + 7 + 7 bags used over the last 30 days (the 10 of 30 days ago may
+  // fall just before the first bar, depending on the time zone).
+  const total = chart.series[0].points.reduce((sum, point) => sum + point.v, 0);
+  assert.ok(total === 28 || total === 38, `total ${total}`);
+  assert.deepEqual(validateWidgetContent(content), []);
+});
+
+test('widget: over a year the bars are weekly, and fit the title with a stock name', () => {
+  const content = contentOf(SEASON, {
+    settings: { chart_view: 'consumption', chart_period: '365' },
+    stockName: 'x'.repeat(24),
+  });
+  const [chart] = byType(content, 'chart');
+  assert.equal(chart.title, `${'x'.repeat(24)} · sacs/semaine`);
+  assert.deepEqual(validateWidgetContent(content), []);
+  assert.equal(
+    byType(
+      contentOf(SEASON, { settings: { chart_view: 'consumption', chart_period: '365' } }),
+      'chart',
+    )[0].title,
+    'Sacs utilisés par semaine',
+  );
+});
+
+test('buildConsumptionPoints: one bar per day, 0 on the days without a fill', () => {
+  const ledger = buildLedger([
+    [10, 'delivery', 66],
+    [3, 'consumption', 2],
+    [3 - 1 / 1440, 'consumption', 1],
+    [1, 'consumption', 1],
+  ]);
+  const points = buildConsumptionPoints(ledger.movements, NOW, 30);
+  assert.equal(points.length, 31);
+  assert.equal(points.filter((point) => point.v > 0).length, 2);
+  assert.deepEqual(
+    points.filter((point) => point.v > 0).map((point) => point.v),
+    [3, 1],
+  );
+  points.forEach((point) => {
+    const date = new Date(point.t);
+    assert.equal(date.getHours() + date.getMinutes(), 0, 'each bar starts at local midnight');
+  });
+});
+
+test('buildConsumptionPoints: a recount puts its missing bags on its day', () => {
+  const ledger = buildLedger([
+    [10, 'delivery', 66],
+    [2, 'inventory', 60],
+  ]);
+  const bars = buildConsumptionPoints(ledger.movements, NOW, 30).filter((point) => point.v > 0);
+  assert.deepEqual(
+    bars.map((point) => point.v),
+    [6],
+  );
+});
+
+test('buildConsumptionPoints: weekly bars start on Monday and stay under the point limit', () => {
+  const points = buildConsumptionPoints(SEASON.movements, NOW, 365);
+  assert.ok(points.length >= 53 && points.length <= 54, `${points.length} bars`);
+  points.forEach((point) => assert.equal(new Date(point.t).getDay(), 1));
+  const total = points.reduce((sum, point) => sum + point.v, 0);
+  assert.equal(total, 10 + 14 + 7 + 7);
+});
+
+test('readChartView', () => {
+  assert.equal(readChartView({}), 'stock');
+  assert.equal(readChartView({ chart_view: 'consumption' }), 'consumption');
+  assert.equal(readChartView({ chart_view: 'x' }), 'stock');
 });

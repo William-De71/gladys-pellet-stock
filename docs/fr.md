@@ -24,7 +24,7 @@ Vous n'êtes pas obligé d'appuyer à chaque sac : **recompter le stock** de tem
 
 - **Stock** en sacs : vert, puis orange sous le seuil de stock bas (10 sacs par défaut), rouge à zéro. Un rappel « Pensez à commander » apparaît alors.
 - **Autonomie** en jours.
-- Un **graphique** de l'évolution du stock, avec les livraisons repérées (période réglable : 1 mois, 3 mois, 1 an).
+- Un **graphique**, au choix dans les réglages du widget : l'**évolution du stock**, avec les livraisons repérées, ou les **sacs utilisés par jour** en barres (par semaine sur 1 an). Période réglable : 1 mois, 3 mois, 1 an. Pour voir les deux, mettez deux widgets côte à côte. Les sacs manquants trouvés lors d'un recomptage sont comptés le jour du recomptage.
 - La **consommation moyenne par jour**, le **dernier sac utilisé** (« il y a 2 jours »), le **poids restant**, la **dernière livraison** et la **consommation depuis** (en sacs et en kg).
 - La date à laquelle **commander** (quand le stock atteindra le seuil de stock bas) et la **date estimée** à laquelle le stock sera vide.
 - Si vous indiquez le **prix d'un sac** dans la configuration : la **valeur du stock** et le **coût par mois**.
@@ -50,6 +50,18 @@ Depuis l'onglet **Découverte**, vous pouvez ajouter l'appareil **« Stock de pe
 Il permet d'afficher l'historique dans une boîte graphique classique et, surtout, de créer des **scènes** : par exemple « quand le stock passe sous 10 sacs, m'envoyer un message ». Une autonomie inconnue n'est jamais envoyée comme 0, pour ne pas déclencher une scène « stock vide » à tort.
 
 Le widget fonctionne sans cet appareil.
+
+## Plusieurs maisons
+
+Pour suivre les pellets d'une autre maison (une résidence secondaire, un chalet…), lancez l'action **« Ajouter un stock »** dans la configuration et donnez-lui un nom. Chaque stock a son propre historique et son propre appareil :
+
+1. Dans l'onglet **Découverte**, ajoutez l'appareil **« Stock de pellets – Chalet »** (avec le nom choisi) et placez-le dans une pièce de cette maison.
+2. Lancez **« Corriger le stock »** en choisissant ce stock, pour indiquer ses sacs actuels.
+3. Ajoutez un widget **« Stock de pellets »** et choisissez ce stock dans ses réglages. Son nom apparaît dans le titre du graphique.
+
+Les actions de la configuration et l'action de scène ont un champ **Stock** : laissé vide, elles portent sur le stock principal. Un bouton Zigbee du chalet peut ainsi décompter uniquement le stock du chalet.
+
+Les réglages (poids d'un sac, sacs par palette, seuil, prix…) sont communs à tous les stocks. **« Supprimer un stock »** retire un stock ajouté et son historique ; le stock principal ne peut pas être supprimé.
 
 ## Scène : « Utiliser des sacs de pellets »
 

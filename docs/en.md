@@ -24,7 +24,7 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 
 - **Stock** in bags: green, then orange under the low stock threshold (10 bags by default), red at zero. A "Time to order" reminder then appears.
 - **Autonomy** in days.
-- A **chart** of the stock over time, with the deliveries marked (period: 1 month, 3 months, 1 year).
+- A **chart**, picked in the widget settings: the **stock over time**, with the deliveries marked, or the **bags used per day** as bars (per week over 1 year). Period: 1 month, 3 months, 1 year. To see both, put two widgets side by side. The bags found missing by a recount are counted on the day of the recount.
 - The **average consumption per day**, the **last bag used** ("2 days ago"), the **remaining weight**, the **last delivery** and the **use since** (in bags and kg).
 - The date to **order by** (when the stock will reach the low stock threshold) and the **estimated date** the stock runs out.
 - If you enter the **bag price** in the configuration: the **stock value** and the **cost per month**.
@@ -50,6 +50,18 @@ From the **Discover** tab, you can add the **"Pellet stock"** device. It exposes
 It lets you show the history in a regular chart box and, above all, build **scenes**: for instance "when the stock drops below 10 bags, send me a message". An unknown autonomy is never sent as 0, so an "empty stock" scene never fires by mistake.
 
 The widget works without this device.
+
+## Several houses
+
+To follow the pellets of another house (a holiday home, a chalet…), run the **"Add a stock"** action in the configuration and give it a name. Each stock has its own history and its own device:
+
+1. In the **Discovery** tab, add the **"Pellet stock – Chalet"** device (with the name you chose) and put it in a room of that house.
+2. Run **"Correct the stock"** with this stock selected, to enter its current bags.
+3. Add a **"Pellet stock"** widget and pick this stock in its settings. Its name shows in the chart title.
+
+The configuration actions and the scene action have a **Stock** field: left empty, they apply to the main stock. A Zigbee button in the chalet can thus count down the chalet's stock only.
+
+The settings (bag weight, bags per pallet, threshold, price…) are shared by all the stocks. **"Remove a stock"** removes an added stock and its history; the main stock cannot be removed.
 
 ## Scene: "Use pellet bags"
 

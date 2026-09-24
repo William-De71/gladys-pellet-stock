@@ -16,10 +16,18 @@
 
 import { DAY_MS, MOVEMENT_TYPES, WIDGET_ACTIONS } from './constants.js';
 import { resolveLanguage, translate } from './i18n.js';
-import { isPalletDelivery } from './ledger.js';
+import { consumedBags, isPalletDelivery } from './ledger.js';
 
-// A stock chart is a step function: each movement jumps, nothing in between.
-const CHART_TYPE = 'stepline';
+// The two views of the chart, picked per widget instance.
+const CHART_VIEWS = {
+  // A step function: each movement jumps, nothing in between.
+  STOCK: 'stock',
+  // Bars of the bags used per day (per week over a year).
+  CONSUMPTION: 'consumption',
+};
+// Beyond this period the consumption bars are weekly: 365 daily bars would
+// exceed the 300 points of an inline series, and would be unreadable anyway.
+const MAX_DAILY_BARS_DAYS = 90;
 // Contract bound of an inline series.
 const MAX_CHART_POINTS = 300;
 // Contract bound of the chart annotations.
@@ -45,6 +53,19 @@ const DAYS_PER_MONTH = 30;
 function readChartDays(settings) {
   const days = Number(settings.chart_period);
   return Number.isInteger(days) && days > 0 ? days : DEFAULT_CHART_DAYS;
+}
+
+/**
+ * @description Read the chart view of a widget instance.
+ * @param {object} settings - The widget instance settings.
+ * @returns {string} One of CHART_VIEWS, the stock by default.
+ * @example
+ * readChartView({ chart_view: 'consumption' }); // -> 'consumption'
+ */
+function readChartView(settings) {
+  return settings.chart_view === CHART_VIEWS.CONSUMPTION
+    ? CHART_VIEWS.CONSUMPTION
+    : CHART_VIEWS.STOCK;
 }
 
 /**
@@ -162,6 +183,63 @@ function buildStockPoints(movements, now, days) {
 }
 
 /**
+ * @description The start of the day of a date, in the local time zone.
+ * @param {number} ms - A timestamp.
+ * @returns {Date} Midnight of that day.
+ * @example
+ * startOfDay(Date.now());
+ */
+function startOfDay(ms) {
+  const date = new Date(ms);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+/**
+ * @description The start of the week (Monday) of a date, in the local time zone.
+ * @param {number} ms - A timestamp.
+ * @returns {Date} Midnight of that Monday.
+ * @example
+ * startOfWeek(Date.now());
+ */
+function startOfWeek(ms) {
+  const date = startOfDay(ms);
+  date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+  return date;
+}
+
+/**
+ * @description Build the consumption bars over the chosen period: the bags
+ * used per day, or per week beyond 3 months. Every day (week) of the period
+ * has its bar, 0 included, so the gaps read as days without a fill. A
+ * downward recount has no date for its missing bags: they land on the day of
+ * the recount.
+ * @param {Array<object>} movements - The ledger movements, oldest first.
+ * @param {Date} now - The current time.
+ * @param {number} days - The period, in days.
+ * @returns {Array<{t: string, v: number}>} The chart points, one per bar.
+ * @example
+ * const points = buildConsumptionPoints(ledger.movements, new Date(), 30);
+ */
+function buildConsumptionPoints(movements, now, days) {
+  const weekly = days > MAX_DAILY_BARS_DAYS;
+  const bucketOf = weekly ? startOfWeek : startOfDay;
+  const bars = new Map();
+  const cursor = bucketOf(now.getTime() - days * DAY_MS);
+  while (cursor.getTime() <= now.getTime()) {
+    bars.set(cursor.getTime(), 0);
+    cursor.setDate(cursor.getDate() + (weekly ? 7 : 1));
+  }
+  movements.forEach((movement) => {
+    const bucket = bucketOf(Date.parse(movement.t)).getTime();
+    if (bars.has(bucket)) {
+      bars.set(bucket, bars.get(bucket) + consumedBags(movement));
+    }
+  });
+  return [...bars].map(([t, v]) => ({ t: new Date(t).toISOString(), v }));
+}
+
+/**
  * @description Mark the deliveries of the period on the chart. Single bags
  * (the "+1 bag" button) are left out: a few of them would push the pallet
  * deliveries out of the 8 annotations the chart allows.
@@ -193,12 +271,13 @@ function buildDeliveryAnnotations(movements, now, days) {
  * @param {object} params.config - The normalized config.
  * @param {object} [params.settings] - The widget instance settings.
  * @param {string} [params.language] - The language of the requesting user.
+ * @param {string|null} [params.stockName] - The name of an added stock, shown in the chart title.
  * @param {Date} params.now - The current time.
  * @returns {{ttl_seconds: number, components: Array<object>}} The widget content.
  * @example
  * const content = buildWidgetContent({ ledger, stats, config, settings, language: 'fr', now: new Date() });
  */
-function buildWidgetContent({ ledger, stats, config, settings = {}, language, now }) {
+function buildWidgetContent({ ledger, stats, config, settings = {}, language, stockName, now }) {
   const lang = resolveLanguage(language);
   const t = (key, params) => translate(lang, key, params);
   const showButtons = settings.show_buttons !== false;
@@ -259,15 +338,32 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, no
   }
 
   const days = readChartDays(settings);
-  const points = buildStockPoints(ledger.movements, now, days);
-  if (points.length >= 2) {
+  // The core owns the widget header: the chart title is where an added
+  // stock says which house it is — with a short title, to fit 40 characters.
+  const chartTitle = (long, short) => (stockName ? `${stockName} · ${t(short)}` : t(long));
+  if (readChartView(settings) === CHART_VIEWS.CONSUMPTION) {
+    const weekly = days > MAX_DAILY_BARS_DAYS;
     components.push({
       type: 'chart',
-      chart_type: CHART_TYPE,
-      title: t('chart_title'),
-      series: [{ name: t('stock'), points }],
-      annotations: buildDeliveryAnnotations(ledger.movements, now, days),
+      chart_type: 'bar',
+      title: weekly
+        ? chartTitle('chart_used_week', 'chart_used_week_short')
+        : chartTitle('chart_used_day', 'chart_used_day_short'),
+      series: [
+        { name: t('bags_used'), points: buildConsumptionPoints(ledger.movements, now, days) },
+      ],
     });
+  } else {
+    const points = buildStockPoints(ledger.movements, now, days);
+    if (points.length >= 2) {
+      components.push({
+        type: 'chart',
+        chart_type: 'stepline',
+        title: chartTitle('chart_title', 'chart_title'),
+        series: [{ name: t('stock'), points }],
+        annotations: buildDeliveryAnnotations(ledger.movements, now, days),
+      });
+    }
   }
 
   const statusItems = [];
@@ -355,7 +451,8 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, no
         type: 'button',
         label: t('button_consume'),
         icon: 'arrow-down-circle',
-        style: 'primary',
+        // Not `primary`: the core draws its icon too dark to be seen.
+        style: 'secondary',
         action: { key: WIDGET_ACTIONS.CONSUME, params: { bags: 1 } },
       });
     }
@@ -373,9 +470,32 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, no
   return { ttl_seconds: TTL_SECONDS, components };
 }
 
+/**
+ * @description The content of a widget whose stock was removed.
+ * @param {string} [language] - The language of the requesting user.
+ * @returns {{ttl_seconds: number, components: Array<object>}} The widget content.
+ * @example
+ * const content = buildUnknownStockContent('fr');
+ */
+function buildUnknownStockContent(language) {
+  return {
+    ttl_seconds: TTL_SECONDS,
+    components: [
+      {
+        type: 'text',
+        variant: 'body',
+        text: translate(resolveLanguage(language), 'widget_unknown_stock'),
+      },
+    ],
+  };
+}
+
 export {
   buildWidgetContent,
+  buildUnknownStockContent,
   buildStockPoints,
+  buildConsumptionPoints,
+  readChartView,
   buildDeliveryAnnotations,
   readChartDays,
   stockColor,

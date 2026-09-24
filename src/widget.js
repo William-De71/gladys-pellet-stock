@@ -10,11 +10,13 @@
 // 8 components, 1 focal (the chart), 6 tiles, 2 texts, 1 status, 4 buttons.
 // The four buttons take half of it, so the content is always exactly 2
 // tiles + chart + status + 4 buttons: the secondary figures (daily rate,
-// low-stock reminder) go into the status rows, which hold up to 10.
+// low-stock reminder, cost…) go into the status rows, which hold up to 10 —
+// 9 at most here (the low-stock reminder replaces the order date).
 // -----------------------------------------------------------------------------
 
-import { DAY_MS, WIDGET_ACTIONS } from './constants.js';
+import { DAY_MS, MOVEMENT_TYPES, WIDGET_ACTIONS } from './constants.js';
 import { resolveLanguage, translate } from './i18n.js';
+import { isPalletDelivery } from './ledger.js';
 
 // A stock chart is a step function: each movement jumps, nothing in between.
 const CHART_TYPE = 'stepline';
@@ -29,6 +31,9 @@ const MAX_ANNOTATIONS = 8;
 const TTL_SECONDS = 3600;
 
 const DEFAULT_CHART_DAYS = 90;
+
+// The monthly cost is the daily rate over an average month.
+const DAYS_PER_MONTH = 30;
 
 /**
  * @description Read the chart period of a widget instance.
@@ -67,6 +72,47 @@ function formatNumber(value, language) {
 }
 
 /**
+ * @description Format an amount in euros, rounded to the euro.
+ * @param {number} value - The amount.
+ * @param {string} language - `fr` or `en`.
+ * @returns {string} The formatted amount.
+ * @example
+ * formatEuros(1234.4, 'fr'); // -> '1 234 €'
+ */
+function formatEuros(value, language) {
+  return new Intl.NumberFormat(language, {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+/**
+ * @description Format how long ago a date was, in the largest fitting unit.
+ * @param {Date} date - The past date.
+ * @param {Date} now - The current time.
+ * @param {string} language - `fr` or `en`.
+ * @returns {string} The relative time.
+ * @example
+ * formatAgo(new Date(Date.now() - 3 * 86400000), new Date(), 'fr'); // -> 'il y a 3 jours'
+ */
+function formatAgo(date, now, language) {
+  const format = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+  const minutes = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 60000));
+  if (minutes < 1) {
+    return format.format(0, 'second');
+  }
+  if (minutes < 60) {
+    return format.format(-minutes, 'minute');
+  }
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    return format.format(-hours, 'hour');
+  }
+  return format.format(-Math.floor(hours / 24), 'day');
+}
+
+/**
  * @description Semantic color of the stock level.
  * @param {number} stock - The stock, in bags.
  * @param {number} threshold - The low-stock threshold.
@@ -84,7 +130,8 @@ function stockColor(stock, threshold) {
 /**
  * @description Build the inline stock series over the chosen period: one
  * point where the period starts, one per movement, one at `now` — so the
- * step line always reaches the present.
+ * step line always reaches the present. A history opened by an inventory
+ * starts at the counted stock: the zero before it was never a real stock.
  * @param {Array<object>} movements - The ledger movements, oldest first.
  * @param {Date} now - The current time.
  * @param {number} days - The period, in days.
@@ -99,7 +146,7 @@ function buildStockPoints(movements, now, days) {
   const before = movements[movements.length - inPeriod.length - 1];
   if (before) {
     points.push({ t: new Date(start).toISOString(), v: before.after });
-  } else if (inPeriod.length > 0) {
+  } else if (inPeriod.length > 0 && inPeriod[0].type !== MOVEMENT_TYPES.INVENTORY) {
     // The history starts inside the period: start from the stock before it.
     points.push({ t: inPeriod[0].t, v: inPeriod[0].before });
   }
@@ -128,10 +175,7 @@ function buildStockPoints(movements, now, days) {
 function buildDeliveryAnnotations(movements, now, days) {
   const start = now.getTime() - days * DAY_MS;
   return movements
-    .filter(
-      (movement) =>
-        movement.type === 'delivery' && movement.bags > 1 && Date.parse(movement.t) >= start,
-    )
+    .filter((movement) => isPalletDelivery(movement) && Date.parse(movement.t) >= start)
     .slice(-MAX_ANNOTATIONS)
     .map((movement) => ({
       t: movement.t,
@@ -174,7 +218,7 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, no
   const addBagButton = {
     type: 'button',
     label: t('button_add_bag'),
-    icon: 'plus',
+    icon: 'arrow-up-circle',
     style: 'secondary',
     action: { key: WIDGET_ACTIONS.ADD_BAG, params: { bags: 1 } },
   };
@@ -235,19 +279,40 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, no
       color,
     });
   }
-  let rateValue = '—';
+  let rateValue = t('rate_pending');
   if (stats.dailyRate === 0) {
     rateValue = t('no_consumption');
   } else if (stats.dailyRate !== null) {
     rateValue = `${formatNumber(stats.dailyRate, lang)} ${t('unit_per_day')}`;
   }
   statusItems.push({ label: t('per_day'), value: rateValue, icon: 'trending-down' });
+  if (stats.lastConsumption) {
+    statusItems.push({
+      label: t('last_bag'),
+      value: formatAgo(new Date(stats.lastConsumption.t), now, lang),
+      icon: 'arrow-down-circle',
+    });
+  }
   statusItems.push({
     label: t('remaining_weight'),
     value: `${formatNumber(stats.stock * config.bagWeight, lang)} kg`,
     icon: 'box',
     color,
   });
+  if (config.bagPrice !== null) {
+    statusItems.push({
+      label: t('stock_value'),
+      value: formatEuros(stats.stock * config.bagPrice, lang),
+      icon: 'tag',
+    });
+    if (stats.dailyRate > 0) {
+      statusItems.push({
+        label: t('monthly_cost'),
+        value: formatEuros(stats.dailyRate * DAYS_PER_MONTH * config.bagPrice, lang),
+        icon: 'credit-card',
+      });
+    }
+  }
   if (stats.lastDelivery) {
     statusItems.push({
       label: t('last_delivery'),
@@ -256,6 +321,21 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, no
         bags: stats.lastDelivery.bags,
       }),
       icon: 'truck',
+      color: 'info',
+    });
+    const used = stats.consumedSinceDelivery;
+    const usedUnit = new Intl.PluralRules(lang).select(used) === 'one' ? 'unit_bag' : 'unit_bags';
+    statusItems.push({
+      label: t('used_since_delivery'),
+      value: `${formatNumber(used, lang)} ${t(usedUnit)} · ${formatNumber(used * config.bagWeight, lang)} kg`,
+      icon: 'bar-chart-2',
+    });
+  }
+  if (stats.orderDate) {
+    statusItems.push({
+      label: t('order_before'),
+      value: formatShortDate(stats.orderDate, lang),
+      icon: 'shopping-cart',
       color: 'info',
     });
   }
@@ -274,7 +354,7 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, no
       components.push({
         type: 'button',
         label: t('button_consume'),
-        icon: 'minus',
+        icon: 'arrow-down-circle',
         style: 'primary',
         action: { key: WIDGET_ACTIONS.CONSUME, params: { bags: 1 } },
       });

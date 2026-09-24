@@ -81,14 +81,19 @@ test('widget: four buttons, one per kind of movement, in that order', () => {
     byType(content, 'button').find((button) => button.action.key === 'add_bag').action.params,
     { bags: 1 },
   );
+  // The arrows tell which way the stock goes.
+  assert.deepEqual(
+    byType(content, 'button').map((button) => button.icon),
+    ['arrow-down-circle', 'arrow-up-circle', 'truck', 'rotate-ccw'],
+  );
 });
 
-test('widget: unknown figures are shown as a dash, never as 0', () => {
+test('widget: unknown figures are never shown as 0', () => {
   const content = contentOf(buildLedger([[0.2, 'delivery', 66]]), { language: 'en' });
   const [, autonomy] = byType(content, 'value');
   assert.equal(autonomy.value, '—');
   const rate = byType(content, 'status')[0].items.find((item) => item.label === 'Per day');
-  assert.equal(rate.value, '—');
+  assert.equal(rate.value, 'Waiting for usage');
   assert.deepEqual(validateWidgetContent(content), []);
 });
 
@@ -162,14 +167,95 @@ test('widget: the chart is a step line over the period, reaching now', () => {
   );
 });
 
-test('widget: the status shows the weight, the last delivery and the empty date', () => {
+test('widget: the status shows the last bag, the weight, the delivery and the dates', () => {
   const [status] = byType(contentOf(SEASON, { language: 'en' }), 'status');
   assert.deepEqual(
     status.items.map((item) => item.label),
-    ['Per day', 'Remaining weight', 'Last delivery', 'Empty around'],
+    [
+      'Per day',
+      'Last bag used',
+      'Remaining weight',
+      'Last delivery',
+      'Used since delivery',
+      'Order before',
+      'Empty around',
+    ],
   );
-  assert.equal(status.items[1].value, '1,410 kg');
-  assert.match(status.items[2].value, /\(\+66\)$/);
+  assert.equal(status.items[1].value, 'yesterday');
+  assert.equal(status.items[2].value, '1,410 kg');
+  assert.match(status.items[3].value, /\(\+66\)$/);
+  // 14 + 7 + 7 bags since the pallet of 20 days ago.
+  assert.equal(status.items[4].value, '28 bags · 420 kg');
+});
+
+test('widget: the use since the delivery counts recounts, in singular or plural', () => {
+  const used = (steps) =>
+    byType(contentOf(buildLedger(steps)), 'status')[0].items.find(
+      (item) => item.label === 'Conso depuis livraison',
+    );
+  assert.equal(used([[5, 'delivery', 66]]).value, '0 sac · 0 kg');
+  assert.equal(
+    used([
+      [5, 'delivery', 66],
+      [3, 'consumption', 1],
+    ]).value,
+    '1 sac · 15 kg',
+  );
+  assert.equal(
+    used([
+      [5, 'delivery', 66],
+      [3, 'consumption', 1],
+      [1, 'inventory', 60],
+    ]).value,
+    '6 sacs · 90 kg',
+  );
+  assert.equal(used([[5, 'inventory', 40]]), undefined, 'no delivery yet');
+});
+
+test('widget: the last bag is told in the largest fitting unit', () => {
+  const lastBag = (hoursAgo) =>
+    byType(
+      contentOf(
+        buildLedger([
+          [10, 'delivery', 66],
+          [hoursAgo / 24, 'consumption', 1],
+        ]),
+      ),
+      'status',
+    )[0].items.find((item) => item.label === 'Dernier sac utilisé').value;
+  assert.equal(lastBag(0), 'maintenant');
+  assert.equal(lastBag(0.5), 'il y a 30 minutes');
+  assert.equal(lastBag(5), 'il y a 5 heures');
+  assert.equal(lastBag(72), 'il y a 3 jours');
+});
+
+test('widget: a bag price adds the stock value and the monthly cost', () => {
+  const rows = (overrides) =>
+    Object.fromEntries(
+      byType(contentOf(SEASON, { overrides }), 'status')[0].items.map((item) => [
+        item.label,
+        item.value,
+      ]),
+    );
+  // 94 bags at 7 €, 2 bags a day.
+  const priced = rows({ bagPrice: 7 });
+  assert.equal(priced['Valeur du stock'], '658\u00a0€');
+  assert.equal(priced['Coût par mois'], '420\u00a0€');
+  const free = rows({});
+  assert.equal(free['Valeur du stock'], undefined);
+  assert.equal(free['Coût par mois'], undefined);
+});
+
+test('widget: every status row at once still fits the budget', () => {
+  const content = contentOf(
+    buildLedger([
+      [5, 'delivery', 20],
+      [1, 'consumption', 12],
+    ]),
+    { overrides: { bagPrice: 7, lowStockThreshold: 5 } },
+  );
+  assert.equal(byType(content, 'status')[0].items.length, 9);
+  assert.deepEqual(validateWidgetContent(content), []);
 });
 
 test('widget: single bags are not marked on the chart, pallets are', () => {
@@ -199,6 +285,21 @@ test('buildStockPoints: a history starting inside the period starts from zero', 
   assert.deepEqual(
     points.map((point) => point.v),
     [0, 66, 65, 65],
+  );
+});
+
+test('buildStockPoints: a history opened by an inventory starts at the counted stock', () => {
+  const points = buildStockPoints(
+    buildLedger([
+      [5, 'inventory', 12],
+      [1, 'consumption', 1],
+    ]).movements,
+    NOW,
+    90,
+  );
+  assert.deepEqual(
+    points.map((point) => point.v),
+    [12, 11, 11],
   );
 });
 

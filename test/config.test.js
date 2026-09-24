@@ -14,12 +14,14 @@ test('normalizeConfig: reads numbers sent as strings', () => {
     pallet_size: '72',
     low_stock_threshold: '5',
     consumption_window: '30',
+    bag_price: '6.9',
   });
   assert.deepEqual(config, {
     bagWeight: 12.5,
     palletSize: 72,
     lowStockThreshold: 5,
     consumptionWindow: 30,
+    bagPrice: 6.9,
   });
 });
 
@@ -34,4 +36,11 @@ test('normalizeConfig: clamps out-of-range values and ignores garbage', () => {
   assert.equal(config.palletSize, 1);
   assert.equal(config.lowStockThreshold, DEFAULTS.lowStockThreshold);
   assert.equal(config.consumptionWindow, 3);
+});
+
+test('normalizeConfig: no price, or a price of 0, hides the cost', () => {
+  assert.equal(normalizeConfig({}).bagPrice, null);
+  assert.equal(normalizeConfig({ bag_price: '' }).bagPrice, null);
+  assert.equal(normalizeConfig({ bag_price: 0 }).bagPrice, null);
+  assert.equal(normalizeConfig({ bag_price: 500 }).bagPrice, 100);
 });

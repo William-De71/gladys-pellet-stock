@@ -25,9 +25,11 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 - **Stock** in bags: green, then orange under the low stock threshold (10 bags by default), red at zero. A "Time to order" reminder then appears.
 - **Autonomy** in days.
 - A **chart** of the stock over time, with the deliveries marked (period: 1 month, 3 months, 1 year).
-- The **average consumption per day**, the **remaining weight**, the **last delivery** and the **estimated date** the stock runs out.
+- The **average consumption per day**, the **last bag used** ("2 days ago"), the **remaining weight**, the **last delivery** and the **use since** (in bags and kg).
+- The date to **order by** (when the stock will reach the low stock threshold) and the **estimated date** the stock runs out.
+- If you enter the **bag price** in the configuration: the **stock value** and the **cost per month**.
 
-On the chart, only deliveries of several bags are marked: bags added one by one are not, so they never hide the pallets.
+Only deliveries of several bags (a pallet, a batch…) count as deliveries: bags added one by one are neither marked on the chart nor used for "Last delivery" and the use since.
 
 In the widget settings, you can **hide the buttons**, for instance for a read-only wall display.
 

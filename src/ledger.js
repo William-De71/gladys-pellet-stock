@@ -205,20 +205,35 @@ function consumedBags(movement) {
 }
 
 /**
+ * @description Tell a pallet (or any batch of bags) from a single bag bought
+ * on its own: only the former is a "delivery" in the widget and the chart.
+ * @param {object} movement - A ledger movement.
+ * @returns {boolean} Whether the movement is a delivery of several bags.
+ * @example
+ * isPalletDelivery({ type: 'delivery', bags: 66 }); // -> true
+ */
+function isPalletDelivery(movement) {
+  return movement.type === MOVEMENT_TYPES.DELIVERY && movement.bags > 1;
+}
+
+/**
  * @description Derive the figures shown everywhere (widget, device, scenes).
  * The daily consumption is averaged over the last `consumptionWindow` days,
  * or over the known history when it is shorter — and stays unknown (`null`)
  * under one day of history, where a single tap would extrapolate wildly.
  * @param {{movements: Array<object>}} ledger - The ledger.
  * @param {Date} now - The current time.
- * @param {{consumptionWindow: number}} config - The normalized config.
+ * The order date is when the stock reaches the low-stock threshold: unknown
+ * without a threshold, or once the stock is already at or below it.
+ * @param {{consumptionWindow: number, lowStockThreshold?: number}} config - The normalized config.
  * @returns {{stock: number, dailyRate: number|null, autonomyDays: number|null,
- *   emptyDate: Date|null, lastDelivery: object|null, referenceStock: number,
+ *   emptyDate: Date|null, orderDate: Date|null, lastDelivery: object|null,
+ *   lastConsumption: object|null, consumedSinceDelivery: number|null, referenceStock: number,
  *   consumedInWindow: number, hasHistory: boolean}} The stock figures.
  * @example
  * const stats = computeStats(ledger, new Date(), { consumptionWindow: 14 });
  */
-function computeStats(ledger, now, { consumptionWindow }) {
+function computeStats(ledger, now, { consumptionWindow, lowStockThreshold = 0 }) {
   const { movements } = ledger;
   const stock = currentStock(ledger);
   const nowMs = now.getTime();
@@ -244,8 +259,24 @@ function computeStats(ledger, now, { consumptionWindow }) {
   }
   const emptyDate = autonomyDays === null ? null : new Date(nowMs + autonomyDays * DAY_MS);
 
-  const lastDelivery =
-    [...movements].reverse().find((movement) => movement.type === MOVEMENT_TYPES.DELIVERY) || null;
+  let orderDate = null;
+  if (lowStockThreshold > 0 && stock > lowStockThreshold && dailyRate > 0) {
+    const daysLeft = Math.floor((stock - lowStockThreshold) / dailyRate);
+    orderDate = new Date(nowMs + daysLeft * DAY_MS);
+  }
+
+  // The last pallet: single bags would reset the "used since" count.
+  const lastDelivery = [...movements].reverse().find(isPalletDelivery) || null;
+  // Counted like the daily rate: "−1 bag" taps and downward recounts.
+  const consumedSinceDelivery = lastDelivery
+    ? movements
+        .slice(movements.lastIndexOf(lastDelivery) + 1)
+        .reduce((sum, movement) => sum + consumedBags(movement), 0)
+    : null;
+  // Only an explicit "−1 bag": a recount says bags went, not when.
+  const lastConsumption =
+    [...movements].reverse().find((movement) => movement.type === MOVEMENT_TYPES.CONSUMPTION) ||
+    null;
 
   // The gauge reference: the stock right after the last refill (a delivery,
   // or an inventory that raised the stock), so "full" means "as full as the
@@ -262,7 +293,10 @@ function computeStats(ledger, now, { consumptionWindow }) {
     dailyRate,
     autonomyDays,
     emptyDate,
+    orderDate,
     lastDelivery,
+    lastConsumption,
+    consumedSinceDelivery,
     referenceStock,
     consumedInWindow,
     hasHistory: movements.length > 0,
@@ -279,5 +313,6 @@ export {
   recordMovement,
   undoLastMovement,
   consumedBags,
+  isPalletDelivery,
   computeStats,
 };

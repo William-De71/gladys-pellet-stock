@@ -29,7 +29,8 @@ function readNumber(raw, fallback, { min, max }) {
  * @description Normalize the raw integration config.
  * @param {object} [raw] - The config as received from Gladys.
  * @returns {{bagWeight: number, palletSize: number, lowStockThreshold: number,
- *   consumptionWindow: number}} The normalized config.
+ *   consumptionWindow: number, bagPrice: number|null}} The normalized config.
+ *   A price of 0 counts as no price.
  * @example
  * normalizeConfig({ bag_weight: 15 });
  */
@@ -53,6 +54,7 @@ function normalizeConfig(raw = {}) {
         LIMITS.consumptionWindow,
       ),
     ),
+    bagPrice: readNumber(raw[CONFIG_KEYS.BAG_PRICE], DEFAULTS.bagPrice, LIMITS.bagPrice) || null,
   };
 }
 

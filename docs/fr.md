@@ -25,9 +25,11 @@ Vous n'êtes pas obligé d'appuyer à chaque sac : **recompter le stock** de tem
 - **Stock** en sacs : vert, puis orange sous le seuil de stock bas (10 sacs par défaut), rouge à zéro. Un rappel « Pensez à commander » apparaît alors.
 - **Autonomie** en jours.
 - Un **graphique** de l'évolution du stock, avec les livraisons repérées (période réglable : 1 mois, 3 mois, 1 an).
-- La **consommation moyenne par jour**, le **poids restant**, la **dernière livraison** et la **date estimée** à laquelle le stock sera vide.
+- La **consommation moyenne par jour**, le **dernier sac utilisé** (« il y a 2 jours »), le **poids restant**, la **dernière livraison** et la **consommation depuis** (en sacs et en kg).
+- La date à laquelle **commander** (quand le stock atteindra le seuil de stock bas) et la **date estimée** à laquelle le stock sera vide.
+- Si vous indiquez le **prix d'un sac** dans la configuration : la **valeur du stock** et le **coût par mois**.
 
-Sur le graphique, seules les livraisons de plusieurs sacs sont repérées : les sacs ajoutés un par un ne sont pas marqués, pour ne pas masquer les palettes.
+Seules les livraisons de plusieurs sacs (une palette, un lot…) comptent comme livraisons : les sacs ajoutés un par un ne sont ni repérés sur le graphique, ni pris en compte pour « Dernière livraison » et la consommation depuis.
 
 Dans les réglages du widget, vous pouvez **masquer les boutons**, par exemple pour un écran mural en lecture seule.
 

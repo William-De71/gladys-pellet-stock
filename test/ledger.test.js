@@ -236,3 +236,48 @@ test('computeStats: the gauge reference is the stock after the last refill', () 
   assert.equal(stats.referenceStock, 102);
   assert.equal(stats.lastDelivery.after, 102);
 });
+
+test('computeStats: the last delivery is the last pallet, not a single bag', () => {
+  const stats = computeStats(
+    buildLedger([
+      [10, 'delivery', 66],
+      [8, 'consumption', 5],
+      [5, 'delivery', 1],
+      [3, 'consumption', 2],
+    ]),
+    NOW,
+    WINDOW,
+  );
+  assert.equal(stats.lastDelivery.bags, 66);
+  assert.equal(stats.consumedSinceDelivery, 7);
+});
+
+test('computeStats: the order date is when the stock reaches the threshold', () => {
+  // 1 bag a day, 47 bags left, threshold at 10: 37 days to order.
+  const steps = [[20, 'delivery', 66]];
+  for (let ago = 19; ago >= 1; ago -= 1) {
+    steps.push([ago, 'consumption', 1]);
+  }
+  const ledger = buildLedger(steps);
+  const stats = computeStats(ledger, NOW, { ...WINDOW, lowStockThreshold: 10 });
+  assert.equal(stats.orderDate.toISOString(), daysAgo(-37).toISOString());
+  assert.equal(stats.lastConsumption.t, daysAgo(1).toISOString());
+  assert.equal(computeStats(ledger, NOW, WINDOW).orderDate, null, 'no threshold, no date');
+  assert.equal(
+    computeStats(ledger, NOW, { ...WINDOW, lowStockThreshold: 50 }).orderDate,
+    null,
+    'already under the threshold',
+  );
+});
+
+test('computeStats: a recount is not a "last bag used"', () => {
+  const stats = computeStats(
+    buildLedger([
+      [10, 'delivery', 66],
+      [5, 'inventory', 56],
+    ]),
+    NOW,
+    WINDOW,
+  );
+  assert.equal(stats.lastConsumption, null);
+});

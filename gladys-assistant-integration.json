@@ -87,6 +87,21 @@
       "default": 14,
       "min": 3,
       "max": 90
+    },
+    {
+      "key": "bag_price",
+      "type": "number",
+      "label": {
+        "en": "Bag price (€)",
+        "fr": "Prix d'un sac (€)"
+      },
+      "description": {
+        "en": "Optional. Shows the value of the stock and the cost per month in the widget. For a pallet, divide its price by its number of bags.",
+        "fr": "Facultatif. Affiche la valeur du stock et le coût par mois dans le widget. Pour une palette, divisez son prix par son nombre de sacs."
+      },
+      "required": false,
+      "min": 0,
+      "max": 100
     }
   ],
   "actions": [

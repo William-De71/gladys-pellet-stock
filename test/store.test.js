@@ -122,3 +122,40 @@ test('device: an unknown autonomy is omitted, never published as 0', () => {
     state: 3650,
   });
 });
+
+test('store: crossing the threshold fires the low-stock trigger once', async () => {
+  const { gladys, store } = setup({
+    [LEDGER_CONFIG_KEY]: serializeLedger(buildLedger([[3, 'delivery', 11]])),
+  });
+  await store.load();
+  await store.record({ type: 'consumption', bags: 1 });
+  await store.record({ type: 'consumption', bags: 1 });
+  assert.deepEqual(
+    gladys.sceneEvents.map((event) => event.key),
+    ['low_stock'],
+  );
+  assert.equal(gladys.sceneEvents[0].data.stock, 'ext:test:pellet:stock');
+  assert.equal(gladys.sceneEvents[0].data.bags_left, 10);
+});
+
+test('store: a pallet added by a scene fires no trigger', async () => {
+  const { gladys, store } = setup();
+  await store.load();
+  await store.record({ type: 'delivery', bags: 66 }, { fromScene: true });
+  assert.deepEqual(gladys.sceneEvents, []);
+  await store.record({ type: 'delivery', bags: 66 });
+  assert.deepEqual(
+    gladys.sceneEvents.map((event) => event.key),
+    ['pallet_delivered'],
+  );
+});
+
+test('store: a trigger that cannot be fired never fails the movement', async () => {
+  const { gladys, store } = setup();
+  await store.load();
+  gladys.publishSceneEvent = async () => {
+    throw new Error('404 unknown trigger');
+  };
+  const movement = await store.record({ type: 'delivery', bags: 66 });
+  assert.equal(movement.after, 66);
+});

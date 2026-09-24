@@ -63,11 +63,26 @@ The configuration actions and the scene action have a **Stock** field: left empt
 
 The settings (bag weight, bags per pallet, threshold, price…) are shared by all the stocks. **"Remove a stock"** removes an added stock and its history; the main stock cannot be removed.
 
-## Scene: "Use pellet bags"
+## Scenes
 
-In the scene editor, the **"Use pellet bags"** action removes bags from the stock. Example: a Zigbee button next to the stove, triggering a scene that removes one bag at each press.
+### Actions
 
-The action returns the **bags left** and the **autonomy** in days to the next actions of the scene. It fails when the recorded stock is too low: count your stock again.
+- **"Use pellet bags"** removes bags from the stock. Example: a Zigbee button next to the stove, triggering a scene that removes one bag at each press. The action fails when the recorded stock is too low: count your stock again.
+- **"Add pellet bags"** adds bags (a delivery, bags bought on their own).
+- **"Correct the pellet stock"** sets the stock to the number of bags counted.
+- **"Read the pellet stock"** changes nothing: it gets the figures for the rest of the scene, for instance a weekly message.
+
+Each action has a **Stock** field (empty: the main stock) and returns to the next actions the **bags left**, the **autonomy** (days), the **bags per day**, the **days before ordering** and the **remaining weight** (kg). A figure still unknown (the autonomy with no consumption yet, say) is left out rather than sent as 0.
+
+### Triggers
+
+- **"Pellet stock low"**: the stock falls to the low stock threshold of the configuration. It fires once, when crossing the threshold, not at every bag below it.
+- **"Pellet stock empty"**: the last bag was used.
+- **"Pellet pallet delivered"**: a delivery of several bags was recorded from the widget or the configuration.
+
+Each trigger has a **Stock** field (empty: every stock) and gives the same figures as the actions, plus the **bags delivered** for the pallet. Example: "Pellet stock low → send me "{{triggerEvent.data.bags_left}} bags left, time to order"".
+
+A delivery added by a scene does not fire "Pallet delivered", so that a scene can never restart itself in a loop. The low and empty stock triggers fire whatever the origin, a Zigbee button going through a scene included.
 
 ## Backup
 

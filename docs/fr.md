@@ -63,11 +63,26 @@ Les actions de la configuration et l'action de scène ont un champ **Stock** : l
 
 Les réglages (poids d'un sac, sacs par palette, seuil, prix…) sont communs à tous les stocks. **« Supprimer un stock »** retire un stock ajouté et son historique ; le stock principal ne peut pas être supprimé.
 
-## Scène : « Utiliser des sacs de pellets »
+## Scènes
 
-Dans l'éditeur de scène, l'action **« Utiliser des sacs de pellets »** retire des sacs du stock. Exemple : un bouton Zigbee posé à côté du poêle, qui déclenche une scène retirant un sac à chaque appui.
+### Actions
 
-L'action renvoie aux actions suivantes de la scène le **nombre de sacs restants** et l'**autonomie** en jours. Elle échoue si le stock enregistré est insuffisant : recomptez alors votre stock.
+- **« Utiliser des sacs de pellets »** retire des sacs du stock. Exemple : un bouton Zigbee posé à côté du poêle, qui déclenche une scène retirant un sac à chaque appui. L'action échoue si le stock enregistré est insuffisant : recomptez alors votre stock.
+- **« Ajouter des sacs de pellets »** ajoute des sacs (une livraison, des sacs achetés à l'unité).
+- **« Corriger le stock de pellets »** fixe le stock au nombre de sacs comptés.
+- **« Lire le stock de pellets »** ne modifie rien : elle sert à récupérer les chiffres pour la suite de la scène, par exemple un message hebdomadaire.
+
+Chaque action a un champ **Stock** (vide : le stock principal) et renvoie aux actions suivantes les **sacs restants**, l'**autonomie** (jours), les **sacs par jour**, les **jours avant de commander** et le **poids restant** (kg). Une valeur encore inconnue (autonomie sans consommation, par exemple) n'est pas renvoyée, plutôt que de valoir 0.
+
+### Déclencheurs
+
+- **« Stock de pellets bas »** : le stock descend au seuil de stock bas de la configuration. Il se déclenche une fois, au passage du seuil, pas à chaque sac en dessous.
+- **« Stock de pellets épuisé »** : le dernier sac a été utilisé.
+- **« Palette de pellets livrée »** : une livraison de plusieurs sacs a été enregistrée depuis le widget ou la configuration.
+
+Chaque déclencheur a un champ **Stock** (vide : tous les stocks) et fournit les mêmes chiffres que les actions, plus les **sacs livrés** pour la palette. Exemple : « Stock de pellets bas → m'envoyer "Il reste {{triggerEvent.data.bags_left}} sacs, pensez à commander" ».
+
+Une livraison ajoutée par une scène ne déclenche pas « Palette livrée », pour qu'une scène ne puisse pas se relancer elle-même en boucle. Les déclencheurs de stock bas et épuisé, eux, partent quelle que soit l'origine, y compris un bouton Zigbee passant par une scène.
 
 ## Sauvegarde
 

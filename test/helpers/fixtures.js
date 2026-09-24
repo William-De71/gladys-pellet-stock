@@ -44,6 +44,7 @@ function createFakeGladys(config = {}) {
   const fake = {
     storedConfig: { ...config },
     publishedStates: [],
+    sceneEvents: [],
     refreshes: [],
     failSetConfig: false,
     failPublishStates: false,
@@ -66,6 +67,10 @@ function createFakeGladys(config = {}) {
         throw new Error('device feature not found');
       }
       fake.publishedStates.push(states);
+      return { success: true };
+    },
+    async publishSceneEvent(key, data) {
+      fake.sceneEvents.push({ key, data });
       return { success: true };
     },
     requestWidgetRefresh(key) {

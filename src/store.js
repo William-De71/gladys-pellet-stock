@@ -9,7 +9,7 @@
 // -----------------------------------------------------------------------------
 
 import { DEVICE_ID, LEDGER_CONFIG_KEY, WIDGET_KEY } from './constants.js';
-import { buildStates } from './device.js';
+import { buildStates, deviceExternalId } from './device.js';
 import {
   computeStats,
   createLedger,
@@ -18,6 +18,7 @@ import {
   serializeLedger,
   undoLastMovement,
 } from './ledger.js';
+import { buildSceneEventData, buildSceneOutputs, detectSceneTriggers } from './scene.js';
 
 /**
  * @description Create the store of one stock.
@@ -102,14 +103,49 @@ function createStockStore({
   }
 
   /**
-   * @description Persist a new ledger, then make it the current one.
-   * @param {object} next - The new ledger.
+   * @description Fire the scene triggers of a change. A trigger that cannot
+   * be published (an older Gladys, the rate limit) never fails the movement.
+   * @param {object} change - The detectSceneTriggers() params, minus the threshold.
    * @returns {Promise<void>}
    */
-  async function commit(next) {
+  async function fireSceneTriggers(change) {
+    const config = getConfig();
+    const triggers = detectSceneTriggers({
+      ...change,
+      lowStockThreshold: config.lowStockThreshold,
+    });
+    if (triggers.length === 0) {
+      return;
+    }
+    const data = buildSceneEventData(
+      deviceExternalId(gladys, stockId),
+      buildSceneOutputs(getStats(), config, now()),
+      change.recorded,
+    );
+    await Promise.all(
+      triggers.map((key) =>
+        gladys
+          .publishSceneEvent(key, data)
+          .catch((error) => logger.debug(`Scene trigger ${key} not fired: ${error.message}`)),
+      ),
+    );
+  }
+
+  /**
+   * @description Persist a new ledger, make it the current one, and tell
+   * Gladys: device states, widget, scene triggers.
+   * @param {object} next - The new ledger.
+   * @param {object} [options] - About the change.
+   * @param {object} [options.recorded] - The movement recorded (none for an undo).
+   * @param {boolean} [options.fromScene] - Whether a scene action made the change.
+   * @returns {Promise<void>}
+   */
+  async function commit(next, { recorded, fromScene } = {}) {
+    const before = getStats().stock;
     await gladys.setConfig({ [ledgerKey]: serializeLedger(next) });
     ledger = next;
     await notifyChange();
+    await fireSceneTriggers({ before, after: getStats().stock, recorded, fromScene });
   }
 
   return {
@@ -130,13 +166,16 @@ function createStockStore({
     /**
      * @description Record a movement.
      * @param {{type: string, bags: unknown}} movement - The movement.
+     * @param {object} [options] - Options.
+     * @param {boolean} [options.fromScene] - Made by a scene action (see src/scene.js).
      * @returns {Promise<object>} The recorded movement.
      */
-    record(movement) {
+    record(movement, { fromScene = false } = {}) {
       return enqueue(async () => {
         const next = recordMovement(ledger, movement, now());
-        await commit(next);
-        return next.movements[next.movements.length - 1];
+        const recorded = next.movements[next.movements.length - 1];
+        await commit(next, { recorded, fromScene });
+        return recorded;
       });
     },
 

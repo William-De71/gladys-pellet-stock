@@ -9,8 +9,8 @@
 //     "Pallet delivered", "Undo" buttons, relayed to onWidgetAction;
 //   - the manifest actions of the Configuration screen: correct the stock,
 //     record a delivery or a consumption of any size, undo;
-//   - the `consume_bags` scene action: a Zigbee button next to the stove can
-//     decrement the stock through a scene;
+//   - the scene actions: use, add or count bags (a Zigbee button next to the
+//     stove can decrement the stock), or read the figures for a message;
 //   - and out: a virtual "Pellet stock" device per stock (stock + autonomy),
 //     for the history charts and the scenes on the stock level.
 //
@@ -33,6 +33,7 @@ import {
 } from './src/constants.js';
 import { message, translate } from './src/i18n.js';
 import { StockError } from './src/ledger.js';
+import { buildSceneOutputs } from './src/scene.js';
 import { createStocks } from './src/stocks.js';
 import { buildWidgetContent, buildUnknownStockContent } from './src/widget.js';
 
@@ -159,11 +160,22 @@ gladys.onAction('remove_stock', (fields) =>
 
 // --- Scene action ------------------------------------------------------------
 
-gladys.onSceneAction('consume_bags', async (fields) => {
+/**
+ * @description Run a scene action on the stock it picked, and return the
+ * stock figures to the next actions of the scene.
+ * @param {object} fields - The fields of the scene action.
+ * @param {Function} [operation] - `(store) => Promise`, the change to make; none only reads.
+ * @returns {Promise<object>} The outputs (see src/scene.js).
+ * @example
+ * await runSceneAction(fields, (store) => store.undo());
+ */
+async function runSceneAction(fields, operation) {
   let store;
   try {
     store = stocks.storeOf(fields.stock);
-    await store.record({ type: MOVEMENT_TYPES.CONSUMPTION, bags: fields.bags });
+    if (operation) {
+      await operation(store);
+    }
   } catch (error) {
     // A scene action fails by throwing: the scene logs it and goes on.
     if (error instanceof StockError) {
@@ -171,12 +183,26 @@ gladys.onSceneAction('consume_bags', async (fields) => {
     }
     throw error;
   }
-  const stats = store.getStats();
-  return {
-    stock: stats.stock,
-    ...(stats.autonomyDays !== null && { autonomy_days: stats.autonomyDays }),
-  };
-});
+  await store.settled();
+  return buildSceneOutputs(store.getStats(), config, new Date());
+}
+
+gladys.onSceneAction('consume_bags', (fields) =>
+  runSceneAction(fields, (store) =>
+    store.record({ type: MOVEMENT_TYPES.CONSUMPTION, bags: fields.bags }, { fromScene: true }),
+  ),
+);
+gladys.onSceneAction('add_bags', (fields) =>
+  runSceneAction(fields, (store) =>
+    store.record({ type: MOVEMENT_TYPES.DELIVERY, bags: fields.bags }, { fromScene: true }),
+  ),
+);
+gladys.onSceneAction('set_stock', (fields) =>
+  runSceneAction(fields, (store) =>
+    store.record({ type: MOVEMENT_TYPES.INVENTORY, bags: fields.bags }, { fromScene: true }),
+  ),
+);
+gladys.onSceneAction('read_stock', (fields) => runSceneAction(fields));
 
 // --- Dashboard widget ----------------------------------------------------------
 

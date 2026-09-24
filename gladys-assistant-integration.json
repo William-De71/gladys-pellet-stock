@@ -295,6 +295,223 @@
       ]
     }
   ],
+  "scene_triggers": [
+    {
+      "key": "low_stock",
+      "label": {
+        "en": "Pellet stock low",
+        "fr": "Stock de pellets bas"
+      },
+      "description": {
+        "en": "The stock falls to the low stock threshold of the configuration.",
+        "fr": "Le stock descend au seuil de stock bas de la configuration."
+      },
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for every stock.",
+            "fr": "Laissez vide pour tous les stocks."
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "bags_left",
+          "type": "number",
+          "label": {
+            "en": "Bags left",
+            "fr": "Sacs restants"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "Bags per day",
+            "fr": "Sacs par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        },
+        {
+          "key": "remaining_kg",
+          "type": "number",
+          "label": {
+            "en": "Remaining weight (kg)",
+            "fr": "Poids restant (kg)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "stock_empty",
+      "label": {
+        "en": "Pellet stock empty",
+        "fr": "Stock de pellets épuisé"
+      },
+      "description": {
+        "en": "The last bag was used.",
+        "fr": "Le dernier sac a été utilisé."
+      },
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for every stock.",
+            "fr": "Laissez vide pour tous les stocks."
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "bags_left",
+          "type": "number",
+          "label": {
+            "en": "Bags left",
+            "fr": "Sacs restants"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "Bags per day",
+            "fr": "Sacs par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        },
+        {
+          "key": "remaining_kg",
+          "type": "number",
+          "label": {
+            "en": "Remaining weight (kg)",
+            "fr": "Poids restant (kg)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pallet_delivered",
+      "label": {
+        "en": "Pellet pallet delivered",
+        "fr": "Palette de pellets livrée"
+      },
+      "description": {
+        "en": "A delivery of several bags was recorded (from the widget or the configuration, not from a scene).",
+        "fr": "Une livraison de plusieurs sacs a été enregistrée (depuis le widget ou la configuration, pas depuis une scène)."
+      },
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for every stock.",
+            "fr": "Laissez vide pour tous les stocks."
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "bags_left",
+          "type": "number",
+          "label": {
+            "en": "Bags left",
+            "fr": "Sacs restants"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "Bags per day",
+            "fr": "Sacs par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        },
+        {
+          "key": "remaining_kg",
+          "type": "number",
+          "label": {
+            "en": "Remaining weight (kg)",
+            "fr": "Poids restant (kg)"
+          }
+        },
+        {
+          "key": "bags_delivered",
+          "type": "number",
+          "label": {
+            "en": "Bags delivered",
+            "fr": "Sacs livrés"
+          }
+        }
+      ]
+    }
+  ],
   "scene_actions": [
     {
       "key": "consume_bags",
@@ -350,6 +567,263 @@
           "label": {
             "en": "Autonomy (days)",
             "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "Bags per day",
+            "fr": "Sacs par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        },
+        {
+          "key": "remaining_kg",
+          "type": "number",
+          "label": {
+            "en": "Remaining weight (kg)",
+            "fr": "Poids restant (kg)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "add_bags",
+      "label": {
+        "en": "Add pellet bags",
+        "fr": "Ajouter des sacs de pellets"
+      },
+      "description": {
+        "en": "Add bags to the stock: a delivery, or bags bought on their own.",
+        "fr": "Ajoute des sacs au stock : une livraison, ou des sacs achetés à l'unité."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
+          "key": "bags",
+          "type": "number",
+          "label": {
+            "en": "Bags",
+            "fr": "Sacs"
+          },
+          "required": true,
+          "default": 1,
+          "min": 1,
+          "max": 1000
+        }
+      ],
+      "outputs": [
+        {
+          "key": "stock",
+          "type": "number",
+          "label": {
+            "en": "Bags left",
+            "fr": "Sacs restants"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "Bags per day",
+            "fr": "Sacs par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        },
+        {
+          "key": "remaining_kg",
+          "type": "number",
+          "label": {
+            "en": "Remaining weight (kg)",
+            "fr": "Poids restant (kg)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "set_stock",
+      "label": {
+        "en": "Correct the pellet stock",
+        "fr": "Corriger le stock de pellets"
+      },
+      "description": {
+        "en": "Set the stock to the number of bags counted. Missing bags are counted as used.",
+        "fr": "Fixe le stock au nombre de sacs comptés. Les sacs manquants sont comptés comme consommés."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
+          "key": "bags",
+          "type": "number",
+          "label": {
+            "en": "Bags in stock",
+            "fr": "Sacs en stock"
+          },
+          "required": true,
+          "min": 0,
+          "max": 10000
+        }
+      ],
+      "outputs": [
+        {
+          "key": "stock",
+          "type": "number",
+          "label": {
+            "en": "Bags left",
+            "fr": "Sacs restants"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "Bags per day",
+            "fr": "Sacs par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        },
+        {
+          "key": "remaining_kg",
+          "type": "number",
+          "label": {
+            "en": "Remaining weight (kg)",
+            "fr": "Poids restant (kg)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "read_stock",
+      "label": {
+        "en": "Read the pellet stock",
+        "fr": "Lire le stock de pellets"
+      },
+      "description": {
+        "en": "Changes nothing: gives the stock figures to the next actions, e.g. for a message.",
+        "fr": "Ne modifie rien : donne les chiffres du stock aux actions suivantes, par exemple pour un message."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "key": "stock",
+          "type": "number",
+          "label": {
+            "en": "Bags left",
+            "fr": "Sacs restants"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "Bags per day",
+            "fr": "Sacs par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        },
+        {
+          "key": "remaining_kg",
+          "type": "number",
+          "label": {
+            "en": "Remaining weight (kg)",
+            "fr": "Poids restant (kg)"
           }
         }
       ]

@@ -21,7 +21,7 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md).
 - **Chart**, picked per widget: the **stock over time** (step line, pallet deliveries marked) or the **bags used
   per day** (bars; weekly over one year). Period: 1 month, 3 months or 1 year.
 - **Status rows**: bags per day, last bag used ("2 hours ago"), remaining weight, stock value and cost per month
-  (once a bag price is set), last delivery and bags used since, the date to order by (when the stock reaches the
+  (once a pallet price is set), last delivery and bags used since, the date to order by (when the stock reaches the
   threshold) and the estimated empty date.
 - **Buttons**: **−1 bag**, **+1 bag**, **Pallet delivered** (asks for confirmation) and **Undo** (removes the last
   operation). They can be hidden per widget, for a read-only wall display.
@@ -68,7 +68,7 @@ The triggers carry the same figures as scene variables (`{{triggerEvent.data.bag
 | Bags per pallet        | 66      | What the "Pallet delivered" button adds                     |
 | Low stock threshold    | 10      | The orange stock, the reminder, the order date, the trigger |
 | Consumption window (d) | 14      | The days the average consumption is computed over           |
-| Bag price (€)          | —       | Optional: the stock value and the cost per month            |
+| Pallet price (€)       | —       | Optional: the stock value and the cost per month            |
 
 The settings are shared by every stock.
 

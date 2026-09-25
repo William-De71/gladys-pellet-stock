@@ -14,14 +14,14 @@ test('normalizeConfig: reads numbers sent as strings', () => {
     pallet_size: '72',
     low_stock_threshold: '5',
     consumption_window: '30',
-    bag_price: '6.9',
+    pallet_price: '504',
   });
   assert.deepEqual(config, {
     bagWeight: 12.5,
     palletSize: 72,
     lowStockThreshold: 5,
     consumptionWindow: 30,
-    bagPrice: 6.9,
+    bagPrice: 7,
   });
 });
 
@@ -40,7 +40,12 @@ test('normalizeConfig: clamps out-of-range values and ignores garbage', () => {
 
 test('normalizeConfig: no price, or a price of 0, hides the cost', () => {
   assert.equal(normalizeConfig({}).bagPrice, null);
-  assert.equal(normalizeConfig({ bag_price: '' }).bagPrice, null);
-  assert.equal(normalizeConfig({ bag_price: 0 }).bagPrice, null);
-  assert.equal(normalizeConfig({ bag_price: 500 }).bagPrice, 100);
+  assert.equal(normalizeConfig({ pallet_price: '' }).bagPrice, null);
+  assert.equal(normalizeConfig({ pallet_price: 0 }).bagPrice, null);
+  assert.equal(normalizeConfig({ pallet_price: 99999, pallet_size: 50 }).bagPrice, 100);
+});
+
+test('normalizeConfig: the bag price is the pallet price split over its bags', () => {
+  assert.equal(normalizeConfig({ pallet_price: 481 }).bagPrice, 481 / 66);
+  assert.equal(normalizeConfig({ pallet_price: 525, pallet_size: 72 }).bagPrice, 525 / 72);
 });

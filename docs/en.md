@@ -27,7 +27,7 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 - A **chart**, picked in the widget settings: the **stock over time**, with the deliveries marked, or the **bags used per day** as bars (per week over 1 year). Period: 1 month, 3 months, 1 year. To see both, put two widgets side by side. The bags found missing by a recount are counted on the day of the recount.
 - The **average consumption per day**, the **last bag used** ("2 days ago"), the **remaining weight**, the **last delivery** and the **use since** (in bags and kg).
 - The date to **order by** (when the stock will reach the low stock threshold) and the **estimated date** the stock runs out.
-- If you enter the **bag price** in the configuration: the **stock value** and the **cost per month**.
+- If you enter the **pallet price** in the configuration: the **stock value** and the **cost per month**.
 
 Only deliveries of several bags (a pallet, a batch…) count as deliveries: bags added one by one are neither marked on the chart nor used for "Last delivery" and the use since.
 

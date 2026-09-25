@@ -8,7 +8,7 @@ const CONFIG_KEYS = {
   PALLET_SIZE: 'pallet_size',
   LOW_STOCK_THRESHOLD: 'low_stock_threshold',
   CONSUMPTION_WINDOW: 'consumption_window',
-  BAG_PRICE: 'bag_price',
+  PALLET_PRICE: 'pallet_price',
 };
 
 // Key stored through setConfig() OUTSIDE the config_schema: the ledger of
@@ -30,7 +30,8 @@ const DEFAULTS = {
   // Days of history used to compute the average consumption: long enough to
   // smooth a cold weekend, short enough to follow the season.
   consumptionWindow: 14,
-  // No price until the user enters one: the cost rows stay hidden.
+  // No price until the user enters one: the cost rows stay hidden. Derived
+  // from the pallet price, which is a whole number of euros.
   bagPrice: null,
 };
 
@@ -39,7 +40,7 @@ const LIMITS = {
   palletSize: { min: 1, max: 200 },
   lowStockThreshold: { min: 0, max: 1000 },
   consumptionWindow: { min: 3, max: 90 },
-  bagPrice: { min: 0, max: 100 },
+  palletPrice: { min: 0, max: 5000 },
   // Upper bound of a single movement, to catch a typo (660 instead of 66).
   movementBags: { min: 1, max: 1000 },
   stockBags: { min: 0, max: 10000 },

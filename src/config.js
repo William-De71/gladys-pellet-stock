@@ -30,16 +30,21 @@ function readNumber(raw, fallback, { min, max }) {
  * @param {object} [raw] - The config as received from Gladys.
  * @returns {{bagWeight: number, palletSize: number, lowStockThreshold: number,
  *   consumptionWindow: number, bagPrice: number|null}} The normalized config.
- *   A price of 0 counts as no price.
+ *   The bag price is the pallet price divided by the bags per pallet; a price
+ *   of 0 counts as no price.
  * @example
  * normalizeConfig({ bag_weight: 15 });
  */
 function normalizeConfig(raw = {}) {
+  const palletSize = Math.round(
+    readNumber(raw[CONFIG_KEYS.PALLET_SIZE], DEFAULTS.palletSize, LIMITS.palletSize),
+  );
+  // The price is entered per pallet: the core number field only takes whole
+  // numbers, too coarse for a bag at 7.29 € but fine for a pallet at 459 €.
+  const palletPrice = readNumber(raw[CONFIG_KEYS.PALLET_PRICE], 0, LIMITS.palletPrice);
   return {
     bagWeight: readNumber(raw[CONFIG_KEYS.BAG_WEIGHT], DEFAULTS.bagWeight, LIMITS.bagWeight),
-    palletSize: Math.round(
-      readNumber(raw[CONFIG_KEYS.PALLET_SIZE], DEFAULTS.palletSize, LIMITS.palletSize),
-    ),
+    palletSize,
     lowStockThreshold: Math.round(
       readNumber(
         raw[CONFIG_KEYS.LOW_STOCK_THRESHOLD],
@@ -54,7 +59,7 @@ function normalizeConfig(raw = {}) {
         LIMITS.consumptionWindow,
       ),
     ),
-    bagPrice: readNumber(raw[CONFIG_KEYS.BAG_PRICE], DEFAULTS.bagPrice, LIMITS.bagPrice) || null,
+    bagPrice: palletPrice > 0 ? palletPrice / palletSize : DEFAULTS.bagPrice,
   };
 }
 

@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/William-De71/gladys-pellet-stock/compare/v1.0.1...v1.1.0) (2026-09-25)
+
+### Bug Fixes
+
+* **config:** enter the pallet price instead of the bag price ([c98b659](https://github.com/William-De71/gladys-pellet-stock/commit/c98b6599061cdc4f473c21b4db7896d8822d13e0))
+
 ## [1.0.1](https://github.com/William-De71/gladys-pellet-stock/compare/v1.0.0...v1.0.1) (2026-09-25)
 
 ## 1.0.0 (2026-09-24)

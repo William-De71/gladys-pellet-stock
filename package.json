@@ -1,6 +1,6 @@
 {
   "name": "gladys-pellet-stock",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "description": "External Gladys Assistant integration tracking a wood pellet stock, with a dashboard widget.",
   "type": "module",

@@ -6,7 +6,8 @@
 // operation returns a new one, which the store persists as a whole.
 //
 // A movement is `{ t, type, bags, before, after }`:
-//   - delivery     `bags` added to the stock;
+//   - delivery     `bags` added to the stock, with the `price` paid for them
+//                  when the user entered one (the widget form);
 //   - consumption  `bags` taken from the stock (loaded into the stove);
 //   - inventory    the stock was COUNTED at `bags` — a correction. Counting
 //                  fewer bags than recorded means bags were used without being
@@ -57,12 +58,13 @@ function isValidMovement(movement) {
   if (!movement || typeof movement !== 'object') {
     return false;
   }
-  const { t, type, bags, before, after } = movement;
+  const { t, type, bags, before, after, price } = movement;
   return (
     typeof t === 'string' &&
     !Number.isNaN(Date.parse(t)) &&
     Object.values(MOVEMENT_TYPES).includes(type) &&
-    [bags, before, after].every((value) => Number.isInteger(value) && value >= 0)
+    [bags, before, after].every((value) => Number.isInteger(value) && value >= 0) &&
+    (price === undefined || (typeof price === 'number' && Number.isFinite(price) && price > 0))
   );
 }
 
@@ -133,19 +135,42 @@ function readBagCount(raw, { min, max }) {
 }
 
 /**
+ * @description Read the price paid for a delivery. Left empty or at 0, the
+ * delivery simply has no price.
+ * @param {unknown} raw - The raw price, in euros.
+ * @param {{min: number, max: number}} limits - The accepted range.
+ * @returns {number|null} The price, or null when none was entered.
+ * @throws {StockError} When the price is not a number within the range.
+ * @example
+ * readPrice(459.5, LIMITS.palletPrice); // -> 459.5
+ */
+function readPrice(raw, { min, max }) {
+  if (raw === undefined || raw === null || (typeof raw === 'string' && raw.trim() === '')) {
+    return null;
+  }
+  const value = typeof raw === 'string' ? Number(raw) : raw;
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max) {
+    throw new StockError('invalid_price', { min, max });
+  }
+  return value > 0 ? value : null;
+}
+
+/**
  * @description Record a movement and return the new ledger.
  * @param {{movements: Array<object>}} ledger - The current ledger.
- * @param {{type: string, bags: unknown}} movement - The movement to record.
+ * @param {{type: string, bags: unknown, price?: unknown}} movement - The movement to
+ *   record; `price` (euros, for the whole delivery) only applies to a delivery.
  * @param {Date} now - The time of the movement.
  * @returns {{version: number, movements: Array<object>}} The new ledger.
  * @throws {StockError} On an invalid count, or a consumption above the stock.
  * @example
  * const next = recordMovement(ledger, { type: 'consumption', bags: 1 }, new Date());
  */
-function recordMovement(ledger, { type, bags: rawBags }, now) {
+function recordMovement(ledger, { type, bags: rawBags, price: rawPrice }, now) {
   const before = currentStock(ledger);
   let bags;
   let after;
+  let price = null;
   if (type === MOVEMENT_TYPES.INVENTORY) {
     bags = readBagCount(rawBags, LIMITS.stockBags);
     after = bags;
@@ -155,6 +180,7 @@ function recordMovement(ledger, { type, bags: rawBags }, now) {
     if (after > LIMITS.stockBags.max) {
       throw new StockError('invalid_count', LIMITS.movementBags);
     }
+    price = readPrice(rawPrice, LIMITS.palletPrice);
   } else if (type === MOVEMENT_TYPES.CONSUMPTION) {
     bags = readBagCount(rawBags, LIMITS.movementBags);
     if (bags > before) {
@@ -166,7 +192,11 @@ function recordMovement(ledger, { type, bags: rawBags }, now) {
   } else {
     throw new StockError('unknown_movement');
   }
-  const movements = [...ledger.movements, { t: now.toISOString(), type, bags, before, after }];
+  const movement = { t: now.toISOString(), type, bags, before, after };
+  if (price !== null) {
+    movement.price = price;
+  }
+  const movements = [...ledger.movements, movement];
   return { version: 1, movements: movements.slice(-MAX_LEDGER_MOVEMENTS) };
 }
 
@@ -229,7 +259,9 @@ function isPalletDelivery(movement) {
  * @returns {{stock: number, dailyRate: number|null, autonomyDays: number|null,
  *   emptyDate: Date|null, orderDate: Date|null, lastDelivery: object|null,
  *   lastConsumption: object|null, consumedSinceDelivery: number|null, referenceStock: number,
- *   consumedInWindow: number, hasHistory: boolean}} The stock figures.
+ *   consumedInWindow: number, lastPrice: number|null, bagPrice: number|null,
+ *   hasHistory: boolean}} The stock figures. `lastPrice` is the price paid for the
+ *   last delivery entered with one, `bagPrice` that price per bag.
  * @example
  * const stats = computeStats(ledger, new Date(), { consumptionWindow: 14 });
  */
@@ -288,6 +320,9 @@ function computeStats(ledger, now, { consumptionWindow, lowStockThreshold = 0 })
     );
   const referenceStock = Math.max(stock, lastRefill ? lastRefill.after : stock);
 
+  // The price of the last bags bought: what the next ones will likely cost.
+  const lastPriced = [...movements].reverse().find((movement) => movement.price !== undefined);
+
   return {
     stock,
     dailyRate,
@@ -299,6 +334,8 @@ function computeStats(ledger, now, { consumptionWindow, lowStockThreshold = 0 })
     consumedSinceDelivery,
     referenceStock,
     consumedInWindow,
+    lastPrice: lastPriced ? lastPriced.price : null,
+    bagPrice: lastPriced ? lastPriced.price / lastPriced.bags : null,
     hasHistory: movements.length > 0,
   };
 }
@@ -310,6 +347,7 @@ export {
   serializeLedger,
   currentStock,
   readBagCount,
+  readPrice,
   recordMovement,
   undoLastMovement,
   consumedBags,

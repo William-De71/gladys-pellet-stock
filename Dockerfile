@@ -21,6 +21,13 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
+# TEMPORARY, until the SDK relays them (expected in 0.15): pass the values
+# typed in a widget action form to onWidgetAction (Gladys PR #3168). The grep
+# fails the build if the SDK line moved, instead of shipping a silent no-op.
+RUN sed -i 's|{ settings: payload.settings }|{ settings: payload.settings, values: payload.values }|' \
+      node_modules/@gladysassistant/integration-sdk/lib/gladys-integration.js \
+ && grep -q 'values: payload.values' node_modules/@gladysassistant/integration-sdk/lib/gladys-integration.js
+
 # Then the integration code.
 COPY index.js ./
 COPY src ./src

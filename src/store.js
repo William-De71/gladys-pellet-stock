@@ -171,7 +171,7 @@ function createStockStore({
 
     /**
      * @description Record a movement.
-     * @param {{type: string, bags: unknown}} movement - The movement.
+     * @param {{type: string, bags: unknown, price?: unknown}} movement - The movement.
      * @param {object} [options] - Options.
      * @param {boolean} [options.fromScene] - Made by a scene action (see src/scene.js).
      * @returns {Promise<object>} The recorded movement.

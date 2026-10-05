@@ -21,6 +21,7 @@ test('normalizeConfig: reads numbers sent as strings', () => {
     palletSize: 72,
     lowStockThreshold: 5,
     consumptionWindow: 30,
+    palletPrice: 504,
     bagPrice: 7,
   });
 });
@@ -42,6 +43,7 @@ test('normalizeConfig: no price, or a price of 0, hides the cost', () => {
   assert.equal(normalizeConfig({}).bagPrice, null);
   assert.equal(normalizeConfig({ pallet_price: '' }).bagPrice, null);
   assert.equal(normalizeConfig({ pallet_price: 0 }).bagPrice, null);
+  assert.equal(normalizeConfig({ pallet_price: 0 }).palletPrice, null);
   assert.equal(normalizeConfig({ pallet_price: 99999, pallet_size: 50 }).bagPrice, 100);
 });
 

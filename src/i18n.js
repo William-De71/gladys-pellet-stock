@@ -13,6 +13,7 @@ const MESSAGES = {
   en: {
     // Action results and errors
     invalid_count: 'Enter a whole number of bags between {min} and {max}.',
+    invalid_price: 'Enter a price between {min} and {max} €.',
     not_enough_stock: 'Only {stock} bag(s) in stock: count your stock first ("Correct the stock").',
     unknown_movement: 'Unknown stock operation.',
     nothing_to_undo: 'Nothing to undo.',
@@ -63,6 +64,10 @@ const MESSAGES = {
     button_add_bag: '+1 bag',
     button_delivery: 'Pallet delivered',
     button_undo: 'Undo',
+    field_bags: 'Bags delivered',
+    field_price: 'Price paid (€)',
+    field_price_description:
+      'For the whole delivery. Optional: gives the stock value and the cost per month.',
     last_delivery_value: '{date} (+{bags})',
     // Device
     device_name: 'Pellet stock',
@@ -71,6 +76,7 @@ const MESSAGES = {
   },
   fr: {
     invalid_count: 'Indiquez un nombre entier de sacs entre {min} et {max}.',
+    invalid_price: 'Indiquez un prix entre {min} et {max} €.',
     not_enough_stock:
       'Seulement {stock} sac(s) en stock : recomptez votre stock (« Corriger le stock »).',
     unknown_movement: 'Opération de stock inconnue.',
@@ -122,6 +128,10 @@ const MESSAGES = {
     button_add_bag: '+1 sac',
     button_delivery: 'Palette livrée',
     button_undo: 'Annuler',
+    field_bags: 'Sacs livrés',
+    field_price: 'Prix payé (€)',
+    field_price_description:
+      'Pour toute la livraison. Facultatif : donne la valeur du stock et le coût par mois.',
     last_delivery_value: '{date} (+{bags})',
     device_name: 'Stock de pellets',
     feature_stock: 'Stock de pellets',

@@ -20,15 +20,16 @@ function daysAgo(days) {
 }
 
 /**
- * @description Build a ledger from `[daysAgo, type, bags]` steps.
- * @param {Array<[number, string, number]>} steps - The movements, oldest first.
+ * @description Build a ledger from `[daysAgo, type, bags, price?]` steps.
+ * @param {Array<[number, string, number, number?]>} steps - The movements, oldest first.
  * @returns {object} The ledger.
  * @example
- * buildLedger([[10, 'delivery', 66], [5, 'consumption', 2]]);
+ * buildLedger([[10, 'delivery', 66, 459], [5, 'consumption', 2]]);
  */
 function buildLedger(steps) {
   return steps.reduce(
-    (ledger, [ago, type, bags]) => recordMovement(ledger, { type, bags }, daysAgo(ago)),
+    (ledger, [ago, type, bags, price]) =>
+      recordMovement(ledger, { type, bags, price }, daysAgo(ago)),
     createLedger(),
   );
 }

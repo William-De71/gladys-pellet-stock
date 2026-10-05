@@ -166,6 +166,54 @@ test('widget: the delivery button adds the configured pallet size', () => {
   assert.deepEqual(delivery.action.params, { bags: 72 });
 });
 
+test('widget: the delivery button opens a form with the bags and the price', () => {
+  const delivery = (ledger, overrides) =>
+    byType(contentOf(ledger, { overrides }), 'button').find(
+      (button) => button.action.key === 'delivery',
+    ).action;
+  const action = delivery(SEASON, { palletSize: 72 });
+  // Kept for a Gladys without action forms, which drops `fields`.
+  assert.deepEqual(action.params, { bags: 72 });
+  assert.equal(action.confirm, true);
+  assert.deepEqual(
+    action.fields.map(({ key, type, required, min, max }) => ({ key, type, required, min, max })),
+    [
+      { key: 'bags', type: 'number', required: true, min: 1, max: 1000 },
+      { key: 'price', type: 'number', required: false, min: 0, max: 5000 },
+    ],
+  );
+  assert.equal(action.fields[0].default, 72);
+  assert.deepEqual(action.fields[0].label, { en: 'Bags delivered', fr: 'Sacs livrés' });
+  // No price anywhere: the price field starts empty.
+  assert.equal('default' in action.fields[1], false);
+  // The configured price, then the last one paid.
+  assert.equal(delivery(SEASON, { palletPrice: 459 }).fields[1].default, 459);
+  const priced = buildLedger([
+    [10, 'delivery', 66, 481.5],
+    [5, 'consumption', 3],
+  ]);
+  assert.equal(delivery(priced, { palletPrice: 459 }).fields[1].default, 481.5);
+  // The empty state offers the same form.
+  assert.equal(delivery(createLedger(), {}).fields.length, 2);
+});
+
+test('widget: the price of the last delivery wins over the configured one', () => {
+  const rows = (ledger, overrides) =>
+    Object.fromEntries(
+      byType(contentOf(ledger, { overrides }), 'status')[0].items.map((item) => [
+        item.label,
+        item.value,
+      ]),
+    );
+  // 72 bags at 504 € = 7 € a bag, 69 left after 3 bags in 5 days.
+  const ledger = buildLedger([
+    [10, 'delivery', 72, 504],
+    [5, 'consumption', 3],
+  ]);
+  assert.equal(rows(ledger, { bagPrice: 10 })['Valeur du stock'], '483 €');
+  assert.equal(rows(ledger, {})['Valeur du stock'], '483 €');
+});
+
 test('widget: the chart is a step line over the period, reaching now', () => {
   const content = contentOf(SEASON, { settings: { chart_period: '30' } });
   const [chart] = byType(content, 'chart');

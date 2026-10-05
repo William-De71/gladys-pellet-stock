@@ -14,8 +14,8 @@
 // 9 at most here (the low-stock reminder replaces the order date).
 // -----------------------------------------------------------------------------
 
-import { DAY_MS, MOVEMENT_TYPES, WIDGET_ACTIONS } from './constants.js';
-import { resolveLanguage, translate } from './i18n.js';
+import { DAY_MS, LIMITS, MOVEMENT_TYPES, WIDGET_ACTIONS } from './constants.js';
+import { message, resolveLanguage, translate } from './i18n.js';
 import { consumedBags, isPalletDelivery } from './ledger.js';
 
 // The two views of the chart, picked per widget instance.
@@ -281,6 +281,10 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
   const lang = resolveLanguage(language);
   const t = (key, params) => translate(lang, key, params);
   const showButtons = settings.show_buttons !== false;
+  // The price paid for the last delivery wins over the configured one: it
+  // follows the market without a trip to the Configuration screen.
+  const bagPrice = stats.bagPrice ?? config.bagPrice;
+  const lastPrice = stats.lastPrice ?? config.palletPrice;
 
   const deliveryButton = {
     type: 'button',
@@ -289,8 +293,32 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     style: 'secondary',
     action: {
       key: WIDGET_ACTIONS.DELIVERY,
+      // `params` and `confirm` serve a Gladys without action forms, which
+      // drops `fields` and adds the configured pallet size; with a form, the
+      // form is the confirmation and the bags come from `values`.
       params: { bags: config.palletSize },
       confirm: true,
+      fields: [
+        {
+          key: 'bags',
+          type: 'number',
+          label: message('field_bags'),
+          required: true,
+          min: LIMITS.movementBags.min,
+          max: LIMITS.movementBags.max,
+          default: config.palletSize,
+        },
+        {
+          key: 'price',
+          type: 'number',
+          label: message('field_price'),
+          description: message('field_price_description'),
+          required: false,
+          min: LIMITS.palletPrice.min,
+          max: LIMITS.palletPrice.max,
+          ...(lastPrice !== null && { default: lastPrice }),
+        },
+      ],
     },
   };
 
@@ -395,16 +423,16 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     icon: 'box',
     color,
   });
-  if (config.bagPrice !== null) {
+  if (bagPrice !== null) {
     statusItems.push({
       label: t('stock_value'),
-      value: formatEuros(stats.stock * config.bagPrice, lang),
+      value: formatEuros(stats.stock * bagPrice, lang),
       icon: 'tag',
     });
     if (stats.dailyRate > 0) {
       statusItems.push({
         label: t('monthly_cost'),
-        value: formatEuros(stats.dailyRate * DAYS_PER_MONTH * config.bagPrice, lang),
+        value: formatEuros(stats.dailyRate * DAYS_PER_MONTH * bagPrice, lang),
         icon: 'credit-card',
       });
     }

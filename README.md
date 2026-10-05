@@ -23,7 +23,8 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md).
 - **Status rows**: bags per day, last bag used ("2 hours ago"), remaining weight, stock value and cost per month
   (once a pallet price is set), last delivery and bags used since, the date to order by (when the stock reaches the
   threshold) and the estimated empty date.
-- **Buttons**: **−1 bag**, **+1 bag**, **Pallet delivered** (asks for confirmation) and **Undo** (removes the last
+- **Buttons**: **−1 bag**, **+1 bag**, **Pallet delivered** (opens a form for the bags and the price paid, on a
+  Gladys with widget action forms; asks for confirmation otherwise) and **Undo** (removes the last
   operation). They can be hidden per widget, for a read-only wall display.
 
 ### Several houses
@@ -62,13 +63,13 @@ The triggers carry the same figures as scene variables (`{{triggerEvent.data.bag
 
 ## Configuration
 
-| Setting                | Default | Used for                                                    |
-| ---------------------- | ------- | ----------------------------------------------------------- |
-| Bag weight (kg)        | 15      | The remaining weight and the weight used                    |
-| Bags per pallet        | 66      | What the "Pallet delivered" button adds                     |
-| Low stock threshold    | 10      | The orange stock, the reminder, the order date, the trigger |
-| Consumption window (d) | 14      | The days the average consumption is computed over           |
-| Pallet price (€)       | —       | Optional: the stock value and the cost per month            |
+| Setting                | Default | Used for                                                                                     |
+| ---------------------- | ------- | -------------------------------------------------------------------------------------------- |
+| Bag weight (kg)        | 15      | The remaining weight and the weight used                                                     |
+| Bags per pallet        | 66      | What the "Pallet delivered" button adds                                                      |
+| Low stock threshold    | 10      | The orange stock, the reminder, the order date, the trigger                                  |
+| Consumption window (d) | 14      | The days the average consumption is computed over                                            |
+| Pallet price (€)       | —       | Optional: the stock value and the cost per month, until a delivery is entered with its price |
 
 The settings are shared by every stock.
 

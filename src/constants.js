@@ -30,8 +30,9 @@ const DEFAULTS = {
   // Days of history used to compute the average consumption: long enough to
   // smooth a cold weekend, short enough to follow the season.
   consumptionWindow: 14,
-  // No price until the user enters one: the cost rows stay hidden. Derived
-  // from the pallet price, which is a whole number of euros.
+  // No price until the user enters one: the cost rows stay hidden. The price
+  // of the last delivery entered with one wins over this configured one.
+  palletPrice: null,
   bagPrice: null,
 };
 

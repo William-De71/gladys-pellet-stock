@@ -29,9 +29,9 @@ function readNumber(raw, fallback, { min, max }) {
  * @description Normalize the raw integration config.
  * @param {object} [raw] - The config as received from Gladys.
  * @returns {{bagWeight: number, palletSize: number, lowStockThreshold: number,
- *   consumptionWindow: number, bagPrice: number|null}} The normalized config.
- *   The bag price is the pallet price divided by the bags per pallet; a price
- *   of 0 counts as no price.
+ *   consumptionWindow: number, palletPrice: number|null, bagPrice: number|null}}
+ *   The normalized config. The bag price is the pallet price divided by the
+ *   bags per pallet; a price of 0 counts as no price.
  * @example
  * normalizeConfig({ bag_weight: 15 });
  */
@@ -59,6 +59,7 @@ function normalizeConfig(raw = {}) {
         LIMITS.consumptionWindow,
       ),
     ),
+    palletPrice: palletPrice > 0 ? palletPrice : DEFAULTS.palletPrice,
     bagPrice: palletPrice > 0 ? palletPrice / palletSize : DEFAULTS.bagPrice,
   };
 }

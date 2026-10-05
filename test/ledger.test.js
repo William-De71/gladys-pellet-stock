@@ -67,6 +67,44 @@ test('recordMovement: rejects counts that are not whole bags within range', () =
   });
 });
 
+test('recordMovement: a delivery keeps the price paid for it', () => {
+  const ledger = recordMovement(createLedger(), { type: 'delivery', bags: 66, price: 459.5 }, NOW);
+  assert.deepEqual(ledger.movements, [
+    { t: NOW.toISOString(), type: 'delivery', bags: 66, before: 0, after: 66, price: 459.5 },
+  ]);
+  assert.equal(
+    recordMovement(createLedger(), { type: 'delivery', bags: 66, price: '481.2' }, NOW).movements[0]
+      .price,
+    481.2,
+  );
+});
+
+test('recordMovement: an empty price, or 0, is no price', () => {
+  [undefined, null, '', '  ', 0, '0'].forEach((price) => {
+    const ledger = recordMovement(createLedger(), { type: 'delivery', bags: 66, price }, NOW);
+    assert.equal('price' in ledger.movements[0], false, `price=${price}`);
+  });
+});
+
+test('recordMovement: rejects a price out of range or not a number', () => {
+  [-1, 5000.01, 'abc', NaN, Infinity, {}].forEach((price) => {
+    assert.throws(
+      () => recordMovement(createLedger(), { type: 'delivery', bags: 66, price }, NOW),
+      (error) => error instanceof StockError && error.code === 'invalid_price',
+      `price=${price}`,
+    );
+  });
+});
+
+test('recordMovement: only a delivery carries a price', () => {
+  const ledger = recordMovement(
+    buildLedger([[1, 'delivery', 66]]),
+    { type: 'consumption', bags: 1, price: 7 },
+    NOW,
+  );
+  assert.equal('price' in ledger.movements[1], false);
+});
+
 test('recordMovement: accepts counts sent as strings', () => {
   const ledger = recordMovement(createLedger(), { type: 'delivery', bags: '12' }, NOW);
   assert.equal(currentStock(ledger), 12);
@@ -128,6 +166,8 @@ test('parseLedger: drops invalid movements, keeps the rest, sorted', () => {
       { t: 'yesterday', type: 'delivery', bags: 1, before: 0, after: 1 },
       { t: daysAgo(2).toISOString(), type: 'delivery', bags: 66, before: 0, after: 66 },
       { t: daysAgo(1).toISOString(), type: 'delivery', bags: -3, before: 0, after: 1 },
+      { t: daysAgo(1).toISOString(), type: 'delivery', bags: 3, before: 0, after: 3, price: '9' },
+      { t: daysAgo(1).toISOString(), type: 'delivery', bags: 3, before: 0, after: 3, price: 0 },
       null,
     ],
   });
@@ -135,6 +175,11 @@ test('parseLedger: drops invalid movements, keeps the rest, sorted', () => {
     ledger.movements.map((movement) => movement.type),
     ['delivery', 'consumption'],
   );
+});
+
+test('parseLedger / serializeLedger: the price of a delivery survives a round trip', () => {
+  const ledger = buildLedger([[3, 'delivery', 66, 459.5]]);
+  assert.deepEqual(parseLedger(serializeLedger(ledger)), ledger);
 });
 
 test('computeStats: an empty ledger', () => {
@@ -250,6 +295,37 @@ test('computeStats: the last delivery is the last pallet, not a single bag', () 
   );
   assert.equal(stats.lastDelivery.bags, 66);
   assert.equal(stats.consumedSinceDelivery, 7);
+});
+
+test('computeStats: no price until a delivery is entered with one', () => {
+  const stats = computeStats(buildLedger([[3, 'delivery', 66]]), NOW, WINDOW);
+  assert.equal(stats.lastPrice, null);
+  assert.equal(stats.bagPrice, null);
+});
+
+test('computeStats: the price is the one of the last delivery entered with one', () => {
+  const stats = computeStats(
+    buildLedger([
+      [30, 'delivery', 66, 400],
+      [10, 'delivery', 72, 504],
+      [8, 'consumption', 5],
+      [5, 'delivery', 1],
+    ]),
+    NOW,
+    WINDOW,
+  );
+  assert.equal(stats.lastPrice, 504);
+  assert.equal(stats.bagPrice, 7);
+});
+
+test('computeStats: undoing a priced delivery brings the previous price back', () => {
+  const { ledger } = undoLastMovement(
+    buildLedger([
+      [30, 'delivery', 66, 400],
+      [10, 'delivery', 72, 504],
+    ]),
+  );
+  assert.equal(computeStats(ledger, NOW, WINDOW).lastPrice, 400);
 });
 
 test('computeStats: the order date is when the stock reaches the threshold', () => {

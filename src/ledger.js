@@ -221,10 +221,10 @@ function isPalletDelivery(movement) {
  * The daily consumption is averaged over the last `consumptionWindow` days,
  * or over the known history when it is shorter — and stays unknown (`null`)
  * under one day of history, where a single tap would extrapolate wildly.
- * @param {{movements: Array<object>}} ledger - The ledger.
- * @param {Date} now - The current time.
  * The order date is when the stock reaches the low-stock threshold: unknown
  * without a threshold, or once the stock is already at or below it.
+ * @param {{movements: Array<object>}} ledger - The ledger.
+ * @param {Date} now - The current time.
  * @param {{consumptionWindow: number, lowStockThreshold?: number}} config - The normalized config.
  * @returns {{stock: number, dailyRate: number|null, autonomyDays: number|null,
  *   emptyDate: Date|null, orderDate: Date|null, lastDelivery: object|null,

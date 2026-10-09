@@ -15,7 +15,7 @@
 // only fire on a DOWNWARD crossing, which no scene can repeat by itself.
 // -----------------------------------------------------------------------------
 
-import { DAY_MS } from './constants.js';
+import { DAY_MS, MOVEMENT_TYPES } from './constants.js';
 import { isPalletDelivery } from './ledger.js';
 
 // Keys of the manifest `scene_triggers`.
@@ -96,7 +96,7 @@ function buildSceneEventData(stockExternalId, outputs, recorded) {
     stock: stockExternalId,
     bags_left: stock,
     ...figures,
-    ...(recorded && recorded.type === 'delivery' && { bags_delivered: recorded.bags }),
+    ...(recorded && recorded.type === MOVEMENT_TYPES.DELIVERY && { bags_delivered: recorded.bags }),
   };
 }
 

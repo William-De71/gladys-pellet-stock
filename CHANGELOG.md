@@ -1,3 +1,18 @@
+## [1.2.0](https://github.com/William-De71/gladys-pellet-stock/compare/v1.1.1...v1.2.0) (2026-10-09)
+
+### Bug Fixes
+
+* **ledger:** keep the last 2,000 movements instead of 500 ([e1b7522](https://github.com/William-De71/gladys-pellet-stock/commit/e1b7522fcd54c9bd5727b0ea37550d6332650c61))
+* **stocks:** never write a ledger before the stored ones are loaded ([be90ae9](https://github.com/William-De71/gladys-pellet-stock/commit/be90ae9a0c1e0b915bd41f4e75b55e69be71625e))
+
+### Continuous Integration
+
+* fail early on an existing release tag, optional Docker Hub login ([11c4cd3](https://github.com/William-De71/gladys-pellet-stock/commit/11c4cd32b8080eefb72559c4f9ea5e7e2048fa5d))
+
+### Miscellaneous
+
+* use npm ci only in the image, small cleanups ([5022cbf](https://github.com/William-De71/gladys-pellet-stock/commit/5022cbf7350e9c93ff2a9b8740013fc0d5d4b0c7))
+
 ## [1.1.1](https://github.com/William-De71/gladys-pellet-stock/compare/v1.1.0...v1.1.1) (2026-10-09)
 
 ### Bug Fixes

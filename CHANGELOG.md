@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/William-De71/gladys-pellet-stock/compare/v1.1.0...v1.1.1) (2026-10-09)
+
+### Bug Fixes
+
+* **manifest:** declare the local transport ([9296f58](https://github.com/William-De71/gladys-pellet-stock/commit/9296f588243a010bef0e2c20d441a783d2e17e33))
+
 ## [1.1.0](https://github.com/William-De71/gladys-pellet-stock/compare/v1.0.1...v1.1.0) (2026-09-25)
 
 ### Bug Fixes

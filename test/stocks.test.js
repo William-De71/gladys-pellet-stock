@@ -117,6 +117,88 @@ test('stocks: states are published for every stock', async () => {
   ]);
 });
 
+/**
+ * @description Stocks over a fake Gladys, NOT loaded yet.
+ * @param {object} [storedConfig] - The config stored in Gladys.
+ * @returns {{gladys: object, stocks: object}} The fake and the stocks.
+ */
+function setupUnloaded(storedConfig) {
+  const gladys = createFakeGladys(storedConfig);
+  const stocks = createStocks({
+    gladys,
+    logger: silentLogger,
+    getConfig: () => DEFAULTS,
+    now: () => NOW,
+    newId: () => '0000000a',
+  });
+  return { gladys, stocks };
+}
+
+test('stocks: a movement arriving during the load never erases the stored history', async () => {
+  const stored = serializeLedger(buildLedger([[5, 'inventory', 50]]));
+  const { gladys, stocks } = setupUnloaded({ [LEDGER_CONFIG_KEY]: stored });
+  // The host API answers slowly: the load is still on its way.
+  const getConfig = gladys.getConfig;
+  gladys.getConfig = () => new Promise((resolve) => setTimeout(() => resolve(getConfig()), 20));
+  const loading = stocks.load();
+  assert.throws(() => stocks.storeOf(), { code: 'stock_unavailable' }, 'no write before the load');
+  await stocks.ready();
+  await stocks.storeOf().record({ type: 'delivery', bags: 66 });
+  await loading;
+  const movements = parseLedger(gladys.storedConfig[LEDGER_CONFIG_KEY]).movements;
+  assert.deepEqual(
+    movements.map((movement) => [movement.type, movement.after]),
+    [
+      ['inventory', 50],
+      ['delivery', 116],
+    ],
+  );
+});
+
+test('stocks: a failed load writes nothing, and the next call loads again', async () => {
+  const stored = serializeLedger(buildLedger([[5, 'inventory', 50]]));
+  const { gladys, stocks } = setupUnloaded({ [LEDGER_CONFIG_KEY]: stored });
+  const getConfig = gladys.getConfig;
+  gladys.getConfig = async () => {
+    throw new Error('host API unreachable');
+  };
+  await assert.rejects(stocks.ready(), { code: 'stock_unavailable' });
+  assert.equal(stocks.isLoaded(), false);
+  assert.throws(() => stocks.storeOf(), { code: 'stock_unavailable' });
+  await assert.rejects(stocks.add('Chalet'), { code: 'stock_unavailable' });
+  await stocks.publishStates({ force: true });
+  assert.deepEqual(gladys.publishedStates, [], 'never a stock of 0 before the load');
+  assert.equal(gladys.storedConfig[LEDGER_CONFIG_KEY], stored, 'the history is untouched');
+
+  gladys.getConfig = getConfig;
+  await stocks.ready();
+  assert.equal(stocks.storeOf().getStats().stock, 50);
+});
+
+test('stocks: a movement queued on a stock being removed is refused', async () => {
+  const { gladys, stocks } = await setup();
+  await stocks.add('Chalet');
+  const store = stocks.storeOf(CHALET);
+  await store.record({ type: 'inventory', bags: 20 });
+  // The removal waits for the store queue: a movement queued meanwhile
+  // must not write the ledger back once it is cleared.
+  const removing = stocks.remove(CHALET);
+  const late = store.record({ type: 'consumption', bags: 1 });
+  await removing;
+  await assert.rejects(late, { code: 'unknown_stock' });
+  assert.equal(gladys.storedConfig[ledgerKeyOf('0000000a')], '');
+});
+
+test('stocks: a failed removal leaves the stock working', async () => {
+  const { gladys, stocks } = await setup();
+  await stocks.add('Chalet');
+  gladys.failSetConfig = true;
+  await assert.rejects(stocks.remove(CHALET));
+  gladys.failSetConfig = false;
+  await stocks.storeOf(CHALET).record({ type: 'inventory', bags: 20 });
+  assert.equal(stocks.storeOf(CHALET).getStats().stock, 20);
+});
+
 test('parseStocks / readStockName', () => {
   assert.deepEqual(parseStocks(undefined), []);
   assert.deepEqual(parseStocks('not json'), []);

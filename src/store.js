@@ -16,6 +16,7 @@ import {
   parseLedger,
   recordMovement,
   serializeLedger,
+  StockError,
   undoLastMovement,
 } from './ledger.js';
 import { buildSceneEventData, buildSceneOutputs, detectSceneTriggers } from './scene.js';
@@ -43,6 +44,8 @@ function createStockStore({
 }) {
   let ledger = createLedger();
   let queue = Promise.resolve();
+  // Set while the stock is being removed: no movement may write its ledger.
+  let closed = false;
   // Last value published per feature: the host API rate-limits states, and
   // the hourly refresh must not republish an unchanged stock.
   const published = new Map();
@@ -141,6 +144,9 @@ function createStockStore({
    * @returns {Promise<void>}
    */
   async function commit(next, { recorded, fromScene } = {}) {
+    if (closed) {
+      throw new StockError('unknown_stock');
+    }
     const before = getStats().stock;
     await gladys.setConfig({ [ledgerKey]: serializeLedger(next) });
     ledger = next;
@@ -197,6 +203,22 @@ function createStockStore({
      * @returns {Promise<void>}
      */
     settled: () => queue,
+
+    /**
+     * @description Refuse every movement from now on (stock being removed).
+     * @returns {void}
+     */
+    close() {
+      closed = true;
+    },
+
+    /**
+     * @description Accept movements again (the removal failed).
+     * @returns {void}
+     */
+    reopen() {
+      closed = false;
+    },
 
     getLedger: () => ledger,
     getStats,

@@ -40,7 +40,6 @@ import { buildWidgetContent, buildUnknownStockContent } from './src/widget.js';
 const gladys = new GladysIntegration();
 
 let config = normalizeConfig();
-let loaded = false;
 let refreshTimer = null;
 
 const stocks = createStocks({ gladys, logger, getConfig: () => config });
@@ -85,6 +84,7 @@ async function runOperation(operation) {
  */
 function recordFromUser(stock, type, bags) {
   return runOperation(async () => {
+    await stocks.ready();
     const store = stocks.storeOf(stock);
     const movement = await store.record({ type, bags });
     return message(RESULT_KEYS[type], { bags: movement.bags, stock: store.getStats().stock });
@@ -100,6 +100,7 @@ function recordFromUser(stock, type, bags) {
  */
 function undoFromUser(stock) {
   return runOperation(async () => {
+    await stocks.ready();
     const store = stocks.storeOf(stock);
     await store.undo();
     return message('undo_done', { stock: store.getStats().stock });
@@ -145,6 +146,7 @@ gladys.onAction('undo', (fields) => undoFromUser(fields.stock));
 
 gladys.onAction('add_stock', (fields) =>
   runOperation(async () => {
+    await stocks.ready();
     const stock = await stocks.add(fields.name);
     await publishDevices();
     return message('stock_added', { name: stock.name });
@@ -152,6 +154,7 @@ gladys.onAction('add_stock', (fields) =>
 );
 gladys.onAction('remove_stock', (fields) =>
   runOperation(async () => {
+    await stocks.ready();
     const stock = await stocks.remove(fields.stock);
     await publishDevices();
     return message('stock_removed', { name: stock.name });
@@ -172,6 +175,7 @@ gladys.onAction('remove_stock', (fields) =>
 async function runSceneAction(fields, operation) {
   let store;
   try {
+    await stocks.ready();
     store = stocks.storeOf(fields.stock);
     if (operation) {
       await operation(store);
@@ -207,6 +211,8 @@ gladys.onSceneAction('read_stock', (fields) => runSceneAction(fields));
 // --- Dashboard widget ----------------------------------------------------------
 
 gladys.onWidgetGet(WIDGET_KEY, async ({ settings = {}, language }) => {
+  // Never an empty widget before the load: a failed one fails the request.
+  await stocks.ready();
   await stocks.settled();
   const stock = stocks.find(settings.stock);
   if (!stock) {
@@ -249,13 +255,12 @@ gladys.onConfigUpdated(async (newConfig) => {
 gladys.on('connected', async () => {
   config = normalizeConfig(gladys.config);
   try {
-    if (!loaded) {
-      await stocks.load();
-      loaded = true;
-    }
+    // Loads once; after a failed load, the next reconnection (or the first
+    // user operation) tries again.
+    await stocks.ready();
     await stocks.publishStates({ force: true });
-  } catch (error) {
-    logger.error('Could not load the pellet stock', error);
+  } catch {
+    // Already logged by ready().
   }
   // Nothing to scan for a virtual device: offer it from the start, so the
   // Discovery screen is never empty before a first scan.
@@ -270,7 +275,7 @@ gladys.on('connected', async () => {
 // window slides): republish it when it changed. The widget follows through
 // its own TTL.
 refreshTimer = setInterval(() => {
-  if (loaded && gladys.connected) {
+  if (stocks.isLoaded() && gladys.connected) {
     stocks.publishStates().catch((error) => logger.debug('Hourly refresh failed', error));
   }
 }, REFRESH_INTERVAL_MS);

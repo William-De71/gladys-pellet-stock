@@ -9,6 +9,12 @@
 //
 // The default stock keeps the keys of the single-stock versions (ledger key,
 // device id): upgrading changes nothing for an existing installation.
+//
+// Nothing is written before the stored ledgers were read: a movement recorded
+// on the empty in-memory ledger would be saved OVER the real one and erase the
+// whole history. Commands may arrive as soon as the SDK is connected, while
+// the load is still on its way (or after it failed): callers await `ready()`,
+// which loads (again) if needed, and every write refuses an unloaded stock.
 // -----------------------------------------------------------------------------
 
 import { randomBytes } from 'node:crypto';
@@ -112,6 +118,9 @@ function createStocks({
   // Adding and removing stocks go through one queue, like the movements of
   // a stock: two quick adds must not both write the list and lose one.
   let queue = Promise.resolve();
+  let loaded = false;
+  // The load in progress, shared by every caller waiting for it.
+  let loading = null;
 
   /**
    * @description Run a task after every queued one, whatever their outcome.
@@ -179,20 +188,58 @@ function createStocks({
     }
   }
 
-  return {
-    /**
-     * @description Load the added stocks and every ledger (once connected).
-     * @returns {Promise<void>}
-     */
-    load() {
-      return enqueue(async () => {
+  /**
+   * @description Refuse a write while the stored ledgers are not read.
+   * @throws {StockError} When the stocks are not loaded.
+   */
+  function assertLoaded() {
+    if (!loaded) {
+      throw new StockError('stock_unavailable');
+    }
+  }
+
+  /**
+   * @description Load the added stocks and every ledger, once: later calls
+   * resolve at once, and a failed load is retried by the next call.
+   * @returns {Promise<void>}
+   */
+  function load() {
+    if (loaded) {
+      return Promise.resolve();
+    }
+    if (!loading) {
+      loading = enqueue(async () => {
         const config = await gladys.getConfig();
         extras = parseStocks(config[STOCKS_CONFIG_KEY]);
         extras.forEach((stock) => createStore(stock.id));
         await Promise.all([...stores.values()].map((store) => store.load()));
+        loaded = true;
+      }).finally(() => {
+        loading = null;
       });
+    }
+    return loading;
+  }
+
+  return {
+    load,
+
+    /**
+     * @description Wait for the stocks to be loaded, loading them if needed.
+     * A failed load is logged and refused with a message for the user.
+     * @returns {Promise<void>}
+     * @throws {StockError} When the stored ledgers cannot be read.
+     */
+    async ready() {
+      try {
+        await load();
+      } catch (error) {
+        logger.error('Could not load the pellet stock', error);
+        throw new StockError('stock_unavailable');
+      }
     },
 
+    isLoaded: () => loaded,
     list,
     find,
 
@@ -200,9 +247,10 @@ function createStocks({
      * @description The store of a stock picked by the user.
      * @param {string} [externalId] - The device external id; none means the default stock.
      * @returns {object} The store.
-     * @throws {StockError} When the stock no longer exists.
+     * @throws {StockError} When the stocks are not loaded, or the stock no longer exists.
      */
     storeOf(externalId) {
+      assertLoaded();
       const stock = find(externalId);
       if (!stock) {
         throw new StockError('unknown_stock');
@@ -217,6 +265,9 @@ function createStocks({
      */
     add(rawName) {
       return enqueue(async () => {
+        // Before the load, the list in memory is empty: saving it would
+        // drop every added stock.
+        assertLoaded();
         const name = readStockName(rawName);
         if (extras.length >= LIMITS.extraStocks.max) {
           throw new StockError('too_many_stocks', { max: LIMITS.extraStocks.max + 1 });
@@ -242,6 +293,7 @@ function createStocks({
      */
     remove(externalId) {
       return enqueue(async () => {
+        assertLoaded();
         const stock = find(externalId);
         if (!stock) {
           throw new StockError('unknown_stock');
@@ -249,9 +301,18 @@ function createStocks({
         if (stock.id === DEVICE_ID) {
           throw new StockError('default_stock_kept');
         }
-        // Let the movements already queued on it land first.
-        await stores.get(stock.id).settled();
-        await saveExtras(extras.filter((other) => other.id !== stock.id));
+        // Refuse any new movement on it, and let those already running land
+        // first: none can write its ledger back after it is cleared below.
+        const store = stores.get(stock.id);
+        store.close();
+        await store.settled();
+        try {
+          await saveExtras(extras.filter((other) => other.id !== stock.id));
+        } catch (error) {
+          // Not removed after all: the stock keeps working.
+          store.reopen();
+          throw error;
+        }
         stores.delete(stock.id);
         try {
           await gladys.setConfig({ [ledgerKeyOf(stock.id)]: '' });
@@ -273,19 +334,28 @@ function createStocks({
     },
 
     /**
-     * @description Publish the device states of every stock.
+     * @description Publish the device states of every stock. Nothing before
+     * the load: an empty ledger would publish a stock of 0 and fire the
+     * scenes on the device value.
      * @param {object} [options] - Passed to each store.
      * @returns {Promise<void>}
      */
     async publishStates(options) {
+      if (!loaded) {
+        return;
+      }
       await Promise.all([...stores.values()].map((store) => store.publishStates(options)));
     },
 
     /**
      * @description Tell Gladys every stock may have changed (config updated).
+     * Nothing before the load, as for publishStates().
      * @returns {Promise<void>}
      */
     async notifyChange() {
+      if (!loaded) {
+        return;
+      }
       await Promise.all([...stores.values()].map((store) => store.notifyChange()));
     },
 

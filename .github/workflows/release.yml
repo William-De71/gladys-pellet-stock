@@ -70,6 +70,16 @@ jobs:
           new_version="$(npm version "$RELEASE_TYPE" --no-git-tag-version | tail -n1)"
           new_version="${new_version#v}" # v1.2.0 -> 1.2.0
 
+          # A full re-run of a release whose build failed starts again from the
+          # pre-bump commit and computes the SAME version: fail here, clearly,
+          # instead of on `git tag` after the bump was committed.
+          if git rev-parse -q --verify "refs/tags/v${new_version}" >/dev/null; then
+            echo "::error::Tag v${new_version} already exists: this version was already released." \
+              "If only its image build failed, use \"Re-run failed jobs\" on that run," \
+              "or run \"Build and publish image\" on the tag v${new_version} with image-tag ${new_version}."
+            exit 1
+          fi
+
           image="ghcr.io/${GITHUB_REPOSITORY,,}:${new_version}"
 
           # Keep the manifest in lockstep: the version the indexer reads AND the
@@ -143,6 +153,8 @@ jobs:
   build:
     needs: prepare
     uses: ./.github/workflows/build.yml
+    # The optional Docker Hub credentials (see build.yml).
+    secrets: inherit
     permissions:
       contents: read
       packages: write

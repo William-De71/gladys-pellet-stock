@@ -57,9 +57,11 @@ const MOVEMENT_TYPES = {
   INVENTORY: 'inventory',
 };
 
-// Oldest movements are dropped beyond this count: a season of daily taps
-// fits, and the stored JSON stays a few tens of KB.
-const MAX_LEDGER_MOVEMENTS = 500;
+// Oldest movements are dropped beyond this count: a year of heavy use (5
+// taps a day all winter) fits, so the last pallet and the one-year chart are
+// never cut. About 200 KB of JSON: the core stores it as TEXT, and its host
+// API takes bodies up to 20 MB.
+const MAX_LEDGER_MOVEMENTS = 2000;
 
 // Key of the dashboard widget declared in the manifest.
 const WIDGET_KEY = 'pellet_stock';

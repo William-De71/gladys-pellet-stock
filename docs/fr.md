@@ -86,4 +86,4 @@ Une livraison ajoutée par une scène ne déclenche pas « Palette livrée », p
 
 ## Sauvegarde
 
-Le registre des mouvements (les 500 derniers) est enregistré dans la base de Gladys : il fait partie des **sauvegardes Gladys** et survit à une mise à jour de l'intégration. Il est supprimé si vous désinstallez l'intégration.
+Le registre des mouvements (les 2 000 derniers) est enregistré dans la base de Gladys : il fait partie des **sauvegardes Gladys** et survit à une mise à jour de l'intégration. Il est supprimé si vous désinstallez l'intégration.

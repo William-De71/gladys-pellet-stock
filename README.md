@@ -94,7 +94,7 @@ The settings are shared by every stock.
 
 ## Storage
 
-Each stock's ledger (last 500 movements) is stored in the integration config through `setConfig()`, under keys
+Each stock's ledger (last 2,000 movements) is stored in the integration config through `setConfig()`, under keys
 outside the `config_schema` (`stock_ledger` for the main stock, `stock_ledger_<id>` for the added ones, `stocks`
 for their list). It lives in the Gladys database, so it is part of the Gladys backups and survives a container
 rebuild.

@@ -86,4 +86,4 @@ A delivery added by a scene does not fire "Pallet delivered", so that a scene ca
 
 ## Backup
 
-The movement ledger (the last 500) is stored in the Gladys database: it is part of the **Gladys backups** and survives an update of the integration. It is deleted if you uninstall the integration.
+The movement ledger (the last 2,000) is stored in the Gladys database: it is part of the **Gladys backups** and survives an update of the integration. It is deleted if you uninstall the integration.

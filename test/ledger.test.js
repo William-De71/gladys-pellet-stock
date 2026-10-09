@@ -80,13 +80,13 @@ test('recordMovement: rejects an unknown movement type', () => {
 });
 
 test('recordMovement: keeps only the most recent movements', () => {
-  let ledger = recordMovement(createLedger(), { type: 'delivery', bags: 1000 }, daysAgo(400));
+  let ledger = recordMovement(createLedger(), { type: 'inventory', bags: 10000 }, daysAgo(400));
   for (let i = 0; i < MAX_LEDGER_MOVEMENTS; i += 1) {
-    ledger = recordMovement(ledger, { type: 'consumption', bags: 1 }, daysAgo(399 - i * 0.5));
+    ledger = recordMovement(ledger, { type: 'consumption', bags: 1 }, daysAgo(399 - i * 0.1));
   }
   assert.equal(ledger.movements.length, MAX_LEDGER_MOVEMENTS);
   assert.equal(ledger.movements[0].type, 'consumption');
-  assert.equal(currentStock(ledger), 1000 - MAX_LEDGER_MOVEMENTS);
+  assert.equal(currentStock(ledger), 10000 - MAX_LEDGER_MOVEMENTS);
 });
 
 test('undoLastMovement: restores the stock before the last movement', () => {

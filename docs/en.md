@@ -31,7 +31,7 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 - Once a price is known: the **stock value**, with the **price per bag and per kg**, and the **cost per month**. The price paid for the last delivery counts, or else the **pallet price** of the configuration. The price per kg follows the weight of the bags of that delivery.
 - The **season cost**: what the bags used since the heating season started cost (October by default, set in the widget settings), with their count.
 
-Only deliveries of several bags (a pallet, a batch…) count as deliveries: bags added one by one are neither marked on the chart nor used for "Last delivery" and the use since.
+Only deliveries ("Pallet delivered", the "Record a delivery" action) count as deliveries: bags added with "Add bag(s)", even several at once, are neither marked on the chart nor used for "Last delivery" and the use since. They do enter the stock and its cost.
 
 In the widget settings, you can **hide the buttons**, for instance for a read-only wall display.
 
@@ -100,9 +100,9 @@ Two scene actions, **"Record a silo delivery"** and **"Read the silo level"**, c
 ### Actions
 
 - **"Use pellet bags"** removes bags from the stock. Example: a Zigbee button next to the stove, triggering a scene that removes one bag at each press. The action fails when the recorded stock is too low: count your stock again.
-- **"Add pellet bags"** adds bags (a delivery, bags bought on their own).
+- **"Add pellet bags"** adds bags (a delivery, bags bought on their own), with an optional price per bag and bag weight.
 - **"Correct the pellet stock"** sets the stock to the number of bags counted.
-- **"Read the pellet stock"** changes nothing: it gets the figures for the rest of the scene, for instance a weekly message.
+- **"Read the pellet stock"** changes nothing: it gets the figures for the rest of the scene, for instance a weekly message. It also returns the **type** of the stock (`bags` or `bulk`), its **unit** (`bag` or `kg`) and the **season cost**: the cost (€), the bags (kg for a silo) and kg used since the season started (October by default, set in the action), and those without a known price.
 
 Each action has a **Stock** field (empty: the main stock) and returns to the next actions the **bags left**, the **autonomy** (days), the **bags per day**, the **days before ordering** and the **remaining weight** (kg). A figure still unknown (the autonomy with no consumption yet, say) is left out rather than sent as 0.
 

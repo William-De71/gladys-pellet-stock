@@ -88,6 +88,34 @@ function createFakeGladys(config = {}) {
     requestWidgetRefresh(key) {
       fake.refreshes.push(key);
     },
+    // The handlers, registered like the SDK does: tests call them as the core would.
+    handlers: { action: {}, sceneAction: {}, widgetGet: {}, widgetAction: {} },
+    discovered: [],
+    onAction(key, callback) {
+      fake.handlers.action[key] = callback;
+    },
+    onSceneAction(key, callback) {
+      fake.handlers.sceneAction[key] = callback;
+    },
+    onWidgetGet(key, callback) {
+      fake.handlers.widgetGet[key] = callback;
+    },
+    onWidgetAction(key, callback) {
+      fake.handlers.widgetAction[key] = callback;
+    },
+    onScanRequest(callback) {
+      fake.handlers.scan = callback;
+    },
+    onDeviceCreated(callback) {
+      fake.handlers.deviceCreated = callback;
+    },
+    onSetValue(callback) {
+      fake.handlers.setValue = callback;
+    },
+    async publishDiscoveredDevices(devices) {
+      fake.discovered = devices;
+      return { success: true };
+    },
   };
   return fake;
 }

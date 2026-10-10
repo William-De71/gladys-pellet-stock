@@ -1073,8 +1073,8 @@
         "fr": "Ajouter des sacs de pellets"
       },
       "description": {
-        "en": "Add bags to the stock: a delivery, or bags bought on their own.",
-        "fr": "Ajoute des sacs au stock : une livraison, ou des sacs achetés à l'unité."
+        "en": "Adds bags bought on their own, or a delivery when \"Delivery\" is ticked.",
+        "fr": "Ajoute des sacs achetés à l'unité, ou une livraison si « Livraison » est coché."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1103,6 +1103,50 @@
           "default": 1,
           "min": 1,
           "max": 1000
+        },
+        {
+          "key": "bag_price",
+          "type": "number",
+          "label": {
+            "en": "Price per bag (€)",
+            "fr": "Prix au sac (€)"
+          },
+          "description": {
+            "en": "Optional: for the stock value and the cost of the season. Without it, the last price known.",
+            "fr": "Facultatif : pour la valeur du stock et le coût de la saison. Sans lui, le dernier prix connu."
+          },
+          "required": false,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "bag_weight",
+          "type": "number",
+          "label": {
+            "en": "Bag weight (kg)",
+            "fr": "Poids d'un sac (kg)"
+          },
+          "description": {
+            "en": "Optional: the bag weight of the stock otherwise.",
+            "fr": "Facultatif : sinon, le poids d'un sac du stock."
+          },
+          "required": false,
+          "min": 1,
+          "max": 50
+        },
+        {
+          "key": "delivery",
+          "type": "boolean",
+          "label": {
+            "en": "Delivery",
+            "fr": "Livraison"
+          },
+          "description": {
+            "en": "Ticked: a delivery (marked on the chart, \"Last delivery\"). Otherwise, bags bought on their own.",
+            "fr": "Coché : une livraison (repérée sur le graphique, « Dernière livraison »). Sinon, des sacs achetés à l'unité."
+          },
+          "required": false,
+          "default": false
         }
       ],
       "outputs": [
@@ -1236,8 +1280,8 @@
         "fr": "Lire le stock de pellets"
       },
       "description": {
-        "en": "Changes nothing: gives the stock figures to the next actions, e.g. for a message.",
-        "fr": "Ne modifie rien : donne les chiffres du stock aux actions suivantes, par exemple pour un message."
+        "en": "Changes nothing: gives the figures of the stock to the next actions, the cost of the heating season included.",
+        "fr": "Ne modifie rien : donne les chiffres du stock aux actions suivantes, coût de la saison de chauffe compris."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1253,6 +1297,106 @@
             "en": "Leave empty for the main stock.",
             "fr": "Laissez vide pour le stock principal."
           },
+          "required": false
+        },
+        {
+          "key": "season_start",
+          "type": "select",
+          "label": {
+            "en": "Heating season starts in",
+            "fr": "Début de la saison de chauffe"
+          },
+          "description": {
+            "en": "The \"Season cost\" row adds up the bags used since the first day of this month.",
+            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois."
+          },
+          "default": "10",
+          "options": [
+            {
+              "value": "1",
+              "label": {
+                "en": "January",
+                "fr": "Janvier"
+              }
+            },
+            {
+              "value": "2",
+              "label": {
+                "en": "February",
+                "fr": "Février"
+              }
+            },
+            {
+              "value": "3",
+              "label": {
+                "en": "March",
+                "fr": "Mars"
+              }
+            },
+            {
+              "value": "4",
+              "label": {
+                "en": "April",
+                "fr": "Avril"
+              }
+            },
+            {
+              "value": "5",
+              "label": {
+                "en": "May",
+                "fr": "Mai"
+              }
+            },
+            {
+              "value": "6",
+              "label": {
+                "en": "June",
+                "fr": "Juin"
+              }
+            },
+            {
+              "value": "7",
+              "label": {
+                "en": "July",
+                "fr": "Juillet"
+              }
+            },
+            {
+              "value": "8",
+              "label": {
+                "en": "August",
+                "fr": "Août"
+              }
+            },
+            {
+              "value": "9",
+              "label": {
+                "en": "September",
+                "fr": "Septembre"
+              }
+            },
+            {
+              "value": "10",
+              "label": {
+                "en": "October",
+                "fr": "Octobre"
+              }
+            },
+            {
+              "value": "11",
+              "label": {
+                "en": "November",
+                "fr": "Novembre"
+              }
+            },
+            {
+              "value": "12",
+              "label": {
+                "en": "December",
+                "fr": "Décembre"
+              }
+            }
+          ],
           "required": false
         }
       ],
@@ -1295,6 +1439,54 @@
           "label": {
             "en": "Remaining weight (kg)",
             "fr": "Poids restant (kg)"
+          }
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "label": {
+            "en": "Type (bags or bulk)",
+            "fr": "Type (bags ou bulk)"
+          }
+        },
+        {
+          "key": "unit",
+          "type": "string",
+          "label": {
+            "en": "Unit (bag or kg)",
+            "fr": "Unité (bag ou kg)"
+          }
+        },
+        {
+          "key": "season_cost",
+          "type": "number",
+          "label": {
+            "en": "Season cost (€)",
+            "fr": "Coût de la saison (€)"
+          }
+        },
+        {
+          "key": "season_used",
+          "type": "number",
+          "label": {
+            "en": "Used this season (bags, kg for a silo)",
+            "fr": "Utilisés cette saison (sacs, kg pour un silo)"
+          }
+        },
+        {
+          "key": "season_kg",
+          "type": "number",
+          "label": {
+            "en": "Used this season (kg)",
+            "fr": "Utilisés cette saison (kg)"
+          }
+        },
+        {
+          "key": "season_unpriced",
+          "type": "number",
+          "label": {
+            "en": "Used without a known price",
+            "fr": "Utilisés sans prix connu"
           }
         }
       ]

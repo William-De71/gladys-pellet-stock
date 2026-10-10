@@ -8,7 +8,9 @@
 // A movement is `{ t, type, bags, before, after }`:
 //   - delivery     `bags` added to the stock, with the `price` paid for all of
 //                  them and the `bagWeight` of one when the user entered them
-//                  (the widget forms, "Record a delivery");
+//                  (the widget forms, "Record a delivery"). `purchase: true`
+//                  marks bags bought on their own ("Add bag(s)"): they enter
+//                  the stock and its cost, but are not a delivery;
 //   - consumption  `bags` taken from the stock (loaded into the stove);
 //   - inventory    the stock was COUNTED at `bags` — a correction. Counting
 //                  fewer bags than recorded means bags were used without being
@@ -83,14 +85,15 @@ function isValidMovement(movement) {
   if (!movement || typeof movement !== 'object') {
     return false;
   }
-  const { t, type, bags, before, after, price, bagWeight } = movement;
+  const { t, type, bags, before, after, price, bagWeight, purchase } = movement;
   const valid =
     typeof t === 'string' &&
     !Number.isNaN(Date.parse(t)) &&
     Object.values(MOVEMENT_TYPES).includes(type) &&
     [bags, before, after].every((value) => Number.isInteger(value) && value >= 0) &&
     (price === undefined || isPositive(price)) &&
-    (bagWeight === undefined || isPositive(bagWeight));
+    (bagWeight === undefined || isPositive(bagWeight)) &&
+    (purchase === undefined || (purchase === true && type === MOVEMENT_TYPES.DELIVERY));
   return valid && (type !== MOVEMENT_TYPES.OPENING || isValidOpening(movement));
 }
 
@@ -237,7 +240,8 @@ function readPrice(raw, limits) {
  *   none, the `bagPrice` of one bag (stored as the total, to the cent), and
  *   the `bagWeight` in kg. An inventory takes the `bagPrice` of the bags found
  *   when it counts more than recorded. A silo counts in kg (`bags` then holds
- *   kg), and takes only the `price` of a delivery.
+ *   kg), and takes only the `price` of a delivery. `purchase: true` makes a
+ *   delivery of bags bought on their own (see isPalletDelivery()).
  * @param {Date} now - The time of the movement.
  * @param {string} [stockType] - The type of the stock: its unit and bounds.
  * @returns {{version: number, movements: Array<object>}} The new ledger.
@@ -295,6 +299,9 @@ function recordMovement(ledger, movementIn, now, stockType = STOCK_TYPES.BAGS) {
   }
   if (bagWeight !== null) {
     movement.bagWeight = bagWeight;
+  }
+  if (type === MOVEMENT_TYPES.DELIVERY && isBags && movementIn.purchase === true) {
+    movement.purchase = true;
   }
   return { version: 1, movements: compact([...ledger.movements, movement]) };
 }
@@ -365,15 +372,17 @@ function consumedBags(movement) {
 }
 
 /**
- * @description Tell a pallet (or any batch of bags) from a single bag bought
- * on its own: only the former is a "delivery" in the widget and the chart.
+ * @description Tell a delivery (a pallet, a batch, a truck for a silo) from
+ * bags bought on their own: only the former is a "delivery" in the widget,
+ * the chart and the triggers. Bags added with "Add bag(s)" are marked as a
+ * purchase, however many; before that mark, a single bag was the purchase.
  * @param {object} movement - A ledger movement.
- * @returns {boolean} Whether the movement is a delivery of several bags.
+ * @returns {boolean} Whether the movement is a delivery.
  * @example
  * isPalletDelivery({ type: 'delivery', bags: 66 }); // -> true
  */
 function isPalletDelivery(movement) {
-  return movement.type === MOVEMENT_TYPES.DELIVERY && movement.bags > 1;
+  return movement.type === MOVEMENT_TYPES.DELIVERY && !movement.purchase && movement.bags > 1;
 }
 
 /**
@@ -434,7 +443,7 @@ function computeStats(
     orderDate = new Date(nowMs + daysLeft * DAY_MS);
   }
 
-  // The last pallet: single bags would reset the "used since" count.
+  // The last delivery: bags bought on their own would reset the "used since" count.
   const lastDelivery = [...movements].reverse().find(isPalletDelivery) || null;
   // Counted like the daily rate: "Remove bag(s)" taps and downward recounts.
   const consumedSinceDelivery = lastDelivery

@@ -31,7 +31,7 @@ Vous n'êtes pas obligé d'appuyer à chaque sac : **recompter le stock** de tem
 - Dès qu'un prix est connu : la **valeur du stock**, avec le **prix au sac et au kg**, et le **coût par mois**. C'est le prix payé lors de la dernière livraison qui compte, ou, à défaut, le **prix d'une palette** de la configuration. Le prix au kg tient compte du poids des sacs de cette livraison.
 - Le **coût de la saison** : ce qu'ont coûté les sacs utilisés depuis le début de la saison de chauffe (octobre par défaut, réglable dans les réglages du widget), avec leur nombre.
 
-Seules les livraisons de plusieurs sacs (une palette, un lot…) comptent comme livraisons : les sacs ajoutés un par un ne sont ni repérés sur le graphique, ni pris en compte pour « Dernière livraison » et la consommation depuis.
+Seules les livraisons (« Palette livrée », l'action « Enregistrer une livraison ») comptent comme livraisons : les sacs ajoutés avec « Ajouter sac(s) », même plusieurs à la fois, ne sont ni repérés sur le graphique, ni pris en compte pour « Dernière livraison » et la consommation depuis. Ils entrent bien dans le stock et dans le coût.
 
 Dans les réglages du widget, vous pouvez **masquer les boutons**, par exemple pour un écran mural en lecture seule.
 
@@ -100,9 +100,9 @@ Deux actions de scène, **« Enregistrer une livraison du silo »** et **« Rele
 ### Actions
 
 - **« Utiliser des sacs de pellets »** retire des sacs du stock. Exemple : un bouton Zigbee posé à côté du poêle, qui déclenche une scène retirant un sac à chaque appui. L'action échoue si le stock enregistré est insuffisant : recomptez alors votre stock.
-- **« Ajouter des sacs de pellets »** ajoute des sacs (une livraison, des sacs achetés à l'unité).
+- **« Ajouter des sacs de pellets »** ajoute des sacs (une livraison, des sacs achetés à l'unité), avec un prix au sac et un poids de sac facultatifs.
 - **« Corriger le stock de pellets »** fixe le stock au nombre de sacs comptés.
-- **« Lire le stock de pellets »** ne modifie rien : elle sert à récupérer les chiffres pour la suite de la scène, par exemple un message hebdomadaire.
+- **« Lire le stock de pellets »** ne modifie rien : elle sert à récupérer les chiffres pour la suite de la scène, par exemple un message hebdomadaire. Elle renvoie en plus le **type** du stock (`bags` ou `bulk`), son **unité** (`bag` ou `kg`) et le **coût de la saison** : le coût (€), les sacs (kg pour un silo) et les kg utilisés depuis le début de la saison (octobre par défaut, réglable dans l'action), et ceux sans prix connu.
 
 Chaque action a un champ **Stock** (vide : le stock principal) et renvoie aux actions suivantes les **sacs restants**, l'**autonomie** (jours), les **sacs par jour**, les **jours avant de commander** et le **poids restant** (kg). Une valeur encore inconnue (autonomie sans consommation, par exemple) n'est pas renvoyée, plutôt que de valoir 0.
 

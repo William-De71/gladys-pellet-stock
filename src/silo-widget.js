@@ -35,6 +35,7 @@ import {
   readSeasonMonth,
   roundCents,
   stockColor,
+  withinField,
 } from './widget.js';
 
 // Beyond a tonne, the level reads better in tonnes.
@@ -114,7 +115,7 @@ function buildSiloContent({ ledger, stats, config, settings = {}, language, stoc
           required: true,
           min: LIMITS.movementKg.min,
           max: LIMITS.movementKg.max,
-          default: config.palletSize,
+          default: withinField(config.palletSize, LIMITS.movementKg),
         },
         {
           key: 'price',
@@ -125,7 +126,10 @@ function buildSiloContent({ ledger, stats, config, settings = {}, language, stoc
           min: LIMITS.deliveryPrice.min,
           max: LIMITS.deliveryPrice.max,
           ...(config.bagPrice !== null && {
-            default: roundCents(config.bagPrice * config.palletSize),
+            default: withinField(
+              roundCents(config.bagPrice * config.palletSize),
+              LIMITS.deliveryPrice,
+            ),
           }),
         },
       ],
@@ -282,7 +286,7 @@ function buildSiloContent({ ledger, stats, config, settings = {}, language, stoc
     const season = costOver(
       ledger.movements,
       seasonStart(now, readSeasonMonth(settings)),
-      now,
+      null,
       config,
     );
     if (season.bags > 0) {

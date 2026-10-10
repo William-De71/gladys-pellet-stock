@@ -154,6 +154,20 @@ function roundCents(value) {
 }
 
 /**
+ * @description Keep a pre-filled value within the bounds of its field: the
+ * core would refuse the form sent as pre-filled (a price per bag above 100 €
+ * after a typo in an old delivery, say).
+ * @param {number} value - The value.
+ * @param {{min: number, max: number}} limits - The bounds of the field.
+ * @returns {number} The value, clamped.
+ * @example
+ * withinField(25000, LIMITS.deliveryPrice); // -> 20000
+ */
+function withinField(value, { min, max }) {
+  return Math.min(max, Math.max(min, value));
+}
+
+/**
  * @description Format how long ago a date was, in the largest fitting unit.
  * @param {Date} date - The past date.
  * @param {Date} now - The current time.
@@ -285,9 +299,9 @@ function buildConsumptionPoints(movements, now, days) {
 }
 
 /**
- * @description Mark the deliveries of the period on the chart. Single bags
- * (the "Add bag(s)" button) are left out: a few of them would push the pallet
- * deliveries out of the 8 annotations the chart allows.
+ * @description Mark the deliveries of the period on the chart. Bags bought
+ * on their own (the "Add bag(s)" button) are left out: a few of them would
+ * push the deliveries out of the 8 annotations the chart allows.
  * @param {Array<object>} movements - The ledger movements, oldest first.
  * @param {Date} now - The current time.
  * @param {number} days - The period, in days.
@@ -369,7 +383,9 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
           required: false,
           min: LIMITS.deliveryPrice.min,
           max: LIMITS.deliveryPrice.max,
-          ...(palletPrice !== null && { default: palletPrice }),
+          ...(palletPrice !== null && {
+            default: withinField(palletPrice, LIMITS.deliveryPrice),
+          }),
         },
         {
           key: 'bag_weight',
@@ -378,7 +394,7 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
           required: false,
           min: LIMITS.bagWeight.min,
           max: LIMITS.bagWeight.max,
-          default: config.bagWeight,
+          default: withinField(config.bagWeight, LIMITS.bagWeight),
         },
       ],
     },
@@ -403,7 +419,9 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
           required: false,
           min: LIMITS.bagPrice.min,
           max: LIMITS.bagPrice.max,
-          ...(bagPrice !== null && { default: roundCents(bagPrice) }),
+          ...(bagPrice !== null && {
+            default: withinField(roundCents(bagPrice), LIMITS.bagPrice),
+          }),
         },
       ],
     },
@@ -524,7 +542,7 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     const season = costOver(
       ledger.movements,
       seasonStart(now, readSeasonMonth(settings)),
-      now,
+      null,
       config,
     );
     if (season.bags > 0) {
@@ -637,6 +655,7 @@ export {
   formatShortDate,
   formatUnitPrice,
   roundCents,
+  withinField,
   buildWidgetContent,
   buildUnknownStockContent,
   buildStockPoints,

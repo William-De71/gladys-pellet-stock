@@ -234,6 +234,31 @@ test('recordMovement: counting more bags may come with their price', () => {
   assert.equal('price' in fewer.movements[2], false);
 });
 
+test('recordMovement: bags bought on their own are never a delivery, however many', () => {
+  let ledger = buildLedger([[10, 'delivery', 66]]);
+  ledger = recordMovement(ledger, { type: 'delivery', bags: 5, purchase: true }, daysAgo(5));
+  ledger = recordMovement(ledger, { type: 'consumption', bags: 3 }, daysAgo(2));
+  assert.equal(ledger.movements[1].purchase, true);
+  const stats = computeStats(ledger, NOW, WINDOW);
+  assert.equal(stats.lastDelivery.bags, 66, 'the pallet, not the 5 bags');
+  assert.equal(stats.consumedSinceDelivery, 3);
+  assert.equal(stats.stock, 68);
+  // Stored and read back; only a delivery carries the mark.
+  assert.deepEqual(parseLedger(serializeLedger(ledger)), ledger);
+  const used = recordMovement(ledger, { type: 'consumption', bags: 1, purchase: true }, NOW);
+  assert.equal('purchase' in used.movements[3], false);
+  assert.equal(
+    parseLedger({ movements: [{ ...ledger.movements[2], purchase: true }] }).movements.length,
+    0,
+  );
+  // Older ledgers, without the mark: a single bag was the purchase.
+  const old = buildLedger([
+    [10, 'delivery', 66],
+    [5, 'delivery', 1],
+  ]);
+  assert.equal(computeStats(old, NOW, WINDOW).lastDelivery.bags, 66);
+});
+
 test('computeStats: the remaining weight follows the lots', () => {
   const ledger = recordMovement(
     buildLedger([[10, 'delivery', 4]]),

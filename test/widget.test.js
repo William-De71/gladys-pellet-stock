@@ -233,6 +233,23 @@ test('widget: adding bags opens a form with the bags and the price per bag', () 
   assert.equal(addBag(SEASON, { bagPrice: 7 }).fields[1].default, 7);
 });
 
+test('widget: a pre-filled value never exceeds its field', () => {
+  // A single bag entered at 150 €: a typo, kept in the ledger.
+  const typo = buildLedger([[10, 'delivery', 1, 150]]);
+  const buttons = byType(contentOf(typo), 'button');
+  const field = (key, name) =>
+    buttons
+      .find((button) => button.action.key === key)
+      .action.fields.find((one) => one.key === name);
+  assert.equal(field('add_bag', 'bag_price').default, 100);
+  assert.equal(field('delivery', 'price').default, 9900, '66 bags at 150 €, within 20,000');
+  const pricey = buildLedger([[10, 'delivery', 1, 600]]);
+  const delivery = byType(contentOf(pricey), 'button').find(
+    (button) => button.action.key === 'delivery',
+  );
+  assert.equal(delivery.action.fields[1].default, 20000);
+});
+
 test('widget: removing bags opens a form capped at the stock', () => {
   const consume = (ledger) =>
     byType(contentOf(ledger), 'button').find((button) => button.action.key === 'consume').action;

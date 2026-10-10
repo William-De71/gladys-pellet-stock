@@ -50,9 +50,9 @@ level** (e.g. from a level sensor). The bag scene triggers leave silos out: use 
 | Scene actions                | What it does                                                         |
 | ---------------------------- | -------------------------------------------------------------------- |
 | **Use pellet bags**          | Removes bags — e.g. a Zigbee button next to the stove, one per press |
-| **Add pellet bags**          | Adds bags: a delivery, or bags bought on their own                   |
+| **Add pellet bags**          | Adds bags (a delivery, or bags bought on their own), price optional  |
 | **Correct the pellet stock** | Sets the stock to the bags counted                                   |
-| **Read the pellet stock**    | Changes nothing: gives the figures to the next actions               |
+| **Read the pellet stock**    | Changes nothing: the figures, the type, the unit and the season cost |
 
 Every action returns the **bags left**, the **autonomy**, the **bags per day**, the **days before ordering** and
 the **remaining weight**; a figure still unknown is left out, never sent as 0.
@@ -107,8 +107,9 @@ These are the defaults of every stock: "Set up a stock" overrides them for one s
   **"Analyze the cost"** action add up the bags used over a period at the price of their lot; the remaining weight
   follows the bag weight of each lot. Bags without any price (a first count, no pallet price configured) are told
   apart.
-- Only deliveries of **several bags** count as deliveries (chart markers, "last delivery", "used since", the
-  trigger): a single bag bought on its own never resets them.
+- Only **deliveries** count as deliveries (chart markers, "last delivery", "used since", the trigger): "Pallet
+  delivered", "Record a delivery", a silo delivery. Bags added with "Add bag(s)", however many, are marked as a
+  purchase (`purchase: true`) and never reset them; in older ledgers, a single bag was the purchase.
 
 ## Storage
 

@@ -152,7 +152,8 @@ function valueBags(parts, config) {
  * @description The bags used over a period, their weight and their cost.
  * @param {Array<object>} movements - The ledger movements, oldest first.
  * @param {Date} start - The start of the period (included).
- * @param {Date} end - The end of the period (excluded).
+ * @param {Date|null} end - The end of the period (excluded); null for "until now",
+ *   the movements just recorded included.
  * @param {{bagPrice: number|null, bagWeight: number}} config - The effective config of the stock.
  * @returns {{bags: number, kg: number, cost: number, unpricedBags: number}} See valueBags().
  * @example
@@ -160,7 +161,7 @@ function valueBags(parts, config) {
  */
 function costOver(movements, start, end, config) {
   const from = start.getTime();
-  const to = end.getTime();
+  const to = end ? end.getTime() : Infinity;
   const { used } = walkLots(movements);
   return valueBags(
     used.filter((part) => {

@@ -142,7 +142,7 @@ function readBagCount(raw, { min, max }) {
  * @returns {number|null} The price, or null when none was entered.
  * @throws {StockError} When the price is not a number within the range.
  * @example
- * readPrice(459.5, LIMITS.palletPrice); // -> 459.5
+ * readPrice(459.5, LIMITS.deliveryPrice); // -> 459.5
  */
 function readPrice(raw, { min, max }) {
   if (raw === undefined || raw === null || (typeof raw === 'string' && raw.trim() === '')) {
@@ -180,7 +180,7 @@ function recordMovement(ledger, { type, bags: rawBags, price: rawPrice }, now) {
     if (after > LIMITS.stockBags.max) {
       throw new StockError('invalid_count', LIMITS.movementBags);
     }
-    price = readPrice(rawPrice, LIMITS.palletPrice);
+    price = readPrice(rawPrice, LIMITS.deliveryPrice);
   } else if (type === MOVEMENT_TYPES.CONSUMPTION) {
     bags = readBagCount(rawBags, LIMITS.movementBags);
     if (bags > before) {
@@ -259,9 +259,9 @@ function isPalletDelivery(movement) {
  * @returns {{stock: number, dailyRate: number|null, autonomyDays: number|null,
  *   emptyDate: Date|null, orderDate: Date|null, lastDelivery: object|null,
  *   lastConsumption: object|null, consumedSinceDelivery: number|null, referenceStock: number,
- *   consumedInWindow: number, lastPrice: number|null, bagPrice: number|null,
- *   hasHistory: boolean}} The stock figures. `lastPrice` is the price paid for the
- *   last delivery entered with one, `bagPrice` that price per bag.
+ *   consumedInWindow: number, bagPrice: number|null, hasHistory: boolean}} The
+ *   stock figures. `bagPrice` is the price per bag of the last delivery entered
+ *   with a price.
  * @example
  * const stats = computeStats(ledger, new Date(), { consumptionWindow: 14 });
  */
@@ -334,7 +334,6 @@ function computeStats(ledger, now, { consumptionWindow, lowStockThreshold = 0 })
     consumedSinceDelivery,
     referenceStock,
     consumedInWindow,
-    lastPrice: lastPriced ? lastPriced.price : null,
     bagPrice: lastPriced ? lastPriced.price / lastPriced.bags : null,
     hasHistory: movements.length > 0,
   };

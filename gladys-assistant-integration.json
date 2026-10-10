@@ -181,6 +181,21 @@
           "required": true,
           "min": 1,
           "max": 1000
+        },
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Price paid (€)",
+            "fr": "Prix payé (€)"
+          },
+          "description": {
+            "en": "For the whole delivery. Optional: gives the stock value and the cost per month.",
+            "fr": "Pour toute la livraison. Facultatif : donne la valeur du stock et le coût par mois."
+          },
+          "required": false,
+          "min": 0,
+          "max": 20000
         }
       ]
     },

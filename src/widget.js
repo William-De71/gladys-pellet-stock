@@ -109,6 +109,17 @@ function formatEuros(value, language) {
 }
 
 /**
+ * @description Round an amount to the cent.
+ * @param {number} value - The amount, in euros.
+ * @returns {number} The rounded amount.
+ * @example
+ * roundCents(7.2954); // -> 7.3
+ */
+function roundCents(value) {
+  return Math.round(value * 100) / 100;
+}
+
+/**
  * @description Format how long ago a date was, in the largest fitting unit.
  * @param {Date} date - The past date.
  * @param {Date} now - The current time.
@@ -284,7 +295,9 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
   // The price paid for the last delivery wins over the configured one: it
   // follows the market without a trip to the Configuration screen.
   const bagPrice = stats.bagPrice ?? config.bagPrice;
-  const lastPrice = stats.lastPrice ?? config.palletPrice;
+  // Pre-filled for the bags pre-filled next to it: the last delivery may have
+  // been half a pallet, whose total would halve the price of a bag.
+  const palletPrice = bagPrice === null ? null : roundCents(bagPrice * config.palletSize);
 
   const deliveryButton = {
     type: 'button',
@@ -314,9 +327,9 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
           label: message('field_price'),
           description: message('field_price_description'),
           required: false,
-          min: LIMITS.palletPrice.min,
-          max: LIMITS.palletPrice.max,
-          ...(lastPrice !== null && { default: lastPrice }),
+          min: LIMITS.deliveryPrice.min,
+          max: LIMITS.deliveryPrice.max,
+          ...(palletPrice !== null && { default: palletPrice }),
         },
       ],
     },

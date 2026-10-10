@@ -138,7 +138,7 @@ gladys.onAction('set_stock', (fields) =>
   recordFromUser(fields.stock, MOVEMENT_TYPES.INVENTORY, fields.bags),
 );
 gladys.onAction('add_delivery', (fields) =>
-  recordFromUser(fields.stock, MOVEMENT_TYPES.DELIVERY, fields.bags),
+  recordFromUser(fields.stock, MOVEMENT_TYPES.DELIVERY, fields.bags, fields.price),
 );
 gladys.onAction('consume', (fields) =>
   recordFromUser(fields.stock, MOVEMENT_TYPES.CONSUMPTION, fields.bags),

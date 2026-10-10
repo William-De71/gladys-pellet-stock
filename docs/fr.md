@@ -14,9 +14,9 @@ Aucun matériel ni compte en ligne n'est nécessaire : l'intégration tient un r
 
 - Appuyez sur **« −1 sac »** dans le widget à chaque fois que vous remplissez le poêle.
 - Appuyez sur **« +1 sac »** pour chaque sac acheté à l'unité (en magasin par exemple).
-- Appuyez sur **« Palette livrée »** à chaque livraison d'une palette. Un petit formulaire s'ouvre dans le widget, pré-rempli avec le nombre de sacs par palette et le prix de la dernière livraison : corrigez-les si besoin, puis envoyez. Le prix est facultatif ; mettez 0 pour une livraison sans prix. Sur une version de Gladys sans ce formulaire, le nombre de sacs par palette est ajouté directement (une confirmation est demandée).
+- Appuyez sur **« Palette livrée »** à chaque livraison d'une palette. Un petit formulaire s'ouvre dans le widget, pré-rempli avec le nombre de sacs par palette et le prix d'une palette au dernier prix payé par sac : corrigez-les si besoin, puis envoyez. Le prix est facultatif ; mettez 0 pour une livraison sans prix. Sur une version de Gladys sans ce formulaire, le nombre de sacs par palette est ajouté directement (une confirmation est demandée).
 - Une fausse manipulation ? **« Annuler »** retire la dernière opération.
-- Pour ajouter plusieurs sacs d'un coup (une demi-palette, un lot de 10 sacs…), utilisez l'action **« Enregistrer une livraison »** de la configuration.
+- Pour ajouter plusieurs sacs d'un coup (une demi-palette, un lot de 10 sacs…), utilisez l'action **« Enregistrer une livraison »** de la configuration, où le prix payé peut aussi être indiqué.
 
 Vous n'êtes pas obligé d'appuyer à chaque sac : **recompter le stock** de temps en temps avec « Corriger le stock » suffit. Les sacs manquants depuis le dernier comptage sont comptés comme consommés.
 

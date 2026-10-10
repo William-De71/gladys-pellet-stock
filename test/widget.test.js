@@ -179,7 +179,7 @@ test('widget: the delivery button opens a form with the bags and the price', () 
     action.fields.map(({ key, type, required, min, max }) => ({ key, type, required, min, max })),
     [
       { key: 'bags', type: 'number', required: true, min: 1, max: 1000 },
-      { key: 'price', type: 'number', required: false, min: 0, max: 5000 },
+      { key: 'price', type: 'number', required: false, min: 0, max: 20000 },
     ],
   );
   assert.equal(action.fields[0].default, 72);
@@ -187,12 +187,17 @@ test('widget: the delivery button opens a form with the bags and the price', () 
   // No price anywhere: the price field starts empty.
   assert.equal('default' in action.fields[1], false);
   // The configured price, then the last one paid.
-  assert.equal(delivery(SEASON, { palletPrice: 459 }).fields[1].default, 459);
+  assert.equal(delivery(SEASON, { palletPrice: 459, bagPrice: 459 / 66 }).fields[1].default, 459);
   const priced = buildLedger([
     [10, 'delivery', 66, 481.5],
     [5, 'consumption', 3],
   ]);
-  assert.equal(delivery(priced, { palletPrice: 459 }).fields[1].default, 481.5);
+  assert.equal(delivery(priced, { bagPrice: 459 / 66 }).fields[1].default, 481.5);
+  // A pallet at the price per bag of the last delivery, even half a pallet:
+  // its total would halve the price of a bag.
+  const half = buildLedger([[10, 'delivery', 33, 240]]);
+  assert.equal(delivery(half, { palletSize: 66 }).fields[1].default, 480);
+  assert.equal(delivery(half, { palletSize: 70 }).fields[1].default, 509.09);
   // The empty state offers the same form.
   assert.equal(delivery(createLedger(), {}).fields.length, 2);
 });

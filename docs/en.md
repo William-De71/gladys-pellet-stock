@@ -14,9 +14,9 @@ No hardware and no online account are needed: the integration keeps a ledger of 
 
 - Tap **"−1 bag"** in the widget each time you fill the stove.
 - Tap **"+1 bag"** for each bag bought on its own (at a store, say).
-- Tap **"Pallet delivered"** when a pallet is delivered. A short form opens in the widget, filled in with the bags per pallet and the price of the last delivery: correct them if needed, then send. The price is optional; enter 0 for a delivery without a price. On a Gladys version without this form, the bags per pallet are added right away (a confirmation is asked).
+- Tap **"Pallet delivered"** when a pallet is delivered. A short form opens in the widget, filled in with the bags per pallet and the price of a pallet at the last price paid per bag: correct them if needed, then send. The price is optional; enter 0 for a delivery without a price. On a Gladys version without this form, the bags per pallet are added right away (a confirmation is asked).
 - Wrong tap? **"Undo"** removes the last operation.
-- To add several bags at once (half a pallet, a batch of 10 bags…), use the **"Record a delivery"** action of the configuration.
+- To add several bags at once (half a pallet, a batch of 10 bags…), use the **"Record a delivery"** action of the configuration, where the price paid can be entered too.
 
 You do not have to tap for every bag: **counting the stock** from time to time with "Correct the stock" is enough. The bags missing since the last count are counted as consumed.
 

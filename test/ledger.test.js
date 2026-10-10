@@ -87,7 +87,13 @@ test('recordMovement: an empty price, or 0, is no price', () => {
 });
 
 test('recordMovement: rejects a price out of range or not a number', () => {
-  [-1, 5000.01, 'abc', NaN, Infinity, {}].forEach((price) => {
+  // A whole delivery: up to the 1,000 bags of a movement, past a pallet price.
+  assert.equal(
+    recordMovement(createLedger(), { type: 'delivery', bags: 700, price: 6000 }, NOW).movements[0]
+      .price,
+    6000,
+  );
+  [-1, 20000.01, 'abc', NaN, Infinity, {}].forEach((price) => {
     assert.throws(
       () => recordMovement(createLedger(), { type: 'delivery', bags: 66, price }, NOW),
       (error) => error instanceof StockError && error.code === 'invalid_price',
@@ -299,7 +305,6 @@ test('computeStats: the last delivery is the last pallet, not a single bag', () 
 
 test('computeStats: no price until a delivery is entered with one', () => {
   const stats = computeStats(buildLedger([[3, 'delivery', 66]]), NOW, WINDOW);
-  assert.equal(stats.lastPrice, null);
   assert.equal(stats.bagPrice, null);
 });
 
@@ -314,7 +319,6 @@ test('computeStats: the price is the one of the last delivery entered with one',
     NOW,
     WINDOW,
   );
-  assert.equal(stats.lastPrice, 504);
   assert.equal(stats.bagPrice, 7);
 });
 
@@ -325,7 +329,7 @@ test('computeStats: undoing a priced delivery brings the previous price back', (
       [10, 'delivery', 72, 504],
     ]),
   );
-  assert.equal(computeStats(ledger, NOW, WINDOW).lastPrice, 400);
+  assert.equal(computeStats(ledger, NOW, WINDOW).bagPrice, 400 / 66);
 });
 
 test('computeStats: the order date is when the stock reaches the threshold', () => {

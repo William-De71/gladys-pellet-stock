@@ -39,8 +39,8 @@ function normalizeConfig(raw = {}) {
   const palletSize = Math.round(
     readNumber(raw[CONFIG_KEYS.PALLET_SIZE], DEFAULTS.palletSize, LIMITS.palletSize),
   );
-  // The price is entered per pallet: the core number field only takes whole
-  // numbers, too coarse for a bag at 7.29 € but fine for a pallet at 459 €.
+  // The price is entered per pallet, as on the invoice; decimals are accepted
+  // (core number fields take them since Gladys PR #3167).
   const palletPrice = readNumber(raw[CONFIG_KEYS.PALLET_PRICE], 0, LIMITS.palletPrice);
   return {
     bagWeight: readNumber(raw[CONFIG_KEYS.BAG_WEIGHT], DEFAULTS.bagWeight, LIMITS.bagWeight),

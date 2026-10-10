@@ -42,6 +42,8 @@ const LIMITS = {
   lowStockThreshold: { min: 0, max: 1000 },
   consumptionWindow: { min: 3, max: 90 },
   palletPrice: { min: 0, max: 5000 },
+  // The price paid for a whole delivery: up to the 1,000 bags of a movement.
+  deliveryPrice: { min: 0, max: 20000 },
   // Upper bound of a single movement, to catch a typo (660 instead of 66).
   movementBags: { min: 1, max: 1000 },
   stockBags: { min: 0, max: 10000 },

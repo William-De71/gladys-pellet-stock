@@ -155,6 +155,21 @@
           "required": true,
           "min": 0,
           "max": 10000
+        },
+        {
+          "key": "bag_price",
+          "type": "number",
+          "label": {
+            "en": "Price per bag (€)",
+            "fr": "Prix au sac (€)"
+          },
+          "description": {
+            "en": "Optional: the price of the bags counted above the recorded stock, for the cost of the season. Without it, they cost the last price known.",
+            "fr": "Facultatif : le prix des sacs comptés en plus du stock enregistré, pour le coût de la saison. Sans lui, ils coûtent le dernier prix connu."
+          },
+          "required": false,
+          "min": 0,
+          "max": 100
         }
       ]
     },
@@ -282,6 +297,64 @@
           "description": {
             "en": "Leave empty for the main stock.",
             "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "analyze_cost",
+      "label": {
+        "en": "Analyze the cost",
+        "fr": "Analyser le coût"
+      },
+      "description": {
+        "en": "The bags used over a period, their weight and their cost: the oldest bags are used first, at the price they were bought.",
+        "fr": "Les sacs utilisés sur une période, leur poids et leur coût : les sacs les plus anciens partent en premier, au prix où ils ont été achetés."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
+          "key": "start",
+          "type": "string",
+          "label": {
+            "en": "From (DD/MM/YYYY)",
+            "fr": "Du (JJ/MM/AAAA)"
+          },
+          "placeholder": {
+            "en": "01/10/2026",
+            "fr": "01/10/2026"
+          },
+          "required": true
+        },
+        {
+          "key": "end",
+          "type": "string",
+          "label": {
+            "en": "To (DD/MM/YYYY)",
+            "fr": "Au (JJ/MM/AAAA)"
+          },
+          "description": {
+            "en": "Included. Leave empty for today.",
+            "fr": "Inclus. Laissez vide pour aujourd'hui."
+          },
+          "placeholder": {
+            "en": "01/06/2027",
+            "fr": "01/06/2027"
           },
           "required": false
         }
@@ -1088,6 +1161,105 @@
               "label": {
                 "en": "1 year",
                 "fr": "1 an"
+              }
+            }
+          ]
+        },
+        {
+          "key": "season_start",
+          "type": "select",
+          "label": {
+            "en": "Heating season starts in",
+            "fr": "Début de la saison de chauffe"
+          },
+          "description": {
+            "en": "The \"Season cost\" row adds up the bags used since the first day of this month.",
+            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois."
+          },
+          "default": "10",
+          "options": [
+            {
+              "value": "1",
+              "label": {
+                "en": "January",
+                "fr": "Janvier"
+              }
+            },
+            {
+              "value": "2",
+              "label": {
+                "en": "February",
+                "fr": "Février"
+              }
+            },
+            {
+              "value": "3",
+              "label": {
+                "en": "March",
+                "fr": "Mars"
+              }
+            },
+            {
+              "value": "4",
+              "label": {
+                "en": "April",
+                "fr": "Avril"
+              }
+            },
+            {
+              "value": "5",
+              "label": {
+                "en": "May",
+                "fr": "Mai"
+              }
+            },
+            {
+              "value": "6",
+              "label": {
+                "en": "June",
+                "fr": "Juin"
+              }
+            },
+            {
+              "value": "7",
+              "label": {
+                "en": "July",
+                "fr": "Juillet"
+              }
+            },
+            {
+              "value": "8",
+              "label": {
+                "en": "August",
+                "fr": "Août"
+              }
+            },
+            {
+              "value": "9",
+              "label": {
+                "en": "September",
+                "fr": "Septembre"
+              }
+            },
+            {
+              "value": "10",
+              "label": {
+                "en": "October",
+                "fr": "Octobre"
+              }
+            },
+            {
+              "value": "11",
+              "label": {
+                "en": "November",
+                "fr": "Novembre"
+              }
+            },
+            {
+              "value": "12",
+              "label": {
+                "en": "December",
+                "fr": "Décembre"
               }
             }
           ]

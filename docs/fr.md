@@ -29,10 +29,21 @@ Vous n'êtes pas obligé d'appuyer à chaque sac : **recompter le stock** de tem
 - La **consommation moyenne par jour**, le **dernier sac utilisé** (« il y a 2 jours »), le **poids restant**, la **dernière livraison** et la **consommation depuis** (en sacs et en kg).
 - La date à laquelle **commander** (quand le stock atteindra le seuil de stock bas) et la **date estimée** à laquelle le stock sera vide.
 - Dès qu'un prix est connu : la **valeur du stock**, avec le **prix au sac et au kg**, et le **coût par mois**. C'est le prix payé lors de la dernière livraison qui compte, ou, à défaut, le **prix d'une palette** de la configuration. Le prix au kg tient compte du poids des sacs de cette livraison.
+- Le **coût de la saison** : ce qu'ont coûté les sacs utilisés depuis le début de la saison de chauffe (octobre par défaut, réglable dans les réglages du widget), avec leur nombre.
 
 Seules les livraisons de plusieurs sacs (une palette, un lot…) comptent comme livraisons : les sacs ajoutés un par un ne sont ni repérés sur le graphique, ni pris en compte pour « Dernière livraison » et la consommation depuis.
 
 Dans les réglages du widget, vous pouvez **masquer les boutons**, par exemple pour un écran mural en lecture seule.
+
+## Coût du chauffage
+
+Les sacs les plus anciens partent en premier (« premier entré, premier sorti ») : chaque sac utilisé coûte le prix auquel il a été acheté. Si vous avez acheté 40 sacs à 6 € puis 60 sacs à 8 €, les 40 premiers sacs utilisés comptent pour 6 € chacun, les suivants pour 8 €.
+
+- Une livraison saisie sans prix prend le **dernier prix au sac connu**.
+- Le stock indiqué au départ avec « Corriger le stock » n'a pas de prix : il prend le **prix d'une palette** de la configuration, ou, sans lui, il est signalé à part (« 12 sans prix »). « Corriger le stock » accepte un **prix au sac** facultatif pour les sacs comptés en plus du stock enregistré.
+- Le **poids restant** et la consommation en kg tiennent compte du poids des sacs de chaque livraison.
+
+Pour une période précise, lancez l'action **« Analyser le coût »** avec une date de début et de fin (JJ/MM/AAAA) : « Du 01/10/2026 au 01/06/2027 : 100 sacs, 1 500 kg, 712 € (0,47 €/kg) ».
 
 ## Comment l'autonomie est calculée
 
@@ -93,4 +104,4 @@ Une livraison ajoutée par une scène ne déclenche pas « Palette livrée », p
 
 ## Sauvegarde
 
-Le registre des mouvements (les 2 000 derniers) est enregistré dans la base de Gladys : il fait partie des **sauvegardes Gladys** et survit à une mise à jour de l'intégration. Il est supprimé si vous désinstallez l'intégration.
+Le registre des mouvements (les 2 000 derniers ; au-delà, les plus anciens sont résumés en gardant le prix des sacs encore en stock) est enregistré dans la base de Gladys : il fait partie des **sauvegardes Gladys** et survit à une mise à jour de l'intégration. Il est supprimé si vous désinstallez l'intégration.

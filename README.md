@@ -21,7 +21,7 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md).
 - **Chart**, picked per widget: the **stock over time** (step line, pallet deliveries marked) or the **bags used
   per day** (bars; weekly over one year). Period: 1 month, 3 months or 1 year.
 - **Status rows**: bags per day, last bag used ("2 hours ago"), remaining weight, stock value with the price per bag
-  and per kg, and cost per month (once a price is known), last delivery and bags used since, the date to order by (when the stock reaches the
+  and per kg, cost per month and season cost (once a price is known), last delivery and bags used since, the date to order by (when the stock reaches the
   threshold) and the estimated empty date.
 - **Buttons**: **Remove bag(s)** (a form for the bags), **Add bag(s)** (the bags and the price per bag),
   **Pallet delivered** (the bags, the price paid and the bag weight) and **Undo** (removes the last operation). On a
@@ -93,14 +93,20 @@ These are the defaults of every stock: "Set up a stock" overrides them for one s
 - The **autonomy** is the stock divided by that rate, and the **order date** is when the stock reaches the
   threshold at that rate. Without any consumption in the window (summer), both are unknown — shown as a dash,
   never published as 0 (a 0 would fire the "empty stock" scenes).
+- The **cost** is first in, first out: each delivery is a lot at the price paid for it (or the last price per bag
+  known), each bag used is taken from the oldest lot. The **season cost** row (season start set per widget) and the
+  **"Analyze the cost"** action add up the bags used over a period at the price of their lot; the remaining weight
+  follows the bag weight of each lot. Bags without any price (a first count, no pallet price configured) are told
+  apart.
 - Only deliveries of **several bags** count as deliveries (chart markers, "last delivery", "used since", the
   trigger): a single bag bought on its own never resets them.
 
 ## Storage
 
-Each stock's ledger (last 2,000 movements) is stored in the integration config through `setConfig()`, under keys
+Each stock's ledger (last 2,000 movements; beyond, the oldest ones are compacted into an `opening` movement that
+keeps the lots still in stock) is stored in the integration config through `setConfig()`, under keys
 outside the `config_schema` (`stock_ledger` for the main stock, `stock_ledger_<id>` for the added ones, `stocks`
-for their list). It lives in the Gladys database, so it is part of the Gladys backups and survives a container
+for their list, houses and settings). It lives in the Gladys database, so it is part of the Gladys backups and survives a container
 rebuild.
 
 ## Requirements

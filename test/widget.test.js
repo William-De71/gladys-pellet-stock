@@ -378,8 +378,51 @@ test('widget: every status row at once still fits the budget', () => {
     ]),
     { overrides: { bagPrice: 7, lowStockThreshold: 5 } },
   );
-  assert.equal(byType(content, 'status')[0].items.length, 9);
+  assert.equal(byType(content, 'status')[0].items.length, 10);
   assert.deepEqual(validateWidgetContent(content), []);
+  // Above the threshold: the order date instead of the reminder, as many rows.
+  const above = contentOf(
+    buildLedger([
+      [5, 'delivery', 40],
+      [1, 'consumption', 12],
+    ]),
+    { overrides: { bagPrice: 7, lowStockThreshold: 5 } },
+  );
+  assert.equal(byType(above, 'status')[0].items.length, 10);
+  assert.deepEqual(validateWidgetContent(above), []);
+});
+
+test('widget: the season cost, first in first out, from the month the season starts', () => {
+  const rows = (ledger, settings, overrides = {}) =>
+    Object.fromEntries(
+      byType(contentOf(ledger, { settings, overrides }), 'status')[0].items.map((item) => [
+        item.label,
+        item.value,
+      ]),
+    );
+  // NOW is 23 Sept 2026: an October season started on 1 Oct 2025.
+  const ledger = buildLedger([
+    [400, 'delivery', 10, 60],
+    [100, 'delivery', 66, 528],
+    [50, 'consumption', 12],
+    [10, 'consumption', 4],
+  ]);
+  // 10 bags at 6 €, then 6 at 8 €.
+  assert.equal(rows(ledger, {})['Coût de la saison'], '108\u00a0€ · 16 sacs');
+  // A September season started on 1 Sept 2026: the last 4 bags, at 8 €.
+  assert.equal(rows(ledger, { season_start: '9' })['Coût de la saison'], '32\u00a0€ · 4 sacs');
+  // A first stock counted without a price: told apart, valued at the
+  // configured price when there is one.
+  const counted = buildLedger([
+    [100, 'inventory', 12],
+    [50, 'delivery', 66, 528],
+    [10, 'consumption', 20],
+  ]);
+  assert.equal(rows(counted, {})['Coût de la saison'], '64\u00a0€ · 20 sacs (12 sans prix)');
+  assert.equal(rows(counted, {}, { bagPrice: 7 })['Coût de la saison'], '148\u00a0€ · 20 sacs');
+  // No bag used this season: no row.
+  const idle = buildLedger([[400, 'delivery', 10, 60]]);
+  assert.equal(rows(idle, {})['Coût de la saison'], undefined);
 });
 
 test('widget: single bags are not marked on the chart, pallets are', () => {

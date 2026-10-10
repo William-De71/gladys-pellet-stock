@@ -11,11 +11,13 @@
 // The four buttons take half of it, so the content is always exactly 2
 // tiles + chart + status + 4 buttons: the secondary figures (daily rate,
 // low-stock reminder, cost…) go into the status rows, which hold up to 10 —
-// 9 at most here (the low-stock reminder replaces the order date).
+// all 10 at most here (the low-stock reminder replaces the order date): a
+// new row must take the place of another, or share one.
 // -----------------------------------------------------------------------------
 
 import { DAY_MS, LIMITS, MOVEMENT_TYPES, WIDGET_ACTIONS } from './constants.js';
 import { message, resolveLanguage, translate } from './i18n.js';
+import { costOver, seasonStart } from './cost.js';
 import { consumedBags, isPalletDelivery } from './ledger.js';
 
 // The two views of the chart, picked per widget instance.
@@ -40,6 +42,9 @@ const TTL_SECONDS = 3600;
 
 const DEFAULT_CHART_DAYS = 90;
 
+// The heating season starts in October, unless the widget says otherwise.
+const DEFAULT_SEASON_MONTH = 10;
+
 // The monthly cost is the daily rate over an average month.
 const DAYS_PER_MONTH = 30;
 
@@ -53,6 +58,18 @@ const DAYS_PER_MONTH = 30;
 function readChartDays(settings) {
   const days = Number(settings.chart_period);
   return Number.isInteger(days) && days > 0 ? days : DEFAULT_CHART_DAYS;
+}
+
+/**
+ * @description Read the month the heating season starts, for a widget instance.
+ * @param {object} settings - The widget instance settings.
+ * @returns {number} The month, 1-12.
+ * @example
+ * readSeasonMonth({ season_start: '9' }); // -> 9
+ */
+function readSeasonMonth(settings) {
+  const month = Number(settings.season_start);
+  return Number.isInteger(month) && month >= 1 && month <= 12 ? month : DEFAULT_SEASON_MONTH;
 }
 
 /**
@@ -480,7 +497,7 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
   }
   statusItems.push({
     label: t('remaining_weight'),
-    value: `${formatNumber(stats.stock * config.bagWeight, lang)} kg`,
+    value: `${formatNumber(stats.remainingKg, lang)} kg`,
     icon: 'box',
     color,
   });
@@ -502,6 +519,24 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
         icon: 'credit-card',
       });
     }
+    // What the bags used since the season started cost, first in first out.
+    const season = costOver(
+      ledger.movements,
+      seasonStart(now, readSeasonMonth(settings)),
+      now,
+      config,
+    );
+    if (season.bags > 0) {
+      statusItems.push({
+        label: t('season_cost'),
+        value: t(season.unpricedBags > 0 ? 'season_cost_value_unpriced' : 'season_cost_value', {
+          cost: formatEuros(season.cost, lang),
+          bags: formatNumber(season.bags, lang),
+          unpriced: formatNumber(season.unpricedBags, lang),
+        }),
+        icon: 'thermometer',
+      });
+    }
   }
   if (stats.lastDelivery) {
     statusItems.push({
@@ -517,7 +552,7 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     const usedUnit = new Intl.PluralRules(lang).select(used) === 'one' ? 'unit_bag' : 'unit_bags';
     statusItems.push({
       label: t('used_since_delivery'),
-      value: `${formatNumber(used, lang)} ${t(usedUnit)} · ${formatNumber(used * config.bagWeight, lang)} kg`,
+      value: `${formatNumber(used, lang)} ${t(usedUnit)} · ${formatNumber(stats.usedKgSinceDelivery, lang)} kg`,
       icon: 'bar-chart-2',
     });
   }
@@ -599,6 +634,7 @@ export {
   buildStockPoints,
   buildConsumptionPoints,
   readChartView,
+  readSeasonMonth,
   buildDeliveryAnnotations,
   readChartDays,
   stockColor,

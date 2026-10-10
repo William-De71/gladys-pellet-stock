@@ -169,14 +169,84 @@ test('recordMovement: rejects an unknown movement type', () => {
   );
 });
 
-test('recordMovement: keeps only the most recent movements', () => {
-  let ledger = recordMovement(createLedger(), { type: 'inventory', bags: 10000 }, daysAgo(400));
+test('recordMovement: compacts the oldest movements into an opening one, lots kept', () => {
+  let ledger = recordMovement(
+    createLedger(),
+    { type: 'delivery', bags: 1000, price: 6000, bagWeight: 10 },
+    daysAgo(400),
+  );
+  ledger = recordMovement(ledger, { type: 'delivery', bags: 1000, price: 7000 }, daysAgo(399));
   for (let i = 0; i < MAX_LEDGER_MOVEMENTS; i += 1) {
-    ledger = recordMovement(ledger, { type: 'consumption', bags: 1 }, daysAgo(399 - i * 0.1));
+    ledger = recordMovement(ledger, { type: 'consumption', bags: 1 }, daysAgo(398 - i * 0.1));
   }
   assert.equal(ledger.movements.length, MAX_LEDGER_MOVEMENTS);
-  assert.equal(ledger.movements[0].type, 'consumption');
-  assert.equal(currentStock(ledger), 10000 - MAX_LEDGER_MOVEMENTS);
+  const [opening] = ledger.movements;
+  assert.equal(opening.type, 'opening');
+  // 2,002 movements: the 2 deliveries and the first consumption compacted away.
+  assert.equal(opening.after, 1999);
+  assert.equal(opening.before, opening.after);
+  assert.deepEqual(opening.lots, [
+    { t: daysAgo(400).toISOString(), units: 999, unitPrice: 6, unitWeight: 10 },
+    { t: daysAgo(399).toISOString(), units: 1000, unitPrice: 7, unitWeight: null },
+  ]);
+  assert.equal(opening.bagPrice, 7);
+  assert.equal(currentStock(ledger), 2000 - MAX_LEDGER_MOVEMENTS);
+  // Valid once stored, the price and the weights still known.
+  assert.deepEqual(parseLedger(serializeLedger(ledger)), ledger);
+  const stats = computeStats(ledger, NOW, { ...WINDOW, bagWeight: 15 });
+  assert.equal(stats.bagPrice, 7);
+  assert.equal(stats.remainingKg, 0, 'every bag used');
+  // A second compaction folds the opening into the next one.
+  const next = recordMovement(ledger, { type: 'delivery', bags: 5 }, NOW);
+  assert.equal(next.movements[0].type, 'opening');
+  assert.equal(next.movements.filter((movement) => movement.type === 'opening').length, 1);
+});
+
+test('undoLastMovement: never removes the opening movement', () => {
+  const opening = {
+    t: daysAgo(5).toISOString(),
+    type: 'opening',
+    bags: 3,
+    before: 3,
+    after: 3,
+    lots: [{ t: daysAgo(30).toISOString(), units: 3, unitPrice: 7, unitWeight: null }],
+  };
+  const ledger = parseLedger({ movements: [opening] });
+  assert.equal(ledger.movements.length, 1);
+  assert.throws(() => undoLastMovement(ledger), { code: 'nothing_to_undo' });
+  // Lots that do not hold its stock: dropped.
+  assert.equal(
+    parseLedger({ movements: [{ ...opening, after: 4, bags: 4, before: 4 }] }).movements.length,
+    0,
+  );
+});
+
+test('recordMovement: counting more bags may come with their price', () => {
+  const ledger = recordMovement(
+    buildLedger([[3, 'delivery', 10]]),
+    { type: 'inventory', bags: 14, bagPrice: 7.5 },
+    NOW,
+  );
+  assert.equal(ledger.movements[1].price, 30);
+  assert.equal(computeStats(ledger, NOW, WINDOW).bagPrice, 7.5);
+  // Counting fewer: no bag found, no price.
+  const fewer = recordMovement(ledger, { type: 'inventory', bags: 2, bagPrice: 7.5 }, NOW);
+  assert.equal('price' in fewer.movements[2], false);
+});
+
+test('computeStats: the remaining weight follows the lots', () => {
+  const ledger = recordMovement(
+    buildLedger([[10, 'delivery', 4]]),
+    { type: 'delivery', bags: 6, bagWeight: 10 },
+    daysAgo(5),
+  );
+  // 4 bags of 15 kg (the default), then 6 of 10 kg.
+  assert.equal(computeStats(ledger, NOW, WINDOW).remainingKg, 120);
+  // The oldest bags go first.
+  const used = recordMovement(ledger, { type: 'consumption', bags: 5 }, daysAgo(1));
+  const stats = computeStats(used, NOW, WINDOW);
+  assert.equal(stats.remainingKg, 50);
+  assert.equal(stats.usedKgSinceDelivery, 70);
 });
 
 test('undoLastMovement: restores the stock before the last movement', () => {

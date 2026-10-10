@@ -28,7 +28,7 @@ const SCENE_TRIGGERS = {
 /**
  * @description Build the outputs of a scene action from the stock figures.
  * @param {object} stats - The figures computed by computeStats().
- * @param {{bagWeight: number, lowStockThreshold: number}} config - The normalized config.
+ * @param {{lowStockThreshold: number}} config - The effective config of the stock.
  * @param {Date} now - The current time.
  * @returns {{stock: number, remaining_kg: number, autonomy_days?: number,
  *   daily_rate?: number, days_before_order?: number}} The outputs.
@@ -38,7 +38,7 @@ const SCENE_TRIGGERS = {
 function buildSceneOutputs(stats, config, now) {
   const outputs = {
     stock: stats.stock,
-    remaining_kg: Math.round(stats.stock * config.bagWeight * 10) / 10,
+    remaining_kg: Math.round(stats.remainingKg * 10) / 10,
   };
   if (stats.autonomyDays !== null) {
     outputs.autonomy_days = stats.autonomyDays;

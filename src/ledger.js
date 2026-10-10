@@ -14,12 +14,18 @@
 //                  fewer bags than recorded means bags were used without being
 //                  declared, so a downward inventory counts as consumption:
 //                  a user who never taps "Remove bag(s)" and only counts the stock
-//                  every other week still gets a consumption rate.
+//                  every other week still gets a consumption rate. Counting
+//                  more bags may come with the `price` of the bags found;
+//   - opening      the stock (`after`) and its `lots` when the history began:
+//                  the movements compacted away beyond MAX_LEDGER_MOVEMENTS,
+//                  so the FIFO cost of the bags still in stock is kept (see
+//                  src/cost.js). Never undone, never made by the user.
 // `before`/`after` freeze the stock around the movement, so undoing the last
 // movement is exact and the chart never recomputes the past.
 // -----------------------------------------------------------------------------
 
-import { DAY_MS, LIMITS, MAX_LEDGER_MOVEMENTS, MOVEMENT_TYPES } from './constants.js';
+import { DAY_MS, DEFAULTS, LIMITS, MAX_LEDGER_MOVEMENTS, MOVEMENT_TYPES } from './constants.js';
+import { pricePerBag, valueBags, walkLots } from './cost.js';
 
 /**
  * Error of a refused stock operation, carrying a message code translated by
@@ -60,14 +66,44 @@ function isValidMovement(movement) {
     return false;
   }
   const { t, type, bags, before, after, price, bagWeight } = movement;
-  const isPositive = (value) => typeof value === 'number' && Number.isFinite(value) && value > 0;
-  return (
+  const valid =
     typeof t === 'string' &&
     !Number.isNaN(Date.parse(t)) &&
     Object.values(MOVEMENT_TYPES).includes(type) &&
     [bags, before, after].every((value) => Number.isInteger(value) && value >= 0) &&
     (price === undefined || isPositive(price)) &&
-    (bagWeight === undefined || isPositive(bagWeight))
+    (bagWeight === undefined || isPositive(bagWeight));
+  return valid && (type !== MOVEMENT_TYPES.OPENING || isValidOpening(movement));
+}
+
+/**
+ * @description True for a finite number above 0.
+ * @param {unknown} value - The value.
+ * @returns {boolean} Whether it is one.
+ */
+function isPositive(value) {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0;
+}
+
+/**
+ * @description Check the lots of an opening movement: they hold its stock.
+ * @param {object} movement - An opening movement.
+ * @returns {boolean} True when its lots can be trusted.
+ */
+function isValidOpening({ lots, after, bagPrice }) {
+  return (
+    Array.isArray(lots) &&
+    lots.every(
+      (lot) =>
+        lot &&
+        typeof lot.t === 'string' &&
+        Number.isInteger(lot.units) &&
+        lot.units > 0 &&
+        (lot.unitPrice === null || isPositive(lot.unitPrice)) &&
+        (lot.unitWeight === null || isPositive(lot.unitWeight)),
+    ) &&
+    lots.reduce((sum, lot) => sum + lot.units, 0) === after &&
+    (bagPrice === undefined || isPositive(bagPrice))
   );
 }
 
@@ -177,10 +213,11 @@ function readPrice(raw, limits) {
  * @description Record a movement and return the new ledger.
  * @param {{movements: Array<object>}} ledger - The current ledger.
  * @param {{type: string, bags: unknown, price?: unknown, bagPrice?: unknown,
- *   bagWeight?: unknown}} movement - The movement to record. Only a delivery
- *   takes the others: the `price` paid for the whole delivery or, when there
- *   is none, the `bagPrice` of one bag (stored as the total, to the cent), and
- *   the `bagWeight` in kg.
+ *   bagWeight?: unknown}} movement - The movement to record. A delivery takes
+ *   the others: the `price` paid for the whole delivery or, when there is
+ *   none, the `bagPrice` of one bag (stored as the total, to the cent), and
+ *   the `bagWeight` in kg. An inventory takes the `bagPrice` of the bags found
+ *   when it counts more than recorded.
  * @param {Date} now - The time of the movement.
  * @returns {{version: number, movements: Array<object>}} The new ledger.
  * @throws {StockError} On an invalid count, price or weight, or a consumption
@@ -198,6 +235,10 @@ function recordMovement(ledger, movementIn, now) {
   if (type === MOVEMENT_TYPES.INVENTORY) {
     bags = readBagCount(rawBags, LIMITS.stockBags);
     after = bags;
+    const bagPrice = readPrice(movementIn.bagPrice, LIMITS.bagPrice);
+    if (bagPrice !== null && after > before) {
+      price = Math.round(bagPrice * (after - before) * 100) / 100;
+    }
   } else if (type === MOVEMENT_TYPES.DELIVERY) {
     bags = readBagCount(rawBags, LIMITS.movementBags);
     after = before + bags;
@@ -230,8 +271,38 @@ function recordMovement(ledger, movementIn, now) {
   if (bagWeight !== null) {
     movement.bagWeight = bagWeight;
   }
-  const movements = [...ledger.movements, movement];
-  return { version: 1, movements: movements.slice(-MAX_LEDGER_MOVEMENTS) };
+  return { version: 1, movements: compact([...ledger.movements, movement]) };
+}
+
+/**
+ * @description Keep the ledger under MAX_LEDGER_MOVEMENTS: the oldest
+ * movements give way to an opening one, which keeps the stock and the lots
+ * they leave (an earlier opening included), so no bag loses its price.
+ * @param {Array<object>} movements - The movements, oldest first.
+ * @returns {Array<object>} The movements, at most MAX_LEDGER_MOVEMENTS.
+ * @example
+ * compact(movements);
+ */
+function compact(movements) {
+  if (movements.length <= MAX_LEDGER_MOVEMENTS) {
+    return movements;
+  }
+  const kept = movements.slice(-(MAX_LEDGER_MOVEMENTS - 1));
+  const dropped = movements.slice(0, movements.length - kept.length);
+  const { lots, lastBagPrice } = walkLots(dropped);
+  const last = dropped[dropped.length - 1];
+  const opening = {
+    t: last.t,
+    type: MOVEMENT_TYPES.OPENING,
+    bags: last.after,
+    before: last.after,
+    after: last.after,
+    lots,
+  };
+  if (lastBagPrice !== null) {
+    opening.bagPrice = lastBagPrice;
+  }
+  return [opening, ...kept];
 }
 
 /**
@@ -244,10 +315,10 @@ function recordMovement(ledger, movementIn, now) {
  * const { ledger: next, movement } = undoLastMovement(ledger);
  */
 function undoLastMovement(ledger) {
-  if (ledger.movements.length === 0) {
+  const movement = ledger.movements[ledger.movements.length - 1];
+  if (!movement || movement.type === MOVEMENT_TYPES.OPENING) {
     throw new StockError('nothing_to_undo');
   }
-  const movement = ledger.movements[ledger.movements.length - 1];
   return { ledger: { version: 1, movements: ledger.movements.slice(0, -1) }, movement };
 }
 
@@ -289,18 +360,24 @@ function isPalletDelivery(movement) {
  * without a threshold, or once the stock is already at or below it.
  * @param {{movements: Array<object>}} ledger - The ledger.
  * @param {Date} now - The current time.
- * @param {{consumptionWindow: number, lowStockThreshold?: number}} config - The normalized config.
+ * @param {{consumptionWindow: number, lowStockThreshold?: number, bagWeight?: number}} config - The
+ *   effective config of the stock.
  * @returns {{stock: number, dailyRate: number|null, autonomyDays: number|null,
  *   emptyDate: Date|null, orderDate: Date|null, lastDelivery: object|null,
  *   lastConsumption: object|null, consumedSinceDelivery: number|null, referenceStock: number,
  *   consumedInWindow: number, bagPrice: number|null, pricedBagWeight: number|null,
- *   hasHistory: boolean}} The stock figures. `bagPrice` is the price per bag of
- *   the last delivery entered with a price, `pricedBagWeight` the weight of its
- *   bags when it was entered.
+ *   remainingKg: number, usedKgSinceDelivery: number|null, hasHistory: boolean}} The
+ *   stock figures. `bagPrice` is the price per bag of the last bags entered
+ *   with a price, `pricedBagWeight` the weight of those bags when it was
+ *   entered. The weights come from the lots (see src/cost.js).
  * @example
  * const stats = computeStats(ledger, new Date(), { consumptionWindow: 14 });
  */
-function computeStats(ledger, now, { consumptionWindow, lowStockThreshold = 0 }) {
+function computeStats(
+  ledger,
+  now,
+  { consumptionWindow, lowStockThreshold = 0, bagWeight = DEFAULTS.bagWeight },
+) {
   const { movements } = ledger;
   const stock = currentStock(ledger);
   const nowMs = now.getTime();
@@ -356,7 +433,24 @@ function computeStats(ledger, now, { consumptionWindow, lowStockThreshold = 0 })
   const referenceStock = Math.max(stock, lastRefill ? lastRefill.after : stock);
 
   // The price of the last bags bought: what the next ones will likely cost.
-  const lastPriced = [...movements].reverse().find((movement) => movement.price !== undefined);
+  // Past a compaction, the opening movement still knows it.
+  const lastPriced = [...movements].reverse().find((movement) => pricePerBag(movement) !== null);
+  const opening = movements[0]?.type === MOVEMENT_TYPES.OPENING ? movements[0] : null;
+  let bagPrice = opening?.bagPrice ?? null;
+  if (lastPriced) {
+    bagPrice = pricePerBag(lastPriced);
+  }
+
+  // The weights, lot by lot: bags of 10 and 15 kg may share the stock.
+  const valuing = { bagPrice: null, bagWeight };
+  const { lots, used } = walkLots(movements);
+  const remainingKg = valueBags(lots, valuing).kg;
+  const usedKgSinceDelivery = lastDelivery
+    ? valueBags(
+        used.filter((part) => Date.parse(part.t) > Date.parse(lastDelivery.t)),
+        valuing,
+      ).kg
+    : null;
 
   return {
     stock,
@@ -369,8 +463,10 @@ function computeStats(ledger, now, { consumptionWindow, lowStockThreshold = 0 })
     consumedSinceDelivery,
     referenceStock,
     consumedInWindow,
-    bagPrice: lastPriced ? lastPriced.price / lastPriced.bags : null,
+    bagPrice,
     pricedBagWeight: lastPriced?.bagWeight ?? null,
+    remainingKg,
+    usedKgSinceDelivery,
     hasHistory: movements.length > 0,
   };
 }

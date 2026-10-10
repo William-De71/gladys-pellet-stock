@@ -8,7 +8,8 @@
 //   - the dashboard widget (SDK 0.14 `widgets`): "Remove bag(s)", "Add
 //     bag(s)", "Pallet delivered", "Undo" buttons, relayed to onWidgetAction;
 //   - the manifest actions of the Configuration screen: correct the stock,
-//     record a delivery or a consumption of any size, undo;
+//     record a delivery or a consumption of any size, undo, analyze the cost
+//     of a period, and manage the stocks (houses, settings);
 //   - the scene actions: use, add or count bags (a Zigbee button next to the
 //     stove can decrement the stock), or read the figures for a message;
 //   - and out: a virtual "Pellet stock" device per stock (stock + autonomy),
@@ -25,6 +26,7 @@
 
 import { GladysIntegration, logger } from '@gladysassistant/integration-sdk';
 import { STOCK_SETTINGS, normalizeConfig } from './src/config.js';
+import { costOver, nextDay, parseDay } from './src/cost.js';
 import {
   MOVEMENT_TYPES,
   REFRESH_INTERVAL_MS,
@@ -140,6 +142,48 @@ function describeSettings(stock, config) {
   );
 }
 
+/**
+ * @description Describe the cost of the bags used over a period.
+ * @param {Date} start - The first day.
+ * @param {Date} lastDay - The last day (included).
+ * @param {{bags: number, kg: number, cost: number, unpricedBags: number}} cost - See costOver().
+ * @returns {{en: string, fr: string}} The message shown to the user.
+ * @example
+ * describeCost(new Date(2026, 9, 1), new Date(2027, 5, 1), cost);
+ */
+function describeCost(start, lastDay, cost) {
+  return Object.fromEntries(
+    LANGUAGES.map((language) => {
+      const t = (key, params) => translate(language, key, params);
+      // Day first in both languages, as the dates were typed.
+      const day = (date) => date.toLocaleDateString(language === 'en' ? 'en-GB' : language);
+      const euros = (value, digits) =>
+        new Intl.NumberFormat(language, {
+          style: 'currency',
+          currency: 'EUR',
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits,
+        }).format(value);
+      const period = { start: day(start), end: day(lastDay) };
+      if (cost.bags === 0) {
+        return [language, t('cost_report_empty', period)];
+      }
+      const pricedKg = cost.kg * ((cost.bags - cost.unpricedBags) / cost.bags);
+      let text = t('cost_report', {
+        ...period,
+        bags: new Intl.NumberFormat(language).format(cost.bags),
+        kg: new Intl.NumberFormat(language, { maximumFractionDigits: 0 }).format(cost.kg),
+        cost: euros(cost.cost, 0),
+        kg_price: pricedKg > 0 ? euros(cost.cost / pricedKg, 2) : '—',
+      });
+      if (cost.unpricedBags > 0) {
+        text += ` ${t('cost_report_unpriced', { bags: cost.unpricedBags })}`;
+      }
+      return [language, text];
+    }),
+  );
+}
+
 // --- Discovery: one virtual device per stock ------------------------------
 
 /**
@@ -170,7 +214,9 @@ gladys.onSetValue(async () => {
 // --- Manifest actions (Configuration screen) -------------------------------
 
 gladys.onAction('set_stock', (fields) =>
-  recordFromUser(fields.stock, MOVEMENT_TYPES.INVENTORY, fields.bags),
+  recordFromUser(fields.stock, MOVEMENT_TYPES.INVENTORY, fields.bags, {
+    bagPrice: fields.bag_price,
+  }),
 );
 gladys.onAction('add_delivery', (fields) =>
   recordFromUser(fields.stock, MOVEMENT_TYPES.DELIVERY, fields.bags, {
@@ -182,6 +228,30 @@ gladys.onAction('consume', (fields) =>
   recordFromUser(fields.stock, MOVEMENT_TYPES.CONSUMPTION, fields.bags),
 );
 gladys.onAction('undo', (fields) => undoFromUser(fields.stock));
+gladys.onAction('analyze_cost', (fields) =>
+  runOperation(async () => {
+    await stocks.ready();
+    const store = stocks.storeOf(fields.stock);
+    const start = parseDay(fields.start);
+    const lastDay =
+      typeof fields.end === 'string' && fields.end.trim() !== ''
+        ? parseDay(fields.end)
+        : new Date();
+    if (!start || !lastDay) {
+      throw new StockError('invalid_date');
+    }
+    if (lastDay.getTime() < start.getTime()) {
+      throw new StockError('invalid_period');
+    }
+    const cost = costOver(
+      store.getLedger().movements,
+      start,
+      nextDay(lastDay),
+      stocks.configOf(fields.stock),
+    );
+    return describeCost(start, lastDay, cost);
+  }),
+);
 
 gladys.onAction('add_stock', (fields) =>
   runOperation(async () => {

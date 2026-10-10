@@ -29,10 +29,21 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 - The **average consumption per day**, the **last bag used** ("2 days ago"), the **remaining weight**, the **last delivery** and the **use since** (in bags and kg).
 - The date to **order by** (when the stock will reach the low stock threshold) and the **estimated date** the stock runs out.
 - Once a price is known: the **stock value**, with the **price per bag and per kg**, and the **cost per month**. The price paid for the last delivery counts, or else the **pallet price** of the configuration. The price per kg follows the weight of the bags of that delivery.
+- The **season cost**: what the bags used since the heating season started cost (October by default, set in the widget settings), with their count.
 
 Only deliveries of several bags (a pallet, a batch…) count as deliveries: bags added one by one are neither marked on the chart nor used for "Last delivery" and the use since.
 
 In the widget settings, you can **hide the buttons**, for instance for a read-only wall display.
+
+## Heating cost
+
+The oldest bags go first ("first in, first out"): each bag used costs the price it was bought at. If you bought 40 bags at €6 then 60 bags at €8, the first 40 bags used count €6 each, the next ones €8.
+
+- A delivery entered without a price takes the **last price per bag known**.
+- The stock entered at first with "Correct the stock" has no price: it takes the **pallet price** of the configuration or, without one, is told apart ("12 unpriced"). "Correct the stock" takes an optional **price per bag** for the bags counted above the recorded stock.
+- The **remaining weight** and the use in kg follow the weight of the bags of each delivery.
+
+For a given period, run the **"Analyze the cost"** action with a start and an end date (DD/MM/YYYY): "From 01/10/2026 to 01/06/2027: 100 bags, 1,500 kg, €712 (€0.47/kg)".
 
 ## How the autonomy is computed
 
@@ -93,4 +104,4 @@ A delivery added by a scene does not fire "Pallet delivered", so that a scene ca
 
 ## Backup
 
-The movement ledger (the last 2,000) is stored in the Gladys database: it is part of the **Gladys backups** and survives an update of the integration. It is deleted if you uninstall the integration.
+The movement ledger (the last 2,000; beyond, the oldest ones are summed up, keeping the price of the bags still in stock) is stored in the Gladys database: it is part of the **Gladys backups** and survives an update of the integration. It is deleted if you uninstall the integration.

@@ -66,11 +66,14 @@ const MOVEMENT_TYPES = {
   DELIVERY: 'delivery',
   CONSUMPTION: 'consumption',
   INVENTORY: 'inventory',
+  // Stands for the movements compacted away: the stock and its lots then.
+  OPENING: 'opening',
 };
 
-// Oldest movements are dropped beyond this count: a year of heavy use (5
-// taps a day all winter) fits, so the last pallet and the one-year chart are
-// never cut. About 200 KB of JSON: the core stores it as TEXT, and its host
+// Beyond this count, the oldest movements are compacted into an opening one
+// that keeps the lots still in stock (see src/cost.js): a year of heavy use
+// (5 taps a day all winter) fits, so the last pallet and the one-year chart
+// are never cut. About 200 KB of JSON: the core stores it as TEXT, and its host
 // API takes bodies up to 20 MB.
 const MAX_LEDGER_MOVEMENTS = 2000;
 

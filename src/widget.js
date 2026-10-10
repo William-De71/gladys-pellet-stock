@@ -291,11 +291,12 @@ function buildConsumptionPoints(movements, now, days) {
  * @param {Array<object>} movements - The ledger movements, oldest first.
  * @param {Date} now - The current time.
  * @param {number} days - The period, in days.
+ * @param {Function} [label] - `(movement) => string`, the label of a delivery.
  * @returns {Array<object>} The chart annotations (the most recent ones).
  * @example
  * const annotations = buildDeliveryAnnotations(ledger.movements, new Date(), 90);
  */
-function buildDeliveryAnnotations(movements, now, days) {
+function buildDeliveryAnnotations(movements, now, days, label = (movement) => `+${movement.bags}`) {
   const start = now.getTime() - days * DAY_MS;
   return movements
     .filter((movement) => isPalletDelivery(movement) && Date.parse(movement.t) >= start)
@@ -303,7 +304,7 @@ function buildDeliveryAnnotations(movements, now, days) {
     .map((movement) => ({
       t: movement.t,
       value: movement.after,
-      label: `+${movement.bags}`,
+      label: label(movement),
       color: 'info',
     }));
 }
@@ -609,26 +610,33 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
 }
 
 /**
- * @description The content of a widget whose stock was removed.
+ * @description The content of a widget that only has something to say: its
+ * stock was removed, is of the other type, or is still to be picked.
  * @param {string} [language] - The language of the requesting user.
+ * @param {string} [key] - The message key.
  * @returns {{ttl_seconds: number, components: Array<object>}} The widget content.
  * @example
  * const content = buildUnknownStockContent('fr');
  */
-function buildUnknownStockContent(language) {
+function buildUnknownStockContent(language, key = 'widget_unknown_stock') {
   return {
     ttl_seconds: TTL_SECONDS,
     components: [
-      {
-        type: 'text',
-        variant: 'body',
-        text: translate(resolveLanguage(language), 'widget_unknown_stock'),
-      },
+      { type: 'text', variant: 'body', text: translate(resolveLanguage(language), key) },
     ],
   };
 }
 
 export {
+  CHART_VIEWS,
+  DAYS_PER_MONTH,
+  MAX_DAILY_BARS_DAYS,
+  formatAgo,
+  formatEuros,
+  formatNumber,
+  formatShortDate,
+  formatUnitPrice,
+  roundCents,
   buildWidgetContent,
   buildUnknownStockContent,
   buildStockPoints,

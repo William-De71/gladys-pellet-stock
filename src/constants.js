@@ -9,6 +9,12 @@ const CONFIG_KEYS = {
   LOW_STOCK_THRESHOLD: 'low_stock_threshold',
   CONSUMPTION_WINDOW: 'consumption_window',
   PALLET_PRICE: 'pallet_price',
+  // The defaults of the silos.
+  BULK_CAPACITY: 'bulk_capacity',
+  BULK_LOW_THRESHOLD: 'bulk_low_threshold',
+  BULK_DELIVERY: 'bulk_delivery_default',
+  BULK_TONNE_PRICE: 'bulk_tonne_price',
+  BULK_READING_UNIT: 'bulk_reading_unit',
 };
 
 // Key stored through setConfig() OUTSIDE the config_schema: the ledger of
@@ -22,9 +28,17 @@ const LEDGER_CONFIG_KEY = 'stock_ledger';
 // house or settings of its own.
 const STOCKS_CONFIG_KEY = 'stocks';
 
-// What a stock holds. A silo (`bulk`, in kg) is to come.
+// What a stock holds: bags (counted in bags), or a silo filled in bulk
+// (counted in kg). Its ledger counts in that unit.
 const STOCK_TYPES = {
   BAGS: 'bags',
+  BULK: 'bulk',
+};
+
+// How the level of a silo is read: in kg, or in % of its capacity.
+const READING_UNITS = {
+  KG: 'kg',
+  PERCENT: 'percent',
 };
 
 const DEFAULTS = {
@@ -40,6 +54,13 @@ const DEFAULTS = {
   // of the last delivery entered with one wins over this configured one.
   palletPrice: null,
   bagPrice: null,
+  // Unknown until the user enters it: no fill rate, no reading in %.
+  bulkCapacity: null,
+  bulkLowThreshold: 500,
+  // A common truck delivery of bulk pellets: 3 tonnes.
+  bulkDelivery: 3000,
+  bulkTonnePrice: null,
+  bulkReadingUnit: READING_UNITS.KG,
 };
 
 const LIMITS = {
@@ -55,6 +76,13 @@ const LIMITS = {
   // Upper bound of a single movement, to catch a typo (660 instead of 66).
   movementBags: { min: 1, max: 1000 },
   stockBags: { min: 0, max: 10000 },
+  // A silo, in kg: a delivery of up to 30 t, a silo of up to 100 t.
+  bulkCapacity: { min: 0, max: 100000 },
+  bulkLowThreshold: { min: 0, max: 50000 },
+  bulkTonnePrice: { min: 0, max: 2000 },
+  movementKg: { min: 1, max: 30000 },
+  stockKg: { min: 0, max: 100000 },
+  percent: { min: 0, max: 100 },
   // The name of a stock added before the houses (versions up to 1.2).
   stockName: { min: 1, max: 24 },
   // Stocks added next to the default one: a house may hold two (bags, silo).
@@ -77,14 +105,23 @@ const MOVEMENT_TYPES = {
 // API takes bodies up to 20 MB.
 const MAX_LEDGER_MOVEMENTS = 2000;
 
-// Key of the dashboard widget declared in the manifest.
+// Keys of the dashboard widgets declared in the manifest: the stock of bags,
+// and the silo.
 const WIDGET_KEY = 'pellet_stock';
+const SILO_WIDGET_KEY = 'pellet_silo';
 
 // Keys of the widget buttons (`^[a-z0-9_]{2,32}$`).
 const WIDGET_ACTIONS = {
   CONSUME: 'consume',
   ADD_BAG: 'add_bag',
   DELIVERY: 'delivery',
+  UNDO: 'undo',
+};
+
+// Keys of the silo widget buttons.
+const SILO_ACTIONS = {
+  DELIVERY: 'delivery',
+  READING: 'reading',
   UNDO: 'undo',
 };
 
@@ -99,6 +136,9 @@ const DEVICE_ID = 'stock';
 const FEATURE_KEYS = {
   STOCK: 'bags',
   AUTONOMY: 'autonomy',
+  // A silo: its level in kg, and in % of its capacity.
+  LEVEL: 'level',
+  FILL: 'fill',
 };
 
 // The autonomy moves with time even without any movement (the consumption
@@ -112,12 +152,15 @@ export {
   LEDGER_CONFIG_KEY,
   STOCKS_CONFIG_KEY,
   STOCK_TYPES,
+  READING_UNITS,
   DEFAULTS,
   LIMITS,
   MOVEMENT_TYPES,
   MAX_LEDGER_MOVEMENTS,
   WIDGET_KEY,
+  SILO_WIDGET_KEY,
   WIDGET_ACTIONS,
+  SILO_ACTIONS,
   DEVICE_TYPE,
   DEVICE_ID,
   FEATURE_KEYS,

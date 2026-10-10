@@ -116,6 +116,110 @@
       "required": false,
       "min": 0,
       "max": 5000
+    },
+    {
+      "key": "silo",
+      "type": "section",
+      "label": {
+        "en": "Silo (bulk pellets)",
+        "fr": "Silo (pellets en vrac)"
+      },
+      "description": {
+        "en": "The defaults of the silos, added with \"Add a stock\" (type: silo) and followed with the \"Pellet silo\" widget.",
+        "fr": "Les réglages par défaut des silos, ajoutés avec « Ajouter un stock » (type : silo) et suivis avec le widget « Silo de pellets »."
+      }
+    },
+    {
+      "key": "bulk_capacity",
+      "type": "number",
+      "label": {
+        "en": "Silo capacity (kg)",
+        "fr": "Capacité du silo (kg)"
+      },
+      "description": {
+        "en": "Optional. Gives the fill rate, and lets you read the level in %.",
+        "fr": "Facultatif. Donne le taux de remplissage, et permet de relever le niveau en %."
+      },
+      "required": false,
+      "min": 0,
+      "max": 100000
+    },
+    {
+      "key": "bulk_low_threshold",
+      "type": "number",
+      "label": {
+        "en": "Low stock threshold (kg)",
+        "fr": "Seuil de stock bas (kg)"
+      },
+      "description": {
+        "en": "From this level, the silo widget turns orange and reminds you to order.",
+        "fr": "À partir de ce niveau, le widget du silo passe en orange et vous rappelle de commander."
+      },
+      "required": false,
+      "default": 500,
+      "min": 0,
+      "max": 50000
+    },
+    {
+      "key": "bulk_delivery_default",
+      "type": "number",
+      "label": {
+        "en": "Usual delivery (kg)",
+        "fr": "Livraison habituelle (kg)"
+      },
+      "description": {
+        "en": "Pre-fills the \"Delivery\" form of the silo widget.",
+        "fr": "Pré-remplit le formulaire « Livraison » du widget du silo."
+      },
+      "required": false,
+      "default": 3000,
+      "min": 1,
+      "max": 30000
+    },
+    {
+      "key": "bulk_tonne_price",
+      "type": "number",
+      "label": {
+        "en": "Price per tonne (€)",
+        "fr": "Prix à la tonne (€)"
+      },
+      "description": {
+        "en": "Optional. The price paid for the last delivery wins over it.",
+        "fr": "Facultatif. Le prix payé lors de la dernière livraison l'emporte."
+      },
+      "required": false,
+      "min": 0,
+      "max": 2000
+    },
+    {
+      "key": "bulk_reading_unit",
+      "type": "select",
+      "label": {
+        "en": "Level reading",
+        "fr": "Relevé du niveau"
+      },
+      "description": {
+        "en": "How the \"Level reading\" form asks for the level. In % needs the capacity.",
+        "fr": "Comment le formulaire « Relevé de niveau » demande le niveau. En % demande la capacité."
+      },
+      "required": false,
+      "default": "kg",
+      "options": [
+        {
+          "value": "kg",
+          "label": {
+            "en": "In kg",
+            "fr": "En kg"
+          }
+        },
+        {
+          "value": "percent",
+          "label": {
+            "en": "In % of the capacity",
+            "fr": "En % de la capacité"
+          }
+        }
+      ]
     }
   ],
   "actions": [
@@ -367,8 +471,8 @@
         "fr": "Ajouter un stock"
       },
       "description": {
-        "en": "To follow the pellets of another house: the new stock gets its own device, to add from the Discovery tab, and takes the name of the house. One stock per house.",
-        "fr": "Pour suivre les pellets d'une autre maison : le nouveau stock a son propre appareil, à ajouter depuis l'onglet Découverte, et prend le nom de la maison. Un stock par maison."
+        "en": "To follow the pellets of another house, in bags or in a silo: the new stock gets its own device, to add from the Discovery tab, and takes the name of the house. One stock of each type per house.",
+        "fr": "Pour suivre les pellets d'une autre maison, en sacs ou en silo : le nouveau stock a son propre appareil, à ajouter depuis l'onglet Découverte, et prend le nom de la maison. Un stock de chaque type par maison."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -381,6 +485,32 @@
             "fr": "Maison"
           },
           "required": true
+        },
+        {
+          "key": "type",
+          "type": "select",
+          "label": {
+            "en": "Type",
+            "fr": "Type"
+          },
+          "required": false,
+          "default": "bags",
+          "options": [
+            {
+              "value": "bags",
+              "label": {
+                "en": "Bags",
+                "fr": "Sacs"
+              }
+            },
+            {
+              "value": "bulk",
+              "label": {
+                "en": "Silo (bulk)",
+                "fr": "Silo (vrac)"
+              }
+            }
+          ]
         }
       ]
     },
@@ -449,6 +579,29 @@
           "required": false
         },
         {
+          "key": "consumption_window",
+          "type": "number",
+          "label": {
+            "en": "Consumption window (days)",
+            "fr": "Période de calcul (jours)"
+          },
+          "required": false,
+          "min": 3,
+          "max": 90
+        },
+        {
+          "key": "bags_settings",
+          "type": "section",
+          "label": {
+            "en": "Stock of bags",
+            "fr": "Stock de sacs"
+          },
+          "description": {
+            "en": "Ignored for a silo.",
+            "fr": "Ignorés pour un silo."
+          }
+        },
+        {
           "key": "bag_weight",
           "type": "number",
           "label": {
@@ -482,17 +635,6 @@
           "max": 1000
         },
         {
-          "key": "consumption_window",
-          "type": "number",
-          "label": {
-            "en": "Consumption window (days)",
-            "fr": "Période de calcul (jours)"
-          },
-          "required": false,
-          "min": 3,
-          "max": 90
-        },
-        {
           "key": "pallet_price",
           "type": "number",
           "label": {
@@ -502,6 +644,87 @@
           "required": false,
           "min": 0,
           "max": 5000
+        },
+        {
+          "key": "silo_settings",
+          "type": "section",
+          "label": {
+            "en": "Silo",
+            "fr": "Silo"
+          },
+          "description": {
+            "en": "Ignored for a stock of bags. The consumption window above applies to both.",
+            "fr": "Ignorés pour un stock de sacs. La période de calcul ci-dessus vaut pour les deux."
+          }
+        },
+        {
+          "key": "bulk_capacity",
+          "type": "number",
+          "label": {
+            "en": "Silo capacity (kg)",
+            "fr": "Capacité du silo (kg)"
+          },
+          "required": false,
+          "min": 0,
+          "max": 100000
+        },
+        {
+          "key": "bulk_low_threshold",
+          "type": "number",
+          "label": {
+            "en": "Low stock threshold (kg)",
+            "fr": "Seuil de stock bas (kg)"
+          },
+          "required": false,
+          "min": 0,
+          "max": 50000
+        },
+        {
+          "key": "bulk_delivery_default",
+          "type": "number",
+          "label": {
+            "en": "Usual delivery (kg)",
+            "fr": "Livraison habituelle (kg)"
+          },
+          "required": false,
+          "min": 1,
+          "max": 30000
+        },
+        {
+          "key": "bulk_tonne_price",
+          "type": "number",
+          "label": {
+            "en": "Price per tonne (€)",
+            "fr": "Prix à la tonne (€)"
+          },
+          "required": false,
+          "min": 0,
+          "max": 2000
+        },
+        {
+          "key": "bulk_reading_unit",
+          "type": "select",
+          "label": {
+            "en": "Level reading",
+            "fr": "Relevé du niveau"
+          },
+          "required": false,
+          "options": [
+            {
+              "value": "kg",
+              "label": {
+                "en": "In kg",
+                "fr": "En kg"
+              }
+            },
+            {
+              "value": "percent",
+              "label": {
+                "en": "In % of the capacity",
+                "fr": "En % de la capacité"
+              }
+            }
+          ]
         },
         {
           "key": "reset",
@@ -1075,6 +1298,178 @@
           }
         }
       ]
+    },
+    {
+      "key": "silo_delivery",
+      "label": {
+        "en": "Record a silo delivery",
+        "fr": "Enregistrer une livraison du silo"
+      },
+      "description": {
+        "en": "Adds the kg delivered to the silo.",
+        "fr": "Ajoute les kg livrés au silo."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the only silo.",
+            "fr": "Laissez vide pour le seul silo."
+          },
+          "required": false
+        },
+        {
+          "key": "kg",
+          "type": "number",
+          "label": {
+            "en": "kg delivered",
+            "fr": "kg livrés"
+          },
+          "required": true,
+          "min": 1,
+          "max": 30000
+        },
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Price paid (€)",
+            "fr": "Prix payé (€)"
+          },
+          "required": false,
+          "min": 0,
+          "max": 20000
+        }
+      ],
+      "outputs": [
+        {
+          "key": "stock",
+          "type": "number",
+          "label": {
+            "en": "Level (kg)",
+            "fr": "Niveau (kg)"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "kg per day",
+            "fr": "kg par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        }
+      ]
+    },
+    {
+      "key": "silo_reading",
+      "label": {
+        "en": "Read the silo level",
+        "fr": "Relever le niveau du silo"
+      },
+      "description": {
+        "en": "Sets the level of the silo: a level sensor can feed it. A lower level than the last one counts as consumption.",
+        "fr": "Fixe le niveau du silo : un capteur de niveau peut l'alimenter. Un niveau plus bas que le précédent compte comme consommation."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the only silo.",
+            "fr": "Laissez vide pour le seul silo."
+          },
+          "required": false
+        },
+        {
+          "key": "kg",
+          "type": "number",
+          "label": {
+            "en": "Level (kg)",
+            "fr": "Niveau (kg)"
+          },
+          "required": false,
+          "min": 0,
+          "max": 100000
+        },
+        {
+          "key": "percent",
+          "type": "number",
+          "label": {
+            "en": "Level (%)",
+            "fr": "Niveau (%)"
+          },
+          "description": {
+            "en": "Instead of the kg: needs the capacity of the silo.",
+            "fr": "À la place des kg : demande la capacité du silo."
+          },
+          "required": false,
+          "min": 0,
+          "max": 100
+        }
+      ],
+      "outputs": [
+        {
+          "key": "stock",
+          "type": "number",
+          "label": {
+            "en": "Level (kg)",
+            "fr": "Niveau (kg)"
+          }
+        },
+        {
+          "key": "autonomy_days",
+          "type": "number",
+          "label": {
+            "en": "Autonomy (days)",
+            "fr": "Autonomie (jours)"
+          }
+        },
+        {
+          "key": "daily_rate",
+          "type": "number",
+          "label": {
+            "en": "kg per day",
+            "fr": "kg par jour"
+          }
+        },
+        {
+          "key": "days_before_order",
+          "type": "number",
+          "label": {
+            "en": "Days before ordering",
+            "fr": "Jours avant de commander"
+          }
+        }
+      ]
     }
   ],
   "widgets": [
@@ -1129,6 +1524,208 @@
               "label": {
                 "en": "Bags used per day",
                 "fr": "Sacs utilisés par jour"
+              }
+            }
+          ]
+        },
+        {
+          "key": "chart_period",
+          "type": "select",
+          "label": {
+            "en": "Chart period",
+            "fr": "Période du graphique"
+          },
+          "default": "90",
+          "options": [
+            {
+              "value": "30",
+              "label": {
+                "en": "1 month",
+                "fr": "1 mois"
+              }
+            },
+            {
+              "value": "90",
+              "label": {
+                "en": "3 months",
+                "fr": "3 mois"
+              }
+            },
+            {
+              "value": "365",
+              "label": {
+                "en": "1 year",
+                "fr": "1 an"
+              }
+            }
+          ]
+        },
+        {
+          "key": "season_start",
+          "type": "select",
+          "label": {
+            "en": "Heating season starts in",
+            "fr": "Début de la saison de chauffe"
+          },
+          "description": {
+            "en": "The \"Season cost\" row adds up the bags used since the first day of this month.",
+            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois."
+          },
+          "default": "10",
+          "options": [
+            {
+              "value": "1",
+              "label": {
+                "en": "January",
+                "fr": "Janvier"
+              }
+            },
+            {
+              "value": "2",
+              "label": {
+                "en": "February",
+                "fr": "Février"
+              }
+            },
+            {
+              "value": "3",
+              "label": {
+                "en": "March",
+                "fr": "Mars"
+              }
+            },
+            {
+              "value": "4",
+              "label": {
+                "en": "April",
+                "fr": "Avril"
+              }
+            },
+            {
+              "value": "5",
+              "label": {
+                "en": "May",
+                "fr": "Mai"
+              }
+            },
+            {
+              "value": "6",
+              "label": {
+                "en": "June",
+                "fr": "Juin"
+              }
+            },
+            {
+              "value": "7",
+              "label": {
+                "en": "July",
+                "fr": "Juillet"
+              }
+            },
+            {
+              "value": "8",
+              "label": {
+                "en": "August",
+                "fr": "Août"
+              }
+            },
+            {
+              "value": "9",
+              "label": {
+                "en": "September",
+                "fr": "Septembre"
+              }
+            },
+            {
+              "value": "10",
+              "label": {
+                "en": "October",
+                "fr": "Octobre"
+              }
+            },
+            {
+              "value": "11",
+              "label": {
+                "en": "November",
+                "fr": "Novembre"
+              }
+            },
+            {
+              "value": "12",
+              "label": {
+                "en": "December",
+                "fr": "Décembre"
+              }
+            }
+          ]
+        },
+        {
+          "key": "show_buttons",
+          "type": "boolean",
+          "label": {
+            "en": "Show the buttons",
+            "fr": "Afficher les boutons"
+          },
+          "description": {
+            "en": "Turn off for a read-only wall display.",
+            "fr": "À désactiver pour un écran mural en lecture seule."
+          },
+          "default": true
+        }
+      ],
+      "action_timeout_seconds": 15
+    },
+    {
+      "key": "pellet_silo",
+      "label": {
+        "en": "Pellet silo",
+        "fr": "Silo de pellets"
+      },
+      "description": {
+        "en": "Level, autonomy and cost of a silo of bulk pellets, with delivery and level reading.",
+        "fr": "Niveau, autonomie et coût d'un silo de pellets en vrac, avec livraison et relevé de niveau."
+      },
+      "icon": "database",
+      "settings": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the only silo. A silo appears here once its device was added from the Discovery tab.",
+            "fr": "Laissez vide pour le seul silo. Un silo apparaît ici une fois son appareil ajouté depuis l'onglet Découverte."
+          },
+          "required": false
+        },
+        {
+          "key": "chart_view",
+          "type": "select",
+          "label": {
+            "en": "Chart",
+            "fr": "Graphique"
+          },
+          "description": {
+            "en": "Put two widgets side by side to see both.",
+            "fr": "Mettez deux widgets côte à côte pour voir les deux."
+          },
+          "default": "stock",
+          "options": [
+            {
+              "value": "stock",
+              "label": {
+                "en": "Level over time",
+                "fr": "Évolution du niveau"
+              }
+            },
+            {
+              "value": "consumption",
+              "label": {
+                "en": "kg used per day",
+                "fr": "kg utilisés par jour"
               }
             }
           ]

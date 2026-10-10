@@ -10,28 +10,80 @@
 // defaults of every stock.
 // -----------------------------------------------------------------------------
 
-import { CONFIG_KEYS, DEFAULTS, LIMITS } from './constants.js';
+import { CONFIG_KEYS, DEFAULTS, LIMITS, READING_UNITS, STOCK_TYPES } from './constants.js';
 import { StockError } from './ledger.js';
 
+const { BAGS, BULK } = STOCK_TYPES;
+
 // The settings a stock may override: their key in the normalized config, the
-// field of the config_schema (and of the "Set up a stock" action) carrying them.
+// field of the config_schema (and of the "Set up a stock" action) carrying
+// them, and the types of stock they apply to. A `price` (or a capacity) of 0
+// is a value of its own: "none for this stock", whatever the default.
 const STOCK_SETTINGS = [
-  { key: 'bagWeight', field: CONFIG_KEYS.BAG_WEIGHT, limits: LIMITS.bagWeight },
-  { key: 'palletSize', field: CONFIG_KEYS.PALLET_SIZE, limits: LIMITS.palletSize, integer: true },
+  { key: 'bagWeight', field: CONFIG_KEYS.BAG_WEIGHT, limits: LIMITS.bagWeight, types: [BAGS] },
+  {
+    key: 'palletSize',
+    field: CONFIG_KEYS.PALLET_SIZE,
+    limits: LIMITS.palletSize,
+    integer: true,
+    types: [BAGS],
+  },
   {
     key: 'lowStockThreshold',
     field: CONFIG_KEYS.LOW_STOCK_THRESHOLD,
     limits: LIMITS.lowStockThreshold,
     integer: true,
+    types: [BAGS],
   },
   {
     key: 'consumptionWindow',
     field: CONFIG_KEYS.CONSUMPTION_WINDOW,
     limits: LIMITS.consumptionWindow,
     integer: true,
+    types: [BAGS, BULK],
   },
-  // 0 is a price of its own: "no price for this stock", whatever the default.
-  { key: 'palletPrice', field: CONFIG_KEYS.PALLET_PRICE, limits: LIMITS.palletPrice, price: true },
+  {
+    key: 'palletPrice',
+    field: CONFIG_KEYS.PALLET_PRICE,
+    limits: LIMITS.palletPrice,
+    price: true,
+    types: [BAGS],
+  },
+  {
+    key: 'bulkCapacity',
+    field: CONFIG_KEYS.BULK_CAPACITY,
+    limits: LIMITS.bulkCapacity,
+    integer: true,
+    price: true,
+    types: [BULK],
+  },
+  {
+    key: 'bulkLowThreshold',
+    field: CONFIG_KEYS.BULK_LOW_THRESHOLD,
+    limits: LIMITS.bulkLowThreshold,
+    integer: true,
+    types: [BULK],
+  },
+  {
+    key: 'bulkDelivery',
+    field: CONFIG_KEYS.BULK_DELIVERY,
+    limits: LIMITS.movementKg,
+    integer: true,
+    types: [BULK],
+  },
+  {
+    key: 'bulkTonnePrice',
+    field: CONFIG_KEYS.BULK_TONNE_PRICE,
+    limits: LIMITS.bulkTonnePrice,
+    price: true,
+    types: [BULK],
+  },
+  {
+    key: 'bulkReadingUnit',
+    field: CONFIG_KEYS.BULK_READING_UNIT,
+    options: Object.values(READING_UNITS),
+    types: [BULK],
+  },
 ];
 
 /**
@@ -55,9 +107,11 @@ function readNumber(raw, fallback, { min, max }) {
  * @description Normalize the raw integration config.
  * @param {object} [raw] - The config as received from Gladys.
  * @returns {{bagWeight: number, palletSize: number, lowStockThreshold: number,
- *   consumptionWindow: number, palletPrice: number|null, bagPrice: number|null}}
- *   The normalized config. The bag price is the pallet price divided by the
- *   bags per pallet; a price of 0 counts as no price.
+ *   consumptionWindow: number, palletPrice: number|null, bagPrice: number|null,
+ *   bulkCapacity: number|null, bulkLowThreshold: number, bulkDelivery: number,
+ *   bulkTonnePrice: number|null, bulkReadingUnit: string}} The normalized config.
+ *   The bag price is the pallet price divided by the bags per pallet; a price
+ *   (or a capacity) of 0 counts as none.
  * @example
  * normalizeConfig({ bag_weight: 15 });
  */
@@ -87,6 +141,33 @@ function normalizeConfig(raw = {}) {
     ),
     palletPrice: palletPrice > 0 ? palletPrice : DEFAULTS.palletPrice,
     bagPrice: palletPrice > 0 ? palletPrice / palletSize : DEFAULTS.bagPrice,
+    ...normalizeBulkConfig(raw),
+  };
+}
+
+/**
+ * @description Normalize the defaults of the silos.
+ * @param {object} raw - The config as received from Gladys.
+ * @returns {object} The `bulk*` keys of the normalized config.
+ */
+function normalizeBulkConfig(raw) {
+  const capacity = Math.round(readNumber(raw[CONFIG_KEYS.BULK_CAPACITY], 0, LIMITS.bulkCapacity));
+  const tonnePrice = readNumber(raw[CONFIG_KEYS.BULK_TONNE_PRICE], 0, LIMITS.bulkTonnePrice);
+  const unit = raw[CONFIG_KEYS.BULK_READING_UNIT];
+  return {
+    bulkCapacity: capacity > 0 ? capacity : DEFAULTS.bulkCapacity,
+    bulkLowThreshold: Math.round(
+      readNumber(
+        raw[CONFIG_KEYS.BULK_LOW_THRESHOLD],
+        DEFAULTS.bulkLowThreshold,
+        LIMITS.bulkLowThreshold,
+      ),
+    ),
+    bulkDelivery: Math.round(
+      readNumber(raw[CONFIG_KEYS.BULK_DELIVERY], DEFAULTS.bulkDelivery, LIMITS.movementKg),
+    ),
+    bulkTonnePrice: tonnePrice > 0 ? tonnePrice : DEFAULTS.bulkTonnePrice,
+    bulkReadingUnit: Object.values(READING_UNITS).includes(unit) ? unit : DEFAULTS.bulkReadingUnit,
   };
 }
 
@@ -107,6 +188,12 @@ function readStockSetting(setting, raw) {
     // Only a stored "no price"; a field left empty is undefined.
     return setting.price ? null : undefined;
   }
+  if (setting.options) {
+    if (!setting.options.includes(raw)) {
+      throw new StockError('invalid_setting_option');
+    }
+    return raw;
+  }
   const value = typeof raw === 'string' ? Number(raw) : raw;
   const { min, max } = setting.limits;
   if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max) {
@@ -121,15 +208,17 @@ function readStockSetting(setting, raw) {
 /**
  * @description Read the settings typed in the "Set up a stock" action: the
  * fields left empty are not part of the result.
+ * The settings of another type of stock are ignored: the action shows them all.
  * @param {object} fields - The action fields, keyed like the config_schema.
+ * @param {string} [type] - The type of the stock.
  * @returns {object} The settings, keyed like the normalized config.
  * @throws {StockError} When a value is out of range.
  * @example
  * readStockSettings({ bag_weight: 10, pallet_size: '' }); // -> { bagWeight: 10 }
  */
-function readStockSettings(fields = {}) {
+function readStockSettings(fields = {}, type = BAGS) {
   const settings = {};
-  STOCK_SETTINGS.forEach((setting) => {
+  settingsOf(type).forEach((setting) => {
     const value = readStockSetting(setting, fields[setting.field]);
     if (value !== undefined) {
       settings[setting.key] = value;
@@ -142,16 +231,17 @@ function readStockSettings(fields = {}) {
  * @description Read the stored settings of a stock, dropping any unknown or
  * invalid one: it then simply takes the default again.
  * @param {unknown} raw - The stored settings.
+ * @param {string} [type] - The type of the stock.
  * @returns {object} The settings, keyed like the normalized config.
  * @example
  * parseStockSettings({ bagWeight: 10, color: 'red' }); // -> { bagWeight: 10 }
  */
-function parseStockSettings(raw) {
+function parseStockSettings(raw, type = BAGS) {
   const settings = {};
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
     return settings;
   }
-  STOCK_SETTINGS.forEach((setting) => {
+  settingsOf(type).forEach((setting) => {
     if (!Object.hasOwn(raw, setting.key)) {
       return;
     }
@@ -168,21 +258,44 @@ function parseStockSettings(raw) {
 }
 
 /**
+ * @description The settings of a type of stock.
+ * @param {string} type - The stock type.
+ * @returns {Array<object>} The STOCK_SETTINGS entries.
+ */
+function settingsOf(type) {
+  return STOCK_SETTINGS.filter((setting) => setting.types.includes(type));
+}
+
+/**
  * @description The effective config of a stock: its own settings over the
- * normalized config, the bag price derived again.
+ * normalized config, the bag price derived again. A silo counts in kg: its
+ * unit weighs 1 kg, costs the price per tonne / 1000, and its threshold and
+ * usual delivery are the silo ones — so the ledger, the stats and the FIFO
+ * cost work on it unchanged.
  * @param {object} config - The normalized config (the defaults).
  * @param {object} [settings] - The settings of the stock.
+ * @param {string} [type] - The stock type.
  * @returns {object} The effective config, shaped like normalizeConfig()'s.
  * @example
  * withStockSettings(config, { palletSize: 96 });
  */
-function withStockSettings(config, settings = {}) {
+function withStockSettings(config, settings = {}, type = BAGS) {
   const effective = { ...config };
-  STOCK_SETTINGS.forEach(({ key }) => {
+  settingsOf(type).forEach(({ key }) => {
     if (Object.hasOwn(settings, key)) {
       effective[key] = settings[key];
     }
   });
+  if (type === BULK) {
+    return {
+      ...effective,
+      bagWeight: 1,
+      palletSize: effective.bulkDelivery,
+      lowStockThreshold: effective.bulkLowThreshold,
+      palletPrice: null,
+      bagPrice: effective.bulkTonnePrice > 0 ? effective.bulkTonnePrice / 1000 : null,
+    };
+  }
   effective.bagPrice =
     effective.palletPrice > 0 ? effective.palletPrice / effective.palletSize : DEFAULTS.bagPrice;
   return effective;
@@ -190,6 +303,7 @@ function withStockSettings(config, settings = {}) {
 
 export {
   STOCK_SETTINGS,
+  settingsOf,
   normalizeConfig,
   readNumber,
   readStockSettings,

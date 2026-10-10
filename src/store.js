@@ -8,7 +8,13 @@
 // leaves the stock as the user last saw it — and the error reaches the toast.
 // -----------------------------------------------------------------------------
 
-import { DEVICE_ID, LEDGER_CONFIG_KEY, WIDGET_KEY } from './constants.js';
+import {
+  DEVICE_ID,
+  LEDGER_CONFIG_KEY,
+  SILO_WIDGET_KEY,
+  STOCK_TYPES,
+  WIDGET_KEY,
+} from './constants.js';
 import { buildStates, deviceExternalId } from './device.js';
 import {
   computeStats,
@@ -30,6 +36,7 @@ import { buildSceneEventData, buildSceneOutputs, detectSceneTriggers } from './s
  * @param {Function} [params.now] - Clock, injectable for the tests.
  * @param {string} [params.stockId] - The stock id (its device), the default one when omitted.
  * @param {string} [params.ledgerKey] - The config key of its ledger.
+ * @param {string} [params.type] - The stock type: bags, or a silo counted in kg.
  * @returns {object} The store.
  * @example
  * const store = createStockStore({ gladys, logger, getConfig: () => config });
@@ -41,6 +48,7 @@ function createStockStore({
   now = () => new Date(),
   stockId = DEVICE_ID,
   ledgerKey = LEDGER_CONFIG_KEY,
+  type = STOCK_TYPES.BAGS,
 }) {
   let ledger = createLedger();
   let queue = Promise.resolve();
@@ -76,7 +84,7 @@ function createStockStore({
    * @returns {Promise<void>}
    */
   async function publishStates({ force = false } = {}) {
-    const states = buildStates(gladys, getStats(), stockId).filter(
+    const states = buildStates(gladys, getStats(), stockId, type, getConfig()).filter(
       ({ device_feature_external_id: id, state }) => force || published.get(id) !== state,
     );
     if (states.length === 0) {
@@ -99,7 +107,7 @@ function createStockStore({
   async function notifyChange() {
     await publishStates();
     try {
-      gladys.requestWidgetRefresh(WIDGET_KEY);
+      gladys.requestWidgetRefresh(type === STOCK_TYPES.BULK ? SILO_WIDGET_KEY : WIDGET_KEY);
     } catch (error) {
       logger.debug(`Widget refresh not requested: ${error.message}`);
     }
@@ -112,6 +120,10 @@ function createStockStore({
    * @returns {Promise<void>}
    */
   async function fireSceneTriggers(change) {
+    // The triggers speak in bags: a silo is followed through its device.
+    if (type === STOCK_TYPES.BULK) {
+      return;
+    }
     const config = getConfig();
     const triggers = detectSceneTriggers({
       ...change,
@@ -179,7 +191,7 @@ function createStockStore({
      */
     record(movement, { fromScene = false } = {}) {
       return enqueue(async () => {
-        const next = recordMovement(ledger, movement, now());
+        const next = recordMovement(ledger, movement, now(), type);
         const recorded = next.movements[next.movements.length - 1];
         await commit(next, { recorded, fromScene });
         return recorded;

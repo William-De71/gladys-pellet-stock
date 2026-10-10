@@ -25,17 +25,21 @@
 // -----------------------------------------------------------------------------
 
 import { GladysIntegration, logger } from '@gladysassistant/integration-sdk';
-import { STOCK_SETTINGS, normalizeConfig } from './src/config.js';
+import { normalizeConfig, settingsOf } from './src/config.js';
 import { costOver, nextDay, parseDay } from './src/cost.js';
 import {
   MOVEMENT_TYPES,
   REFRESH_INTERVAL_MS,
+  SILO_ACTIONS,
+  SILO_WIDGET_KEY,
+  STOCK_TYPES,
   WIDGET_ACTIONS,
   WIDGET_KEY,
 } from './src/constants.js';
 import { LANGUAGES, message, translate } from './src/i18n.js';
 import { StockError } from './src/ledger.js';
 import { buildSceneOutputs } from './src/scene.js';
+import { buildSiloContent, readLevel } from './src/silo-widget.js';
 import { createStocks } from './src/stocks.js';
 import { buildWidgetContent, buildUnknownStockContent } from './src/widget.js';
 
@@ -51,6 +55,11 @@ const RESULT_KEYS = {
   [MOVEMENT_TYPES.DELIVERY]: 'delivery_recorded',
   [MOVEMENT_TYPES.CONSUMPTION]: 'consumption_recorded',
   [MOVEMENT_TYPES.INVENTORY]: 'inventory_recorded',
+};
+// The same, for a silo (in kg).
+const SILO_RESULT_KEYS = {
+  [MOVEMENT_TYPES.DELIVERY]: 'silo_delivery_recorded',
+  [MOVEMENT_TYPES.INVENTORY]: 'silo_reading_recorded',
 };
 
 /**
@@ -76,7 +85,7 @@ async function runOperation(operation) {
 }
 
 /**
- * @description Record a movement from a user action.
+ * @description Record a movement of bags from a user action.
  * @param {string} [stock] - The external id of the stock's device; none means the default stock.
  * @param {string} type - The movement type.
  * @param {unknown} bags - The bag count.
@@ -89,9 +98,28 @@ async function runOperation(operation) {
 function recordFromUser(stock, type, bags, details = {}) {
   return runOperation(async () => {
     await stocks.ready();
-    const store = stocks.storeOf(stock);
+    const store = stocks.storeOf(stock, STOCK_TYPES.BAGS);
     const movement = await store.record({ ...details, type, bags });
     return message(RESULT_KEYS[type], { bags: movement.bags, stock: store.getStats().stock });
+  });
+}
+
+/**
+ * @description Record a movement of a silo from a user action.
+ * @param {string} [stock] - The external id of the silo's device.
+ * @param {string} type - The movement type: a delivery, or a reading (inventory).
+ * @param {Function} read - `(config) => ({ kg, price? })`, what the user entered.
+ * @returns {Promise<{en: string, fr: string}>} The message shown to the user.
+ * @example
+ * await recordSiloFromUser(stock, MOVEMENT_TYPES.DELIVERY, () => ({ kg: 3000 }));
+ */
+function recordSiloFromUser(stock, type, read) {
+  return runOperation(async () => {
+    await stocks.ready();
+    const store = stocks.storeOf(stock, STOCK_TYPES.BULK);
+    const { kg, price } = read(stocks.configOf(stock));
+    const movement = await store.record({ type, bags: kg, price });
+    return message(SILO_RESULT_KEYS[type], { kg: movement.bags, level: store.getStats().stock });
   });
 }
 
@@ -107,7 +135,8 @@ function undoFromUser(stock) {
     await stocks.ready();
     const store = stocks.storeOf(stock);
     await store.undo();
-    return message('undo_done', { stock: store.getStats().stock });
+    const isSilo = stocks.find(stock).type === STOCK_TYPES.BULK;
+    return message(isSilo ? 'silo_undo_done' : 'undo_done', { stock: store.getStats().stock });
   });
 }
 
@@ -125,12 +154,16 @@ function describeSettings(stock, config) {
     LANGUAGES.map((language) => {
       const t = (key, params) => translate(language, key, params);
       const format = (value) => new Intl.NumberFormat(language).format(value);
-      const parts = STOCK_SETTINGS.map(({ key }) => {
-        // Only the pallet price may be unset.
-        const text =
-          config[key] === null
-            ? t(`setting_${key}_none`)
-            : t(`setting_${key}`, { value: format(config[key]) });
+      const parts = settingsOf(stock.type).map(({ key }) => {
+        // Only a price or a capacity may be unset.
+        let text;
+        if (config[key] === null) {
+          text = t(`setting_${key}_none`);
+        } else if (key === 'bulkReadingUnit') {
+          text = t(`setting_bulkReadingUnit_${config[key]}`);
+        } else {
+          text = t(`setting_${key}`, { value: format(config[key]) });
+        }
         const origin = Object.hasOwn(stock.settings, key) ? 'setting_own' : 'setting_default';
         return `${text} (${t(origin)})`;
       });
@@ -147,11 +180,12 @@ function describeSettings(stock, config) {
  * @param {Date} start - The first day.
  * @param {Date} lastDay - The last day (included).
  * @param {{bags: number, kg: number, cost: number, unpricedBags: number}} cost - See costOver().
+ * @param {boolean} [isSilo] - A silo counts in kg: no bag count.
  * @returns {{en: string, fr: string}} The message shown to the user.
  * @example
  * describeCost(new Date(2026, 9, 1), new Date(2027, 5, 1), cost);
  */
-function describeCost(start, lastDay, cost) {
+function describeCost(start, lastDay, cost, isSilo = false) {
   return Object.fromEntries(
     LANGUAGES.map((language) => {
       const t = (key, params) => translate(language, key, params);
@@ -169,7 +203,7 @@ function describeCost(start, lastDay, cost) {
         return [language, t('cost_report_empty', period)];
       }
       const pricedKg = cost.kg * ((cost.bags - cost.unpricedBags) / cost.bags);
-      let text = t('cost_report', {
+      let text = t(isSilo ? 'cost_report_silo' : 'cost_report', {
         ...period,
         bags: new Intl.NumberFormat(language).format(cost.bags),
         kg: new Intl.NumberFormat(language, { maximumFractionDigits: 0 }).format(cost.kg),
@@ -177,7 +211,9 @@ function describeCost(start, lastDay, cost) {
         kg_price: pricedKg > 0 ? euros(cost.cost / pricedKg, 2) : '—',
       });
       if (cost.unpricedBags > 0) {
-        text += ` ${t('cost_report_unpriced', { bags: cost.unpricedBags })}`;
+        text += ` ${t(isSilo ? 'cost_report_unpriced_silo' : 'cost_report_unpriced', {
+          bags: cost.unpricedBags,
+        })}`;
       }
       return [language, text];
     }),
@@ -249,7 +285,7 @@ gladys.onAction('analyze_cost', (fields) =>
       nextDay(lastDay),
       stocks.configOf(fields.stock),
     );
-    return describeCost(start, lastDay, cost);
+    return describeCost(start, lastDay, cost, stocks.find(fields.stock).type === STOCK_TYPES.BULK);
   }),
 );
 
@@ -257,7 +293,7 @@ gladys.onAction('add_stock', (fields) =>
   runOperation(async () => {
     await stocks.ready();
     await stocks.refreshHouses();
-    const stock = await stocks.add(fields.house);
+    const stock = await stocks.add(fields.house, fields.type);
     await publishDevices();
     return message('stock_added', { name: stock.name });
   }),
@@ -294,15 +330,16 @@ gladys.onAction('remove_stock', (fields) =>
  * stock figures to the next actions of the scene.
  * @param {object} fields - The fields of the scene action.
  * @param {Function} [operation] - `(store) => Promise`, the change to make; none only reads.
+ * @param {string} [type] - The type of stock the change needs.
  * @returns {Promise<object>} The outputs (see src/scene.js).
  * @example
  * await runSceneAction(fields, (store) => store.undo());
  */
-async function runSceneAction(fields, operation) {
+async function runSceneAction(fields, operation, type) {
   let store;
   try {
     await stocks.ready();
-    store = stocks.storeOf(fields.stock);
+    store = stocks.storeOf(fields.stock, type);
     if (operation) {
       await operation(store);
     }
@@ -318,18 +355,63 @@ async function runSceneAction(fields, operation) {
 }
 
 gladys.onSceneAction('consume_bags', (fields) =>
-  runSceneAction(fields, (store) =>
-    store.record({ type: MOVEMENT_TYPES.CONSUMPTION, bags: fields.bags }, { fromScene: true }),
+  runSceneAction(
+    fields,
+    (store) =>
+      store.record({ type: MOVEMENT_TYPES.CONSUMPTION, bags: fields.bags }, { fromScene: true }),
+    STOCK_TYPES.BAGS,
   ),
 );
 gladys.onSceneAction('add_bags', (fields) =>
-  runSceneAction(fields, (store) =>
-    store.record({ type: MOVEMENT_TYPES.DELIVERY, bags: fields.bags }, { fromScene: true }),
+  runSceneAction(
+    fields,
+    (store) =>
+      store.record({ type: MOVEMENT_TYPES.DELIVERY, bags: fields.bags }, { fromScene: true }),
+    STOCK_TYPES.BAGS,
   ),
 );
 gladys.onSceneAction('set_stock', (fields) =>
-  runSceneAction(fields, (store) =>
-    store.record({ type: MOVEMENT_TYPES.INVENTORY, bags: fields.bags }, { fromScene: true }),
+  runSceneAction(
+    fields,
+    (store) =>
+      store.record({ type: MOVEMENT_TYPES.INVENTORY, bags: fields.bags }, { fromScene: true }),
+    STOCK_TYPES.BAGS,
+  ),
+);
+/**
+ * @description Run a scene action on a silo: left without a stock, it takes
+ * the only silo there is.
+ * @param {object} fields - The fields of the scene action.
+ * @param {Function} operation - `(store, fields) => Promise`, the change to make.
+ * @returns {Promise<object>} The outputs (see src/scene.js).
+ */
+async function runSiloSceneAction(fields, operation) {
+  if (!fields.stock) {
+    // A failed load is reported by runSceneAction(), which loads again.
+    await stocks.ready().catch(() => {});
+  }
+  const siloFields = { ...fields, stock: fields.stock || siloOf({}).externalId };
+  return runSceneAction(siloFields, (store) => operation(store, siloFields), STOCK_TYPES.BULK);
+}
+
+gladys.onSceneAction('silo_delivery', (fields) =>
+  runSiloSceneAction(fields, (store) =>
+    store.record(
+      { type: MOVEMENT_TYPES.DELIVERY, bags: fields.kg, price: fields.price },
+      { fromScene: true },
+    ),
+  ),
+);
+// A level sensor on the silo can feed it from a scene.
+gladys.onSceneAction('silo_reading', (fields) =>
+  runSiloSceneAction(fields, (store, siloFields) =>
+    store.record(
+      {
+        type: MOVEMENT_TYPES.INVENTORY,
+        bags: readLevel(fields, stocks.configOf(siloFields.stock)),
+      },
+      { fromScene: true },
+    ),
   ),
 );
 gladys.onSceneAction('read_stock', (fields) => runSceneAction(fields));
@@ -343,6 +425,9 @@ gladys.onWidgetGet(WIDGET_KEY, async ({ settings = {}, language }) => {
   const stock = stocks.find(settings.stock);
   if (!stock) {
     return buildUnknownStockContent(language);
+  }
+  if (stock.type === STOCK_TYPES.BULK) {
+    return buildUnknownStockContent(language, 'widget_stock_is_silo');
   }
   const store = stocks.storeOf(settings.stock);
   return buildWidgetContent({
@@ -381,6 +466,87 @@ gladys.onWidgetAction(WIDGET_KEY, (actionKey, params, { settings = {}, values } 
       throw new Error(`Unknown widget action: ${actionKey}`);
   }
 });
+
+/**
+ * @description The silo a silo widget shows: the one picked in its settings,
+ * else the only silo there is.
+ * @param {object} settings - The widget instance settings.
+ * @returns {{stock: object|null, externalId: string|undefined, problem: string|null}}
+ *   The silo and the external id to reach it, or the message key of what is wrong.
+ */
+function siloOf(settings) {
+  if (settings.stock) {
+    const stock = stocks.find(settings.stock);
+    if (!stock) {
+      return { stock: null, problem: 'widget_unknown_stock' };
+    }
+    if (stock.type !== STOCK_TYPES.BULK) {
+      return { stock: null, problem: 'widget_stock_is_bags' };
+    }
+    return { stock, externalId: settings.stock, problem: null };
+  }
+  const silos = stocks.list().filter((stock) => stock.type === STOCK_TYPES.BULK);
+  if (silos.length !== 1) {
+    return { stock: null, problem: silos.length === 0 ? 'widget_no_silo' : 'widget_pick_silo' };
+  }
+  return { stock: silos[0], externalId: stocks.externalIdOf(silos[0].id), problem: null };
+}
+
+gladys.onWidgetGet(SILO_WIDGET_KEY, async ({ settings = {}, language }) => {
+  await stocks.ready();
+  await stocks.settled();
+  const { stock, externalId, problem } = siloOf(settings);
+  if (problem) {
+    return buildUnknownStockContent(language, problem);
+  }
+  const store = stocks.storeOf(externalId);
+  return buildSiloContent({
+    ledger: store.getLedger(),
+    stats: store.getStats(),
+    config: stocks.configOf(externalId),
+    settings,
+    language,
+    stockName: stock.name,
+    now: new Date(),
+  });
+});
+
+gladys.onWidgetAction(SILO_WIDGET_KEY, (actionKey, params, { settings = {}, values } = {}) =>
+  runOperation(async () => {
+    const form = values || {};
+    await stocks.ready();
+    const { externalId, problem } = siloOf(settings);
+    if (problem) {
+      return message(problem);
+    }
+    return runSiloAction(actionKey, externalId, form);
+  }),
+);
+
+/**
+ * @description Run a button of the silo widget.
+ * @param {string} actionKey - The button.
+ * @param {string} externalId - The silo's device external id.
+ * @param {object} form - What the user typed in its form.
+ * @returns {Promise<{en: string, fr: string}>} The message shown to the user.
+ */
+function runSiloAction(actionKey, externalId, form) {
+  switch (actionKey) {
+    case SILO_ACTIONS.DELIVERY:
+      return recordSiloFromUser(externalId, MOVEMENT_TYPES.DELIVERY, () => ({
+        kg: form.kg,
+        price: form.price,
+      }));
+    case SILO_ACTIONS.READING:
+      return recordSiloFromUser(externalId, MOVEMENT_TYPES.INVENTORY, (siloConfig) => ({
+        kg: readLevel(form, siloConfig),
+      }));
+    case SILO_ACTIONS.UNDO:
+      return undoFromUser(externalId);
+    default:
+      throw new Error(`Unknown widget action: ${actionKey}`);
+  }
+}
 
 // --- Config & lifecycle ----------------------------------------------------------
 

@@ -81,6 +81,20 @@ Pour lire le nom des maisons, l'intégration demande l'accès aux maisons de Gla
 
 **« Supprimer un stock »** retire un stock ajouté et son historique ; le stock principal ne peut pas être supprimé.
 
+## Silo (pellets en vrac)
+
+Pour une chaudière alimentée par un silo, lancez **« Ajouter un stock »** avec le type **Silo (vrac)** et la maison. Un silo compte en **kg** et a son propre widget, **« Silo de pellets »**, et son propre appareil, **« Silo de pellets – Maison »** (niveau en kg, remplissage en %, autonomie). Une maison peut avoir un stock de sacs et un silo.
+
+- **« Livraison »** : les kg livrés (pré-remplis avec la livraison habituelle) et le prix payé.
+- **« Relevé de niveau »** : le niveau lu sur le silo, en kg ou en % de la capacité (réglage « Relevé du niveau »). Un niveau plus bas que le précédent compte comme consommation : la consommation par jour, l'autonomie, la date de commande et le coût de la saison se calculent comme pour les sacs.
+- **« Annuler »** retire la dernière opération.
+
+Le widget affiche le niveau (en tonnes au-delà de 1 000 kg), l'autonomie, l'évolution du niveau ou les kg utilisés par jour, le remplissage, le dernier relevé, la dernière livraison, la valeur du stock et le prix au kg, le coût par mois et de la saison, et la date à laquelle commander.
+
+Les réglages par défaut des silos sont dans la section **« Silo »** de la configuration : capacité, seuil de stock bas (kg), livraison habituelle, prix à la tonne, relevé en kg ou en %. « Régler un stock » les change pour un silo. Laissé sans stock choisi, le widget et les actions de scène du silo prennent le seul silo.
+
+Deux actions de scène, **« Enregistrer une livraison du silo »** et **« Relever le niveau du silo »**, permettent par exemple d'alimenter le niveau depuis un capteur. Les déclencheurs de scène comptent en sacs et ne concernent pas les silos : pour une alerte, utilisez l'appareil du silo (« niveau du silo inférieur à… »).
+
 ## Scènes
 
 ### Actions

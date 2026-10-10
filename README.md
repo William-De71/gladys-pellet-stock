@@ -36,6 +36,15 @@ the main stock, or one added by name before the houses, keeping its device and i
 from Gladys (`location: true`; the coordinates are not used). The widget, the configuration actions, the scene actions and the triggers
 all have a **Stock** field; left empty, they use the main stock (triggers: every stock).
 
+### Silo (bulk pellets)
+
+**"Add a stock"** with the **Silo (bulk)** type adds a silo, counted in kg: a dedicated **"Pellet silo"** widget
+(level, autonomy, level or kg-per-day chart, fill, last reading, value and price per kg, season cost, order date;
+**Delivery**, **Level reading** in kg or in % of the capacity, **Undo**) and a dedicated device (level in kg, fill
+in %, autonomy). A lower reading counts as consumption, so the rate, autonomy and FIFO cost work as for the bags.
+Defaults in the "Silo" section of the configuration; scene actions **Record a silo delivery** and **Read the silo
+level** (e.g. from a level sensor). The bag scene triggers leave silos out: use the silo device.
+
 ### Scenes
 
 | Scene actions                | What it does                                                         |

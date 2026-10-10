@@ -24,7 +24,14 @@
 // movement is exact and the chart never recomputes the past.
 // -----------------------------------------------------------------------------
 
-import { DAY_MS, DEFAULTS, LIMITS, MAX_LEDGER_MOVEMENTS, MOVEMENT_TYPES } from './constants.js';
+import {
+  DAY_MS,
+  DEFAULTS,
+  LIMITS,
+  MAX_LEDGER_MOVEMENTS,
+  MOVEMENT_TYPES,
+  STOCK_TYPES,
+} from './constants.js';
 import { pricePerBag, valueBags, walkLots } from './cost.js';
 
 /**
@@ -43,6 +50,17 @@ class StockError extends Error {
     this.params = params;
   }
 }
+
+// What a ledger counts, per type of stock: the bounds of a movement and of
+// the stock, and the message of a count out of them. A silo counts in kg.
+const UNITS = {
+  [STOCK_TYPES.BAGS]: {
+    movement: LIMITS.movementBags,
+    stock: LIMITS.stockBags,
+    invalid: 'invalid_count',
+  },
+  [STOCK_TYPES.BULK]: { movement: LIMITS.movementKg, stock: LIMITS.stockKg, invalid: 'invalid_kg' },
+};
 
 /**
  * @description Create an empty ledger.
@@ -160,15 +178,16 @@ function currentStock(ledger) {
  * @description Read a bag count typed by the user or declared by a button.
  * @param {unknown} raw - The raw count.
  * @param {{min: number, max: number}} limits - The accepted range.
+ * @param {string} [code] - The message code of a refused count.
  * @returns {number} The count, as an integer.
  * @throws {StockError} When the count is not an integer within the range.
  * @example
  * readBagCount('3', LIMITS.movementBags); // -> 3
  */
-function readBagCount(raw, { min, max }) {
+function readBagCount(raw, { min, max }, code = 'invalid_count') {
   const value = typeof raw === 'string' && raw.trim() !== '' ? Number(raw) : raw;
   if (!Number.isInteger(value) || value < min || value > max) {
-    throw new StockError('invalid_count', { min, max });
+    throw new StockError(code, { min, max });
   }
   return value;
 }
@@ -217,44 +236,50 @@ function readPrice(raw, limits) {
  *   the others: the `price` paid for the whole delivery or, when there is
  *   none, the `bagPrice` of one bag (stored as the total, to the cent), and
  *   the `bagWeight` in kg. An inventory takes the `bagPrice` of the bags found
- *   when it counts more than recorded.
+ *   when it counts more than recorded. A silo counts in kg (`bags` then holds
+ *   kg), and takes only the `price` of a delivery.
  * @param {Date} now - The time of the movement.
+ * @param {string} [stockType] - The type of the stock: its unit and bounds.
  * @returns {{version: number, movements: Array<object>}} The new ledger.
  * @throws {StockError} On an invalid count, price or weight, or a consumption
  *   above the stock.
  * @example
  * const next = recordMovement(ledger, { type: 'consumption', bags: 1 }, new Date());
  */
-function recordMovement(ledger, movementIn, now) {
+function recordMovement(ledger, movementIn, now, stockType = STOCK_TYPES.BAGS) {
   const { type, bags: rawBags } = movementIn;
+  const units = UNITS[stockType];
+  const isBags = stockType === STOCK_TYPES.BAGS;
   const before = currentStock(ledger);
   let bags;
   let after;
   let price = null;
   let bagWeight = null;
   if (type === MOVEMENT_TYPES.INVENTORY) {
-    bags = readBagCount(rawBags, LIMITS.stockBags);
+    bags = readBagCount(rawBags, units.stock, units.invalid);
     after = bags;
-    const bagPrice = readPrice(movementIn.bagPrice, LIMITS.bagPrice);
+    const bagPrice = isBags ? readPrice(movementIn.bagPrice, LIMITS.bagPrice) : null;
     if (bagPrice !== null && after > before) {
       price = Math.round(bagPrice * (after - before) * 100) / 100;
     }
   } else if (type === MOVEMENT_TYPES.DELIVERY) {
-    bags = readBagCount(rawBags, LIMITS.movementBags);
+    bags = readBagCount(rawBags, units.movement, units.invalid);
     after = before + bags;
-    if (after > LIMITS.stockBags.max) {
-      throw new StockError('invalid_count', LIMITS.movementBags);
+    if (after > units.stock.max) {
+      throw new StockError(units.invalid, units.movement);
     }
     price = readPrice(movementIn.price, LIMITS.deliveryPrice);
-    if (price === null) {
+    if (price === null && isBags) {
       const bagPrice = readPrice(movementIn.bagPrice, LIMITS.bagPrice);
       // One model in the ledger, the total: a lot of the FIFO cost is then
       // always `price / bags`, whatever the form it was entered with.
       price = bagPrice === null ? null : Math.round(bagPrice * bags * 100) / 100;
     }
-    bagWeight = readOptionalNumber(movementIn.bagWeight, LIMITS.bagWeight, 'invalid_weight');
+    if (isBags) {
+      bagWeight = readOptionalNumber(movementIn.bagWeight, LIMITS.bagWeight, 'invalid_weight');
+    }
   } else if (type === MOVEMENT_TYPES.CONSUMPTION) {
-    bags = readBagCount(rawBags, LIMITS.movementBags);
+    bags = readBagCount(rawBags, units.movement, units.invalid);
     if (bags > before) {
       // Consuming bags we do not have means the recorded stock is wrong: the
       // user must count it (inventory), we never go negative silently.

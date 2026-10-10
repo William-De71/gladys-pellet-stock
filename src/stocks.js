@@ -77,6 +77,24 @@ function readHouse(raw) {
 }
 
 /**
+ * @description Read the type of a stock picked by the user.
+ * @param {unknown} raw - The raw value; none means bags.
+ * @returns {string} One of STOCK_TYPES.
+ * @throws {StockError} When it is not a type of stock.
+ * @example
+ * readStockType('bulk'); // -> 'bulk'
+ */
+function readStockType(raw) {
+  if (raw === undefined || raw === null || raw === '') {
+    return STOCK_TYPES.BAGS;
+  }
+  if (!Object.values(STOCK_TYPES).includes(raw)) {
+    throw new StockError('invalid_stock_type');
+  }
+  return raw;
+}
+
+/**
  * @description Read one stored stock.
  * @param {unknown} raw - The stored entry.
  * @returns {object|null} The stock, or null when malformed.
@@ -91,6 +109,10 @@ function parseStock(raw) {
     return null;
   }
   if (!Object.values(STOCK_TYPES).includes(type)) {
+    return null;
+  }
+  // The main stock is the one of the bag versions: always bags.
+  if (id === DEVICE_ID && type !== STOCK_TYPES.BAGS) {
     return null;
   }
   if (house !== undefined && house !== null && !HOUSE_REGEX.test(house)) {
@@ -115,7 +137,12 @@ function parseStock(raw) {
   if (id !== DEVICE_ID && !isLegacy && !ledger) {
     return null;
   }
-  const stock = { id, type, house: house || null, settings: parseStockSettings(raw.settings) };
+  const stock = {
+    id,
+    type,
+    house: house || null,
+    settings: parseStockSettings(raw.settings, type),
+  };
   if (hasName) {
     stock.name = name;
   }
@@ -236,7 +263,9 @@ function createStocks({
    */
   function configOf(stockId) {
     const stock = stocks.find((other) => other.id === stockId);
-    return withStockSettings(getConfig(), stock ? stock.settings : {});
+    return stock
+      ? withStockSettings(getConfig(), stock.settings, stock.type)
+      : withStockSettings(getConfig());
   }
 
   /**
@@ -252,6 +281,7 @@ function createStocks({
       now,
       stockId: stock.id,
       ledgerKey: ledgerKeyOf(stock),
+      type: stock.type,
     });
     stores.set(stock.id, store);
     return store;
@@ -427,14 +457,28 @@ function createStocks({
     find,
 
     /**
+     * @description The external id of a stock's device, to reach it like a user would.
+     * @param {string} stockId - The stock id.
+     * @returns {string} The device external id.
+     */
+    externalIdOf: (stockId) => deviceExternalId(gladys, stockId),
+
+    /**
      * @description The store of a stock picked by the user.
      * @param {string} [externalId] - The device external id; none means the default stock.
+     * @param {string} [type] - The type the operation needs: bags are not
+     *   counted in a silo, nor kg in a stock of bags.
      * @returns {object} The store.
-     * @throws {StockError} When the stocks are not loaded, or the stock no longer exists.
+     * @throws {StockError} When the stocks are not loaded, the stock no longer
+     *   exists, or is not of that type.
      */
-    storeOf(externalId) {
+    storeOf(externalId, type) {
       assertLoaded();
-      return stores.get(stockOf(externalId).id);
+      const stock = stockOf(externalId);
+      if (type && stock.type !== type) {
+        throw new StockError(stock.type === STOCK_TYPES.BULK ? 'stock_is_silo' : 'stock_is_bags');
+      }
+      return stores.get(stock.id);
     },
 
     /**
@@ -450,15 +494,16 @@ function createStocks({
     /**
      * @description Add a stock for a house.
      * @param {unknown} rawHouse - The house selector picked by the user.
-     * @param {string} [type] - The stock type.
+     * @param {unknown} [rawType] - The stock type picked by the user; none means bags.
      * @returns {Promise<object>} The new stock (see list()).
      */
-    add(rawHouse, type = STOCK_TYPES.BAGS) {
+    add(rawHouse, rawType) {
       return enqueue(async () => {
         // Before the load, the list in memory is empty: saving it would
         // drop every added stock.
         assertLoaded();
         const house = readHouse(rawHouse);
+        const type = readStockType(rawType);
         if (stocks.length - 1 >= LIMITS.extraStocks.max) {
           throw new StockError('too_many_stocks', { max: LIMITS.extraStocks.max + 1 });
         }
@@ -513,7 +558,10 @@ function createStocks({
       return enqueue(async () => {
         assertLoaded();
         const stock = stockOf(externalId);
-        const settings = { ...(reset ? {} : stock.settings), ...readStockSettings(fields) };
+        const settings = {
+          ...(reset ? {} : stock.settings),
+          ...readStockSettings(fields, stock.type),
+        };
         await saveStocks(
           stocks.map((other) => (other.id === stock.id ? { ...other, settings } : other)),
         );
@@ -605,4 +653,4 @@ function createStocks({
   };
 }
 
-export { createStocks, ledgerKeyOf, parseStocks, readHouse };
+export { createStocks, ledgerKeyOf, parseStocks, readHouse, readStockType };

@@ -263,6 +263,51 @@ test('stocks: removing an added stock drops it and its ledger, the main one stay
   await stocks.add('chalet');
 });
 
+test('stocks: a silo next to the bags of a house, counted in kg', async () => {
+  const { gladys, stocks } = await setup();
+  await stocks.add('chalet');
+  const silo = await stocks.add('chalet', 'bulk');
+  assert.equal(silo.id, 'chalet:bulk');
+  assert.equal(silo.type, 'bulk');
+  await assert.rejects(stocks.add('chalet', 'bulk'), { code: 'house_taken' });
+  await assert.rejects(stocks.add('maison', 'tank'), { code: 'invalid_stock_type' });
+  const SILO = 'ext:test:pellet:chalet:bulk';
+
+  // Its own bounds: a delivery of 3 t, refused in a stock of bags.
+  const store = stocks.storeOf(SILO, 'bulk');
+  await store.record({ type: 'delivery', bags: 3000, price: 1140 });
+  assert.equal(store.getStats().stock, 3000);
+  await assert.rejects(store.record({ type: 'delivery', bags: 40000 }), { code: 'invalid_kg' });
+  assert.throws(() => stocks.storeOf(SILO, 'bags'), { code: 'stock_is_silo' });
+  assert.throws(() => stocks.storeOf(CHALET, 'bulk'), { code: 'stock_is_bags' });
+  assert.throws(() => stocks.storeOf(undefined, 'bulk'), { code: 'stock_is_bags' });
+
+  // Its settings: the silo ones only.
+  const { config } = await stocks.configure(SILO, { bulk_capacity: 4000, bag_weight: 10 });
+  assert.deepEqual(stocks.find(SILO).settings, { bulkCapacity: 4000 });
+  assert.equal(config.bulkCapacity, 4000);
+  assert.equal(config.bagPrice, null, 'no price per tonne configured');
+  assert.equal(store.getStats().bagPrice, 0.38, 'the price paid: 1140 € for 3 t');
+
+  // Its device, and its states in kg and in %.
+  const device = stocks.devices('fr').find((one) => one.external_id === SILO);
+  assert.equal(device.name, 'Silo de pellets – Chalet des Écrins');
+  assert.deepEqual(
+    device.features.map((feature) => feature.external_id),
+    [`${SILO}:level`, `${SILO}:fill`, `${SILO}:autonomy`],
+  );
+  gladys.publishedStates.length = 0;
+  await store.publishStates({ force: true });
+  assert.deepEqual(gladys.publishedStates.flat(), [
+    { device_feature_external_id: `${SILO}:level`, state: 3000 },
+    { device_feature_external_id: `${SILO}:fill`, state: 75 },
+  ]);
+  // No scene trigger in bags for a silo, the silo widget nudged.
+  await store.record({ type: 'inventory', bags: 0 });
+  assert.deepEqual(gladys.sceneEvents, []);
+  assert.equal(gladys.refreshes.at(-1), 'pellet_silo');
+});
+
 test('stocks: states are published for every stock', async () => {
   const { gladys, stocks } = await setup();
   await stocks.add('chalet');
@@ -371,14 +416,17 @@ test('parseStocks / ledgerKeyOf / readHouse', () => {
       { id: 'maison:bags', type: 'bags', house: 'maison', ledger: '0000000c' },
       { id: 'maison:bags:x', type: 'bags', house: 'maison', ledger: '0000000d' },
       { id: 'grange:bags', type: 'bags', house: 'grange' },
-      { id: 'silo:bulk', type: 'bulk', house: 'silo', ledger: '0000000e' },
+      { id: 'maison:bulk', type: 'bulk', house: 'maison', ledger: '0000000e' },
+      { id: 'silo:tank', type: 'tank', house: 'silo', ledger: '0000000f' },
       { id: 'stock', house: 'chalet', settings: { bagWeight: 10, color: 'red', palletSize: -1 } },
+      { id: 'stock', type: 'bulk', house: 'grange' },
       null,
     ]),
     [
       { id: 'stock', type: 'bags', house: 'chalet', settings: { bagWeight: 10 } },
       { id: '0000000a', type: 'bags', house: null, settings: {}, name: 'Chalet' },
       { id: 'maison:bags', type: 'bags', house: 'maison', settings: {}, ledger: '0000000c' },
+      { id: 'maison:bulk', type: 'bulk', house: 'maison', settings: {}, ledger: '0000000e' },
     ],
   );
   assert.equal(ledgerKeyOf({ id: 'stock' }), 'stock_ledger');

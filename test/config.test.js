@@ -28,6 +28,11 @@ test('normalizeConfig: reads numbers sent as strings', () => {
     consumptionWindow: 30,
     palletPrice: 504,
     bagPrice: 7,
+    bulkCapacity: DEFAULTS.bulkCapacity,
+    bulkLowThreshold: DEFAULTS.bulkLowThreshold,
+    bulkDelivery: DEFAULTS.bulkDelivery,
+    bulkTonnePrice: DEFAULTS.bulkTonnePrice,
+    bulkReadingUnit: DEFAULTS.bulkReadingUnit,
   });
 });
 
@@ -86,4 +91,46 @@ test('stock settings: over the defaults, the bag price derived again', () => {
   assert.equal(withStockSettings(defaults, { palletSize: 77 }).bagPrice, 6);
   assert.equal(withStockSettings(defaults, { palletPrice: null }).bagPrice, null);
   assert.equal(withStockSettings(defaults, { bagWeight: 10 }).lowStockThreshold, 10);
+});
+
+test('normalizeConfig: the defaults of the silos', () => {
+  const config = normalizeConfig({
+    bulk_capacity: '4000',
+    bulk_low_threshold: 800,
+    bulk_delivery_default: '2500',
+    bulk_tonne_price: 0,
+    bulk_reading_unit: 'percent',
+  });
+  assert.equal(config.bulkCapacity, 4000);
+  assert.equal(config.bulkLowThreshold, 800);
+  assert.equal(config.bulkDelivery, 2500);
+  assert.equal(config.bulkTonnePrice, null, '0: no price');
+  assert.equal(config.bulkReadingUnit, 'percent');
+  assert.equal(normalizeConfig({ bulk_reading_unit: 'litres' }).bulkReadingUnit, 'kg');
+  assert.equal(normalizeConfig({ bulk_capacity: 0 }).bulkCapacity, null);
+});
+
+test('stock settings: a silo counts in kg, with its own settings', () => {
+  const defaults = normalizeConfig({ bulk_tonne_price: 380, pallet_price: 462 });
+  const silo = withStockSettings(defaults, { bulkDelivery: 4000 }, 'bulk');
+  assert.equal(silo.bagWeight, 1, 'a unit of a silo is 1 kg');
+  assert.equal(silo.bagPrice, 0.38, 'the price per tonne / 1000');
+  assert.equal(silo.palletSize, 4000, 'the usual delivery');
+  assert.equal(silo.lowStockThreshold, 500, 'the silo threshold');
+  assert.equal(silo.palletPrice, null);
+  assert.equal(withStockSettings(defaults, { bulkTonnePrice: null }, 'bulk').bagPrice, null);
+  // The settings of the other type are ignored.
+  assert.deepEqual(readStockSettings({ bag_weight: 10, bulk_capacity: 5000 }, 'bulk'), {
+    bulkCapacity: 5000,
+  });
+  assert.deepEqual(readStockSettings({ bag_weight: 10, bulk_capacity: 5000 }), { bagWeight: 10 });
+  assert.deepEqual(readStockSettings({ bulk_reading_unit: 'percent' }, 'bulk'), {
+    bulkReadingUnit: 'percent',
+  });
+  assert.throws(() => readStockSettings({ bulk_reading_unit: 'litres' }, 'bulk'), {
+    code: 'invalid_setting_option',
+  });
+  assert.deepEqual(parseStockSettings({ bagWeight: 10, bulkCapacity: 5000 }, 'bulk'), {
+    bulkCapacity: 5000,
+  });
 });

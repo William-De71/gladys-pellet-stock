@@ -81,6 +81,20 @@ To read the names of the houses, the integration asks for access to the houses o
 
 **"Remove a stock"** removes an added stock and its history; the main stock cannot be removed.
 
+## Silo (bulk pellets)
+
+For a boiler fed from a silo, run **"Add a stock"** with the **Silo (bulk)** type and the house. A silo counts in **kg** and has its own widget, **"Pellet silo"**, and its own device, **"Pellet silo – House"** (level in kg, fill in %, autonomy). A house may have a stock of bags and a silo.
+
+- **"Delivery"**: the kg delivered (filled in with the usual delivery) and the price paid.
+- **"Level reading"**: the level read on the silo, in kg or in % of its capacity (the "Level reading" setting). A level lower than the last one counts as consumption: the use per day, the autonomy, the order date and the season cost work as for the bags.
+- **"Undo"** removes the last operation.
+
+The widget shows the level (in tonnes from 1,000 kg), the autonomy, the level over time or the kg used per day, the fill, the last reading, the last delivery, the stock value and the price per kg, the cost per month and of the season, and the date to order by.
+
+The defaults of the silos are in the **"Silo"** section of the configuration: capacity, low stock threshold (kg), usual delivery, price per tonne, reading in kg or in %. "Set up a stock" changes them for one silo. Without a stock picked, the silo widget and scene actions take the only silo.
+
+Two scene actions, **"Record a silo delivery"** and **"Read the silo level"**, can for instance feed the level from a sensor. The scene triggers count in bags and leave the silos out: for an alert, use the silo's device ("silo level below…").
+
 ## Scenes
 
 ### Actions

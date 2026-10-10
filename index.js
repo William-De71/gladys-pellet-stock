@@ -4,7 +4,7 @@
 // No hardware, no cloud: the integration keeps a ledger of pellet bag
 // movements (deliveries, consumption, counted stock) and derives the stock,
 // the daily consumption and the autonomy from it. One ledger per stock — a
-// default one, plus one per other house (see src/stocks.js) — and four ways in:
+// default one, plus one per house (see src/stocks.js) — and four ways in:
 //   - the dashboard widget (SDK 0.14 `widgets`): "Remove bag(s)", "Add
 //     bag(s)", "Pallet delivered", "Undo" buttons, relayed to onWidgetAction;
 //   - the manifest actions of the Configuration screen: correct the stock,
@@ -24,14 +24,14 @@
 // -----------------------------------------------------------------------------
 
 import { GladysIntegration, logger } from '@gladysassistant/integration-sdk';
-import { normalizeConfig } from './src/config.js';
+import { STOCK_SETTINGS, normalizeConfig } from './src/config.js';
 import {
   MOVEMENT_TYPES,
   REFRESH_INTERVAL_MS,
   WIDGET_ACTIONS,
   WIDGET_KEY,
 } from './src/constants.js';
-import { message, translate } from './src/i18n.js';
+import { LANGUAGES, message, translate } from './src/i18n.js';
 import { StockError } from './src/ledger.js';
 import { buildSceneOutputs } from './src/scene.js';
 import { createStocks } from './src/stocks.js';
@@ -109,6 +109,37 @@ function undoFromUser(stock) {
   });
 }
 
+/**
+ * @description Describe the effective settings of a stock, telling its own
+ * from the defaults of the Configuration screen.
+ * @param {object} stock - The stock (see stocks.list()).
+ * @param {object} config - Its effective config.
+ * @returns {{en: string, fr: string}} The message shown to the user.
+ * @example
+ * describeSettings(stock, stocks.configOf(externalId));
+ */
+function describeSettings(stock, config) {
+  return Object.fromEntries(
+    LANGUAGES.map((language) => {
+      const t = (key, params) => translate(language, key, params);
+      const format = (value) => new Intl.NumberFormat(language).format(value);
+      const parts = STOCK_SETTINGS.map(({ key }) => {
+        // Only the pallet price may be unset.
+        const text =
+          config[key] === null
+            ? t(`setting_${key}_none`)
+            : t(`setting_${key}`, { value: format(config[key]) });
+        const origin = Object.hasOwn(stock.settings, key) ? 'setting_own' : 'setting_default';
+        return `${text} (${t(origin)})`;
+      });
+      return [
+        language,
+        t('stock_configured', { name: stock.name || t('main_stock'), settings: parts.join(', ') }),
+      ];
+    }),
+  );
+}
+
 // --- Discovery: one virtual device per stock ------------------------------
 
 /**
@@ -121,7 +152,10 @@ function publishDevices() {
   return gladys.publishDiscoveredDevices(stocks.devices());
 }
 
-gladys.onScanRequest(publishDevices);
+gladys.onScanRequest(async () => {
+  await stocks.refreshHouses();
+  await publishDevices();
+});
 
 gladys.onDeviceCreated(async () => {
   // The device may be added long after the last movement: publish its
@@ -152,9 +186,26 @@ gladys.onAction('undo', (fields) => undoFromUser(fields.stock));
 gladys.onAction('add_stock', (fields) =>
   runOperation(async () => {
     await stocks.ready();
-    const stock = await stocks.add(fields.name);
+    await stocks.refreshHouses();
+    const stock = await stocks.add(fields.house);
     await publishDevices();
     return message('stock_added', { name: stock.name });
+  }),
+);
+gladys.onAction('attach_stock', (fields) =>
+  runOperation(async () => {
+    await stocks.ready();
+    await stocks.refreshHouses();
+    const stock = await stocks.attach(fields.stock, fields.house);
+    return message('stock_attached', { name: stock.name });
+  }),
+);
+gladys.onAction('configure_stock', (fields) =>
+  runOperation(async () => {
+    await stocks.ready();
+    await stocks.refreshHouses();
+    const { stock, config } = await stocks.configure(fields.stock, fields, fields.reset === true);
+    return describeSettings(stock, config);
   }),
 );
 gladys.onAction('remove_stock', (fields) =>
@@ -193,7 +244,7 @@ async function runSceneAction(fields, operation) {
     throw error;
   }
   await store.settled();
-  return buildSceneOutputs(store.getStats(), config, new Date());
+  return buildSceneOutputs(store.getStats(), stocks.configOf(fields.stock), new Date());
 }
 
 gladys.onSceneAction('consume_bags', (fields) =>
@@ -227,7 +278,7 @@ gladys.onWidgetGet(WIDGET_KEY, async ({ settings = {}, language }) => {
   return buildWidgetContent({
     ledger: store.getLedger(),
     stats: store.getStats(),
-    config,
+    config: stocks.configOf(settings.stock),
     settings,
     language,
     stockName: stock.name,
@@ -265,7 +316,8 @@ gladys.onWidgetAction(WIDGET_KEY, (actionKey, params, { settings = {}, values } 
 
 gladys.onConfigUpdated(async (newConfig) => {
   config = normalizeConfig(newConfig);
-  // The window and the threshold change the autonomy and the widget colors.
+  // The defaults of every stock: the window and the threshold change the
+  // autonomy and the widget colors.
   await stocks.notifyChange();
 });
 
@@ -279,6 +331,7 @@ gladys.on('connected', async () => {
   } catch {
     // Already logged by ready().
   }
+  await stocks.refreshHouses();
   // Nothing to scan for a virtual device: offer it from the start, so the
   // Discovery screen is never empty before a first scan.
   try {
@@ -291,9 +344,19 @@ gladys.on('connected', async () => {
 // The autonomy drifts with time even without any movement (the consumption
 // window slides): republish it when it changed. The widget follows through
 // its own TTL.
-refreshTimer = setInterval(() => {
-  if (stocks.isLoaded() && gladys.connected) {
-    stocks.publishStates().catch((error) => logger.debug('Hourly refresh failed', error));
+// A renamed house follows on the same beat.
+refreshTimer = setInterval(async () => {
+  if (!stocks.isLoaded() || !gladys.connected) {
+    return;
+  }
+  try {
+    if (await stocks.refreshHouses()) {
+      await stocks.notifyChange();
+    } else {
+      await stocks.publishStates();
+    }
+  } catch (error) {
+    logger.debug('Hourly refresh failed', error);
   }
 }, REFRESH_INTERVAL_MS);
 

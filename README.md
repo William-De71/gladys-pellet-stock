@@ -29,8 +29,11 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md).
 
 ### Several houses
 
-The **"Add a stock"** action creates a stock with its own history and its own device, to add from the Discovery
-tab and put in a room of that house. The widget, the configuration actions, the scene actions and the triggers
+The **"Add a stock"** action creates a stock for a house of Gladys (one per house, named after it), with its own
+history and its own device, to add from the Discovery tab and put in a room of that house. **"Set up a stock"**
+gives a stock settings of its own, over the defaults of the configuration; **"Attach a stock to a house"** attaches
+the main stock, or one added by name before the houses, keeping its device and its history. The house names are read
+from Gladys (`location: true`; the coordinates are not used). The widget, the configuration actions, the scene actions and the triggers
 all have a **Stock** field; left empty, they use the main stock (triggers: every stock).
 
 ### Scenes
@@ -71,7 +74,7 @@ The triggers carry the same figures as scene variables (`{{triggerEvent.data.bag
 | Consumption window (d) | 14      | The days the average consumption is computed over                                            |
 | Pallet price (€)       | —       | Optional: the stock value and the cost per month, until a delivery is entered with its price |
 
-The settings are shared by every stock.
+These are the defaults of every stock: "Set up a stock" overrides them for one stock.
 
 ## Getting started
 

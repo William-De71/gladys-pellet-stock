@@ -54,15 +54,21 @@ The widget works without this device.
 
 ## Several houses
 
-To follow the pellets of another house (a holiday home, a chalet…), run the **"Add a stock"** action in the configuration and give it a name. Each stock has its own history and its own device:
+To follow the pellets of another house (a holiday home, a chalet…), run the **"Add a stock"** action in the configuration and pick the house in the list of the houses of Gladys. The stock takes the name of the house, one stock per house. Each stock has its own history and its own device:
 
-1. In the **Discovery** tab, add the **"Pellet stock – Chalet"** device (with the name you chose) and put it in a room of that house.
+1. In the **Discovery** tab, add the **"Pellet stock – Chalet"** device (with the name of the house) and put it in a room of that house.
 2. Run **"Correct the stock"** with this stock selected, to enter its current bags.
 3. Add a **"Pellet stock"** widget and pick this stock in its settings. Its name shows in the chart title.
 
 The configuration actions and the scene action have a **Stock** field: left empty, they apply to the main stock. A Zigbee button in the chalet can thus count down the chalet's stock only.
 
-The settings (bag weight, bags per pallet, threshold, price…) are shared by all the stocks. **"Remove a stock"** removes an added stock and its history; the main stock cannot be removed.
+The settings of the configuration (bag weight, bags per pallet, threshold, window, pallet price) are the **default settings** of every stock. For a stock to have others (10 kg bags at the chalet, say), run **"Set up a stock"**: fill in only the settings to change, the others keep their value. The answer lists the settings in use, the stock's own or the defaults. The **"Back to the defaults"** option drops the stock's own settings.
+
+The main stock, and the stocks added with a name in an earlier version, can be attached to a house with **"Attach a stock to a house"**: they take the name of the house, and keep their device and their history.
+
+To read the names of the houses, the integration asks for access to the houses of Gladys (shown on install); it does not use their coordinates.
+
+**"Remove a stock"** removes an added stock and its history; the main stock cannot be removed.
 
 ## Scenes
 

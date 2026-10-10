@@ -24,12 +24,24 @@ const MESSAGES = {
     undo_done: 'Last operation undone — {stock} bag(s) in stock.',
     unknown_stock: 'This stock no longer exists.',
     stock_unavailable: 'The stock could not be loaded from Gladys: try again in a moment.',
-    invalid_stock_name: 'Enter a name of 1 to {max} characters.',
-    stock_name_taken: 'A stock is already named "{name}".',
+    invalid_house: 'Pick a house.',
+    house_taken: 'The house "{name}" already has a pellet stock.',
+    invalid_setting: 'Enter a value between {min} and {max}.',
     too_many_stocks: 'At most {max} stocks.',
     default_stock_kept: 'The main stock cannot be removed.',
     stock_added:
-      'Stock "{name}" added: add its device from the Discovery tab, then enter its stock with "Correct the stock".',
+      'Stock of "{name}" added: add its device from the Discovery tab, then enter its stock with "Correct the stock".',
+    stock_attached: 'Stock attached to the house "{name}".',
+    stock_configured: 'Settings of "{name}": {settings}.',
+    main_stock: 'main stock',
+    setting_bagWeight: 'bags of {value} kg',
+    setting_palletSize: '{value} bags per pallet',
+    setting_lowStockThreshold: 'low stock at {value} bags',
+    setting_consumptionWindow: 'average over {value} days',
+    setting_palletPrice: 'pallet at {value} €',
+    setting_palletPrice_none: 'no pallet price',
+    setting_own: 'own',
+    setting_default: 'default',
     stock_removed: 'Stock "{name}" removed. You can now delete its device from the Devices tab.',
     widget_unknown_stock:
       'The stock of this widget was removed: pick another one in the widget settings.',
@@ -95,12 +107,24 @@ const MESSAGES = {
     undo_done: 'Dernière opération annulée — {stock} sac(s) en stock.',
     unknown_stock: "Ce stock n'existe plus.",
     stock_unavailable: "Le stock n'a pas pu être chargé depuis Gladys : réessayez dans un instant.",
-    invalid_stock_name: 'Indiquez un nom de 1 à {max} caractères.',
-    stock_name_taken: "Un stock s'appelle déjà « {name} ».",
+    invalid_house: 'Choisissez une maison.',
+    house_taken: 'La maison « {name} » a déjà un stock de pellets.',
+    invalid_setting: 'Indiquez une valeur entre {min} et {max}.',
     too_many_stocks: '{max} stocks au maximum.',
     default_stock_kept: 'Le stock principal ne peut pas être supprimé.',
     stock_added:
-      "Stock « {name} » ajouté : ajoutez son appareil depuis l'onglet Découverte, puis indiquez son stock avec « Corriger le stock ».",
+      "Stock de « {name} » ajouté : ajoutez son appareil depuis l'onglet Découverte, puis indiquez son stock avec « Corriger le stock ».",
+    stock_attached: 'Stock rattaché à la maison « {name} ».',
+    stock_configured: 'Réglages de « {name} » : {settings}.',
+    main_stock: 'stock principal',
+    setting_bagWeight: 'sacs de {value} kg',
+    setting_palletSize: '{value} sacs par palette',
+    setting_lowStockThreshold: 'stock bas à {value} sacs',
+    setting_consumptionWindow: 'moyenne sur {value} jours',
+    setting_palletPrice: 'palette à {value} €',
+    setting_palletPrice_none: 'sans prix de palette',
+    setting_own: 'propre',
+    setting_default: 'par défaut',
     stock_removed:
       "Stock « {name} » supprimé. Vous pouvez maintenant supprimer son appareil dans l'onglet Appareils.",
     widget_unknown_stock:
@@ -197,4 +221,4 @@ function message(key, params = {}) {
   );
 }
 
-export { MESSAGES, resolveLanguage, translate, message };
+export { MESSAGES, LANGUAGES, resolveLanguage, translate, message };

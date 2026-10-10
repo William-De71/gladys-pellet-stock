@@ -8,7 +8,8 @@
   },
   "version": "1.2.0",
   "docker_image": "ghcr.io/william-de71/gladys-pellet-stock:1.2.0",
-  "gladys_version": ">=5.1.0",
+  "gladys_version": ">=5.2.0",
+  "location": true,
   "categories": ["climate", "energy"],
   "transports": ["local"],
   "cover_image": "https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/cover.jpg",
@@ -23,6 +24,18 @@
       "description": {
         "en": "Start by entering your current stock with the \"Correct the stock\" action below. Then add the \"Pellet stock\" widget to your dashboard: tap \"Remove bag(s)\" each time you fill the stove, \"Add bag(s)\" for bags bought on their own, and \"Pallet delivered\" when a pallet arrives. Counting the stock from time to time with \"Correct the stock\" is enough too: the bags missing are counted as consumed.",
         "fr": "Commencez par indiquer votre stock actuel avec l'action « Corriger le stock » ci-dessous. Ajoutez ensuite le widget « Stock de pellets » à votre tableau de bord : appuyez sur « Enlever sac(s) » à chaque remplissage du poêle, sur « Ajouter sac(s) » pour des sacs achetés à l'unité, et sur « Palette livrée » à chaque palette livrée. Recompter le stock de temps en temps avec « Corriger le stock » suffit aussi : les sacs manquants sont comptés comme consommés."
+      }
+    },
+    {
+      "key": "defaults",
+      "type": "section",
+      "label": {
+        "en": "Default settings",
+        "fr": "Réglages par défaut"
+      },
+      "description": {
+        "en": "Used by every stock, except the settings given to one stock with the \"Set up a stock\" action.",
+        "fr": "Utilisés par tous les stocks, sauf les réglages donnés à un stock avec l'action « Régler un stock »."
       }
     },
     {
@@ -281,23 +294,154 @@
         "fr": "Ajouter un stock"
       },
       "description": {
-        "en": "To follow the pellets of another house: the new stock gets its own device, to add from the Discovery tab and put in a room of that house.",
-        "fr": "Pour suivre les pellets d'une autre maison : le nouveau stock a son propre appareil, à ajouter depuis l'onglet Découverte et à placer dans une pièce de cette maison."
+        "en": "To follow the pellets of another house: the new stock gets its own device, to add from the Discovery tab, and takes the name of the house. One stock per house.",
+        "fr": "Pour suivre les pellets d'une autre maison : le nouveau stock a son propre appareil, à ajouter depuis l'onglet Découverte, et prend le nom de la maison. Un stock par maison."
       },
       "timeout_seconds": 15,
       "fields": [
         {
-          "key": "name",
-          "type": "string",
+          "key": "house",
+          "type": "select",
+          "source": "houses",
           "label": {
-            "en": "Name",
-            "fr": "Nom"
-          },
-          "description": {
-            "en": "For instance the name of the house.",
-            "fr": "Par exemple le nom de la maison."
+            "en": "House",
+            "fr": "Maison"
           },
           "required": true
+        }
+      ]
+    },
+    {
+      "key": "attach_stock",
+      "label": {
+        "en": "Attach a stock to a house",
+        "fr": "Rattacher un stock à une maison"
+      },
+      "description": {
+        "en": "For the main stock, or a stock added by name in an earlier version: it then takes the name of the house. Its device and its history stay as they are.",
+        "fr": "Pour le stock principal, ou un stock ajouté avec un nom dans une version précédente : il prend alors le nom de la maison. Son appareil et son historique restent les mêmes."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
+          "key": "house",
+          "type": "select",
+          "source": "houses",
+          "label": {
+            "en": "House",
+            "fr": "Maison"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "configure_stock",
+      "label": {
+        "en": "Set up a stock",
+        "fr": "Régler un stock"
+      },
+      "description": {
+        "en": "Settings of one stock, over those of the configuration above. A field left empty keeps the current value; the answer lists the settings in use.",
+        "fr": "Les réglages d'un seul stock, à la place de ceux de la configuration ci-dessus. Un champ laissé vide garde la valeur actuelle ; la réponse récapitule les réglages en vigueur."
+      },
+      "timeout_seconds": 15,
+      "fields": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock.",
+            "fr": "Laissez vide pour le stock principal."
+          },
+          "required": false
+        },
+        {
+          "key": "bag_weight",
+          "type": "number",
+          "label": {
+            "en": "Bag weight (kg)",
+            "fr": "Poids d'un sac (kg)"
+          },
+          "required": false,
+          "min": 1,
+          "max": 50
+        },
+        {
+          "key": "pallet_size",
+          "type": "number",
+          "label": {
+            "en": "Bags per pallet",
+            "fr": "Sacs par palette"
+          },
+          "required": false,
+          "min": 1,
+          "max": 200
+        },
+        {
+          "key": "low_stock_threshold",
+          "type": "number",
+          "label": {
+            "en": "Low stock threshold (bags)",
+            "fr": "Seuil de stock bas (sacs)"
+          },
+          "required": false,
+          "min": 0,
+          "max": 1000
+        },
+        {
+          "key": "consumption_window",
+          "type": "number",
+          "label": {
+            "en": "Consumption window (days)",
+            "fr": "Période de calcul (jours)"
+          },
+          "required": false,
+          "min": 3,
+          "max": 90
+        },
+        {
+          "key": "pallet_price",
+          "type": "number",
+          "label": {
+            "en": "Pallet price (€)",
+            "fr": "Prix d'une palette (€)"
+          },
+          "required": false,
+          "min": 0,
+          "max": 5000
+        },
+        {
+          "key": "reset",
+          "type": "boolean",
+          "label": {
+            "en": "Back to the defaults",
+            "fr": "Revenir aux valeurs par défaut"
+          },
+          "description": {
+            "en": "Drops the settings of this stock first: it then follows the configuration above.",
+            "fr": "Retire d'abord les réglages propres à ce stock : il suit alors la configuration ci-dessus."
+          },
+          "required": false
         }
       ]
     },

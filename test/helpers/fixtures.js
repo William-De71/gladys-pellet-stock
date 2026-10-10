@@ -44,6 +44,11 @@ function buildLedger(steps) {
 function createFakeGladys(config = {}) {
   const fake = {
     storedConfig: { ...config },
+    houses: [
+      { id: 'h1', name: 'Maison', selector: 'maison', latitude: null, longitude: null },
+      { id: 'h2', name: 'Chalet des Écrins', selector: 'chalet', latitude: null, longitude: null },
+    ],
+    failGetHouses: false,
     publishedStates: [],
     sceneEvents: [],
     refreshes: [],
@@ -52,6 +57,12 @@ function createFakeGladys(config = {}) {
     externalIds(type, platformId) {
       const device = `ext:test:${type}:${platformId}`;
       return { device, feature: (key) => `${device}:${key}` };
+    },
+    async getHouses() {
+      if (fake.failGetHouses) {
+        throw new Error('403 location not declared');
+      }
+      return fake.houses.map((house) => ({ ...house }));
     },
     async getConfig() {
       return { ...fake.storedConfig };

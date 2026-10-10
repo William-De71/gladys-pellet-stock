@@ -17,9 +17,15 @@ const CONFIG_KEYS = {
 // which a file in /data would not.
 const LEDGER_CONFIG_KEY = 'stock_ledger';
 
-// Key stored the same way: the stocks added next to the default one, as
-// `[{ id, name }]`. Each one keeps its ledger under `stock_ledger_<id>`.
+// Key stored the same way: the stocks, as `[{ id, type, house, settings,
+// ledger }]` (see src/stocks.js). The main stock is listed only once it has a
+// house or settings of its own.
 const STOCKS_CONFIG_KEY = 'stocks';
+
+// What a stock holds. A silo (`bulk`, in kg) is to come.
+const STOCK_TYPES = {
+  BAGS: 'bags',
+};
 
 const DEFAULTS = {
   // The common retail bag in France: 15 kg.
@@ -49,10 +55,10 @@ const LIMITS = {
   // Upper bound of a single movement, to catch a typo (660 instead of 66).
   movementBags: { min: 1, max: 1000 },
   stockBags: { min: 0, max: 10000 },
-  // Fits the chart title (40) next to "· Stock (bags)".
+  // The name of a stock added before the houses (versions up to 1.2).
   stockName: { min: 1, max: 24 },
-  // Stocks added next to the default one.
-  extraStocks: { max: 9 },
+  // Stocks added next to the default one: a house may hold two (bags, silo).
+  extraStocks: { max: 19 },
 };
 
 // Movement types of the ledger.
@@ -81,7 +87,10 @@ const WIDGET_ACTIONS = {
 
 // One device per stock. There is no hardware behind it: the default stock
 // has the fixed platform id below (the one of the single-stock versions, so
-// an existing device keeps its history), the added ones a random id.
+// an existing device keeps its history), a stock added for a house the id
+// `<house selector>:<type>`, and one added before the houses a random id,
+// kept when it is attached to a house: Gladys cannot change the external id
+// of a device, and its history hangs on it.
 const DEVICE_TYPE = 'pellet';
 const DEVICE_ID = 'stock';
 const FEATURE_KEYS = {
@@ -99,6 +108,7 @@ export {
   CONFIG_KEYS,
   LEDGER_CONFIG_KEY,
   STOCKS_CONFIG_KEY,
+  STOCK_TYPES,
   DEFAULTS,
   LIMITS,
   MOVEMENT_TYPES,

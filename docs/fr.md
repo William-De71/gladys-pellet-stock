@@ -54,15 +54,21 @@ Le widget fonctionne sans cet appareil.
 
 ## Plusieurs maisons
 
-Pour suivre les pellets d'une autre maison (une résidence secondaire, un chalet…), lancez l'action **« Ajouter un stock »** dans la configuration et donnez-lui un nom. Chaque stock a son propre historique et son propre appareil :
+Pour suivre les pellets d'une autre maison (une résidence secondaire, un chalet…), lancez l'action **« Ajouter un stock »** dans la configuration et choisissez la maison dans la liste des maisons de Gladys. Le stock prend le nom de la maison, un stock par maison. Chaque stock a son propre historique et son propre appareil :
 
-1. Dans l'onglet **Découverte**, ajoutez l'appareil **« Stock de pellets – Chalet »** (avec le nom choisi) et placez-le dans une pièce de cette maison.
+1. Dans l'onglet **Découverte**, ajoutez l'appareil **« Stock de pellets – Chalet »** (avec le nom de la maison) et placez-le dans une pièce de cette maison.
 2. Lancez **« Corriger le stock »** en choisissant ce stock, pour indiquer ses sacs actuels.
 3. Ajoutez un widget **« Stock de pellets »** et choisissez ce stock dans ses réglages. Son nom apparaît dans le titre du graphique.
 
 Les actions de la configuration et l'action de scène ont un champ **Stock** : laissé vide, elles portent sur le stock principal. Un bouton Zigbee du chalet peut ainsi décompter uniquement le stock du chalet.
 
-Les réglages (poids d'un sac, sacs par palette, seuil, prix…) sont communs à tous les stocks. **« Supprimer un stock »** retire un stock ajouté et son historique ; le stock principal ne peut pas être supprimé.
+Les réglages de la configuration (poids d'un sac, sacs par palette, seuil, période, prix d'une palette) sont les **réglages par défaut** de tous les stocks. Pour qu'un stock en ait d'autres (des sacs de 10 kg au chalet, par exemple), lancez **« Régler un stock »** : remplissez seulement les réglages à changer, les autres gardent leur valeur. La réponse récapitule les réglages en vigueur, propres au stock ou par défaut. L'option **« Revenir aux valeurs par défaut »** retire les réglages propres au stock.
+
+Le stock principal, et les stocks ajoutés avec un nom dans une version précédente, peuvent être rattachés à une maison avec **« Rattacher un stock à une maison »** : ils prennent le nom de la maison, et gardent leur appareil et leur historique.
+
+Pour lire le nom des maisons, l'intégration demande l'accès aux maisons de Gladys (affiché à l'installation) ; elle n'utilise pas leurs coordonnées.
+
+**« Supprimer un stock »** retire un stock ajouté et son historique ; le stock principal ne peut pas être supprimé.
 
 ## Scènes
 

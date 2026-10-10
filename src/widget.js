@@ -109,6 +109,23 @@ function formatEuros(value, language) {
 }
 
 /**
+ * @description Format a unit price in euros, to the cent.
+ * @param {number} value - The price.
+ * @param {string} language - `fr` or `en`.
+ * @returns {string} The formatted price.
+ * @example
+ * formatUnitPrice(7.2954, 'fr'); // -> '7,30 €'
+ */
+function formatUnitPrice(value, language) {
+  return new Intl.NumberFormat(language, {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+/**
  * @description Round an amount to the cent.
  * @param {number} value - The amount, in euros.
  * @returns {number} The rounded amount.
@@ -252,7 +269,7 @@ function buildConsumptionPoints(movements, now, days) {
 
 /**
  * @description Mark the deliveries of the period on the chart. Single bags
- * (the "+1 bag" button) are left out: a few of them would push the pallet
+ * (the "Add bag(s)" button) are left out: a few of them would push the pallet
  * deliveries out of the 8 annotations the chart allows.
  * @param {Array<object>} movements - The ledger movements, oldest first.
  * @param {Date} now - The current time.
@@ -298,6 +315,21 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
   // Pre-filled for the bags pre-filled next to it: the last delivery may have
   // been half a pallet, whose total would halve the price of a bag.
   const palletPrice = bagPrice === null ? null : roundCents(bagPrice * config.palletSize);
+  // The weight of the bags the price was paid for, to give the price per kg.
+  const pricedBagWeight = stats.pricedBagWeight ?? config.bagWeight;
+
+  // Every button opens a form on a Gladys with widget action forms. Without
+  // them, the core drops `fields` and sends `params`: one bag, or the
+  // configured pallet size after a confirmation.
+  const bagsField = (label, { max = LIMITS.movementBags.max, value = 1 } = {}) => ({
+    key: 'bags',
+    type: 'number',
+    label: message(label),
+    required: true,
+    min: LIMITS.movementBags.min,
+    max,
+    default: value,
+  });
 
   const deliveryButton = {
     type: 'button',
@@ -306,21 +338,11 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     style: 'secondary',
     action: {
       key: WIDGET_ACTIONS.DELIVERY,
-      // `params` and `confirm` serve a Gladys without action forms, which
-      // drops `fields` and adds the configured pallet size; with a form, the
-      // form is the confirmation and the bags come from `values`.
+      // With a form, the form is the confirmation and the bags come from `values`.
       params: { bags: config.palletSize },
       confirm: true,
       fields: [
-        {
-          key: 'bags',
-          type: 'number',
-          label: message('field_bags'),
-          required: true,
-          min: LIMITS.movementBags.min,
-          max: LIMITS.movementBags.max,
-          default: config.palletSize,
-        },
+        bagsField('field_bags', { value: config.palletSize }),
         {
           key: 'price',
           type: 'number',
@@ -331,16 +353,42 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
           max: LIMITS.deliveryPrice.max,
           ...(palletPrice !== null && { default: palletPrice }),
         },
+        {
+          key: 'bag_weight',
+          type: 'number',
+          label: message('field_bag_weight'),
+          required: false,
+          min: LIMITS.bagWeight.min,
+          max: LIMITS.bagWeight.max,
+          default: config.bagWeight,
+        },
       ],
     },
   };
 
+  // Bags bought on their own are priced per bag: the price on the shelf.
   const addBagButton = {
     type: 'button',
     label: t('button_add_bag'),
     icon: 'arrow-up-circle',
     style: 'secondary',
-    action: { key: WIDGET_ACTIONS.ADD_BAG, params: { bags: 1 } },
+    action: {
+      key: WIDGET_ACTIONS.ADD_BAG,
+      params: { bags: 1 },
+      fields: [
+        bagsField('field_bags_added'),
+        {
+          key: 'bag_price',
+          type: 'number',
+          label: message('field_bag_price'),
+          description: message('field_bag_price_description'),
+          required: false,
+          min: LIMITS.bagPrice.min,
+          max: LIMITS.bagPrice.max,
+          ...(bagPrice !== null && { default: roundCents(bagPrice) }),
+        },
+      ],
+    },
   };
 
   if (!stats.hasHistory) {
@@ -437,9 +485,14 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     color,
   });
   if (bagPrice !== null) {
+    // One row for the value and the prices: the status is nearly full.
     statusItems.push({
       label: t('stock_value'),
-      value: formatEuros(stats.stock * bagPrice, lang),
+      value: t('stock_value_detail', {
+        value: formatEuros(stats.stock * bagPrice, lang),
+        bag: formatUnitPrice(bagPrice, lang),
+        kg: formatUnitPrice(bagPrice / pricedBagWeight, lang),
+      }),
       icon: 'tag',
     });
     if (stats.dailyRate > 0) {
@@ -494,7 +547,16 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
         icon: 'arrow-down-circle',
         // Not `primary`: the core draws its icon too dark to be seen.
         style: 'secondary',
-        action: { key: WIDGET_ACTIONS.CONSUME, params: { bags: 1 } },
+        action: {
+          key: WIDGET_ACTIONS.CONSUME,
+          params: { bags: 1 },
+          // Never more than the stock: the core refuses it before sending.
+          fields: [
+            bagsField('field_bags_used', {
+              max: Math.min(stats.stock, LIMITS.movementBags.max),
+            }),
+          ],
+        },
       });
     }
     components.push(addBagButton);

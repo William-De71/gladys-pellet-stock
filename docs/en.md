@@ -12,9 +12,10 @@ No hardware and no online account are needed: the integration keeps a ledger of 
 
 ## Day to day
 
-- Tap **"−1 bag"** in the widget each time you fill the stove.
-- Tap **"+1 bag"** for each bag bought on its own (at a store, say).
-- Tap **"Pallet delivered"** when a pallet is delivered. A short form opens in the widget, filled in with the bags per pallet and the price of a pallet at the last price paid per bag: correct them if needed, then send. The price is optional; enter 0 for a delivery without a price. On a Gladys version without this form, the bags per pallet are added right away (a confirmation is asked).
+- Tap **"Remove bag(s)"** in the widget each time you fill the stove. A short form opens, filled in with 1 bag: send it, or enter another count.
+- Tap **"Add bag(s)"** for bags bought on their own (at a store, say). The form asks for the bags and the **price per bag**, filled in with the last known price; the price is optional.
+- Tap **"Pallet delivered"** when a pallet is delivered. The form is filled in with the bags per pallet, the price of a pallet at the last price paid per bag and the **bag weight** of the configuration: correct them if needed, then send. The price is optional; enter 0 for a delivery without a price.
+- On a Gladys version without these forms, the buttons remove or add 1 bag, and "Pallet delivered" adds the bags per pallet (a confirmation is asked).
 - Wrong tap? **"Undo"** removes the last operation.
 - To add several bags at once (half a pallet, a batch of 10 bags…), use the **"Record a delivery"** action of the configuration, where the price paid can be entered too.
 
@@ -27,7 +28,7 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 - A **chart**, picked in the widget settings: the **stock over time**, with the deliveries marked, or the **bags used per day** as bars (per week over 1 year). Period: 1 month, 3 months, 1 year. To see both, put two widgets side by side. The bags found missing by a recount are counted on the day of the recount.
 - The **average consumption per day**, the **last bag used** ("2 days ago"), the **remaining weight**, the **last delivery** and the **use since** (in bags and kg).
 - The date to **order by** (when the stock will reach the low stock threshold) and the **estimated date** the stock runs out.
-- Once a price is known: the **stock value** and the **cost per month**. The price paid for the last delivery counts, or else the **pallet price** of the configuration.
+- Once a price is known: the **stock value**, with the **price per bag and per kg**, and the **cost per month**. The price paid for the last delivery counts, or else the **pallet price** of the configuration. The price per kg follows the weight of the bags of that delivery.
 
 Only deliveries of several bags (a pallet, a batch…) count as deliveries: bags added one by one are neither marked on the chart nor used for "Last delivery" and the use since.
 

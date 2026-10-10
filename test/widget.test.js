@@ -10,7 +10,7 @@ import {
   readChartView,
   stockColor,
 } from '../src/widget.js';
-import { computeStats, createLedger } from '../src/ledger.js';
+import { computeStats, createLedger, recordMovement } from '../src/ledger.js';
 import { DEFAULTS } from '../src/constants.js';
 import { NOW, buildLedger, daysAgo } from './helpers/fixtures.js';
 
@@ -59,8 +59,9 @@ test('widget: the empty state explains how to start, with the add buttons', () =
   assert.equal(content.components[0].type, 'text');
   assert.match(content.components[0].text, /Corriger le stock/);
   const [bag, pallet] = byType(content, 'button');
-  assert.equal(bag.label, '+1 sac');
-  assert.deepEqual(bag.action, { key: 'add_bag', params: { bags: 1 } });
+  assert.equal(bag.label, 'Ajouter sac(s)');
+  assert.equal(bag.action.key, 'add_bag');
+  assert.deepEqual(bag.action.params, { bags: 1 });
   assert.equal(pallet.action.key, 'delivery');
   assert.deepEqual(pallet.action.params, { bags: DEFAULTS.palletSize });
   assert.equal(pallet.action.confirm, true);
@@ -80,8 +81,8 @@ test('widget: four buttons, one per kind of movement, in that order', () => {
   assert.deepEqual(
     byType(content, 'button').map((button) => [button.label, button.action.key]),
     [
-      ['−1 bag', 'consume'],
-      ['+1 bag', 'add_bag'],
+      ['Remove bag(s)', 'consume'],
+      ['Add bag(s)', 'add_bag'],
       ['Pallet delivered', 'delivery'],
       ['Undo', 'undo'],
     ],
@@ -142,7 +143,7 @@ test('widget: a low stock turns orange, adds a reminder, and still fits the budg
   assert.deepEqual(validateWidgetContent(content), []);
 });
 
-test('widget: an empty stock is red and has no "−1 bag" button', () => {
+test('widget: an empty stock is red and has no "Remove bag(s)" button', () => {
   const content = contentOf(
     buildLedger([
       [5, 'delivery', 2],
@@ -180,8 +181,10 @@ test('widget: the delivery button opens a form with the bags and the price', () 
     [
       { key: 'bags', type: 'number', required: true, min: 1, max: 1000 },
       { key: 'price', type: 'number', required: false, min: 0, max: 20000 },
+      { key: 'bag_weight', type: 'number', required: false, min: 1, max: 50 },
     ],
   );
+  assert.equal(action.fields[2].default, DEFAULTS.bagWeight);
   assert.equal(action.fields[0].default, 72);
   assert.deepEqual(action.fields[0].label, { en: 'Bags delivered', fr: 'Sacs livrés' });
   // No price anywhere: the price field starts empty.
@@ -199,7 +202,53 @@ test('widget: the delivery button opens a form with the bags and the price', () 
   assert.equal(delivery(half, { palletSize: 66 }).fields[1].default, 480);
   assert.equal(delivery(half, { palletSize: 70 }).fields[1].default, 509.09);
   // The empty state offers the same form.
-  assert.equal(delivery(createLedger(), {}).fields.length, 2);
+  assert.equal(delivery(createLedger(), {}).fields.length, 3);
+});
+
+test('widget: adding bags opens a form with the bags and the price per bag', () => {
+  const addBag = (ledger, overrides) =>
+    byType(contentOf(ledger, { overrides }), 'button').find(
+      (button) => button.action.key === 'add_bag',
+    ).action;
+  const action = addBag(SEASON, {});
+  // Kept for a Gladys without action forms: one bag, no confirmation.
+  assert.deepEqual(action.params, { bags: 1 });
+  assert.equal(action.confirm, undefined);
+  assert.deepEqual(
+    action.fields.map(({ key, required, min, max, default: value }) => ({
+      key,
+      required,
+      min,
+      max,
+      value,
+    })),
+    [
+      { key: 'bags', required: true, min: 1, max: 1000, value: 1 },
+      { key: 'bag_price', required: false, min: 0, max: 100, value: undefined },
+    ],
+  );
+  // The last price per bag, to the cent.
+  const priced = buildLedger([[10, 'delivery', 66, 481.5]]);
+  assert.equal(addBag(priced, {}).fields[1].default, 7.3);
+  assert.equal(addBag(SEASON, { bagPrice: 7 }).fields[1].default, 7);
+});
+
+test('widget: removing bags opens a form capped at the stock', () => {
+  const consume = (ledger) =>
+    byType(contentOf(ledger), 'button').find((button) => button.action.key === 'consume').action;
+  const action = consume(SEASON);
+  assert.deepEqual(action.params, { bags: 1 });
+  assert.deepEqual(
+    action.fields.map(({ key, required, min, max, default: value }) => ({
+      key,
+      required,
+      min,
+      max,
+      value,
+    })),
+    [{ key: 'bags', required: true, min: 1, max: 94, value: 1 }],
+  );
+  assert.deepEqual(action.fields[0].label, { en: 'Bags used', fr: 'Sacs utilisés' });
 });
 
 test('widget: the price of the last delivery wins over the configured one', () => {
@@ -215,8 +264,16 @@ test('widget: the price of the last delivery wins over the configured one', () =
     [10, 'delivery', 72, 504],
     [5, 'consumption', 3],
   ]);
-  assert.equal(rows(ledger, { bagPrice: 10 })['Valeur du stock'], '483 €');
-  assert.equal(rows(ledger, {})['Valeur du stock'], '483 €');
+  const value = '483\u00a0€ · 7,00\u00a0€/sac · 0,47\u00a0€/kg';
+  assert.equal(rows(ledger, { bagPrice: 10 })['Valeur du stock'], value);
+  assert.equal(rows(ledger, {})['Valeur du stock'], value);
+  // The price per kg uses the weight of the bags the price was paid for.
+  const light = recordMovement(
+    ledger,
+    { type: 'delivery', bags: 10, price: 70, bagWeight: 10 },
+    daysAgo(4),
+  );
+  assert.equal(rows(light, {})['Valeur du stock'], '553\u00a0€ · 7,00\u00a0€/sac · 0,70\u00a0€/kg');
 });
 
 test('widget: the chart is a step line over the period, reaching now', () => {
@@ -306,7 +363,7 @@ test('widget: a bag price adds the stock value and the monthly cost', () => {
     );
   // 94 bags at 7 €, 2 bags a day.
   const priced = rows({ bagPrice: 7 });
-  assert.equal(priced['Valeur du stock'], '658\u00a0€');
+  assert.equal(priced['Valeur du stock'], '658\u00a0€ · 7,00\u00a0€/sac · 0,47\u00a0€/kg');
   assert.equal(priced['Coût par mois'], '420\u00a0€');
   const free = rows({});
   assert.equal(free['Valeur du stock'], undefined);

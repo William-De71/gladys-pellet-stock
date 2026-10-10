@@ -20,12 +20,12 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md).
 - **Tiles**: the stock in bags (green, orange under the low-stock threshold, red at zero) and the autonomy in days.
 - **Chart**, picked per widget: the **stock over time** (step line, pallet deliveries marked) or the **bags used
   per day** (bars; weekly over one year). Period: 1 month, 3 months or 1 year.
-- **Status rows**: bags per day, last bag used ("2 hours ago"), remaining weight, stock value and cost per month
-  (once a pallet price is set), last delivery and bags used since, the date to order by (when the stock reaches the
+- **Status rows**: bags per day, last bag used ("2 hours ago"), remaining weight, stock value with the price per bag
+  and per kg, and cost per month (once a price is known), last delivery and bags used since, the date to order by (when the stock reaches the
   threshold) and the estimated empty date.
-- **Buttons**: **−1 bag**, **+1 bag**, **Pallet delivered** (opens a form for the bags and the price paid, on a
-  Gladys with widget action forms; asks for confirmation otherwise) and **Undo** (removes the last
-  operation). They can be hidden per widget, for a read-only wall display.
+- **Buttons**: **Remove bag(s)** (a form for the bags), **Add bag(s)** (the bags and the price per bag),
+  **Pallet delivered** (the bags, the price paid and the bag weight) and **Undo** (removes the last operation). On a
+  Gladys without widget action forms, they remove or add 1 bag, or the bags per pallet after a confirmation. They can be hidden per widget, for a read-only wall display.
 
 ### Several houses
 
@@ -83,7 +83,7 @@ The settings are shared by every stock.
 ## How the figures are computed
 
 - A **downward correction** of the stock counts as consumption: counting the stock every other week is enough to
-  get a consumption rate, tapping "−1 bag" is not mandatory. On the consumption chart, those bags land on the day
+  get a consumption rate, tapping "Remove bag(s)" is not mandatory. On the consumption chart, those bags land on the day
   of the recount.
 - The **daily consumption** is averaged over the last _N_ days (14 by default), or over the known history when it
   is shorter. Under one day of history it stays unknown rather than extrapolating a single tap.

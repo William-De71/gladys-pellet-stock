@@ -5,8 +5,8 @@
 // movements (deliveries, consumption, counted stock) and derives the stock,
 // the daily consumption and the autonomy from it. One ledger per stock — a
 // default one, plus one per other house (see src/stocks.js) — and four ways in:
-//   - the dashboard widget (SDK 0.14 `widgets`): "−1 bag", "+1 bag",
-//     "Pallet delivered", "Undo" buttons, relayed to onWidgetAction;
+//   - the dashboard widget (SDK 0.14 `widgets`): "Remove bag(s)", "Add
+//     bag(s)", "Pallet delivered", "Undo" buttons, relayed to onWidgetAction;
 //   - the manifest actions of the Configuration screen: correct the stock,
 //     record a delivery or a consumption of any size, undo;
 //   - the scene actions: use, add or count bags (a Zigbee button next to the
@@ -78,16 +78,17 @@ async function runOperation(operation) {
  * @param {string} [stock] - The external id of the stock's device; none means the default stock.
  * @param {string} type - The movement type.
  * @param {unknown} bags - The bag count.
- * @param {unknown} [price] - The price paid for a delivery, in euros.
+ * @param {{price?: unknown, bagPrice?: unknown, bagWeight?: unknown}} [details] - What
+ *   a delivery was entered with (see recordMovement()).
  * @returns {Promise<{en: string, fr: string}>} The message shown to the user.
  * @example
- * await recordFromUser(undefined, MOVEMENT_TYPES.DELIVERY, 66, 459.5);
+ * await recordFromUser(undefined, MOVEMENT_TYPES.DELIVERY, 66, { price: 459.5 });
  */
-function recordFromUser(stock, type, bags, price) {
+function recordFromUser(stock, type, bags, details = {}) {
   return runOperation(async () => {
     await stocks.ready();
     const store = stocks.storeOf(stock);
-    const movement = await store.record({ type, bags, price });
+    const movement = await store.record({ ...details, type, bags });
     return message(RESULT_KEYS[type], { bags: movement.bags, stock: store.getStats().stock });
   });
 }
@@ -138,7 +139,10 @@ gladys.onAction('set_stock', (fields) =>
   recordFromUser(fields.stock, MOVEMENT_TYPES.INVENTORY, fields.bags),
 );
 gladys.onAction('add_delivery', (fields) =>
-  recordFromUser(fields.stock, MOVEMENT_TYPES.DELIVERY, fields.bags, fields.price),
+  recordFromUser(fields.stock, MOVEMENT_TYPES.DELIVERY, fields.bags, {
+    price: fields.price,
+    bagWeight: fields.bag_weight,
+  }),
 );
 gladys.onAction('consume', (fields) =>
   recordFromUser(fields.stock, MOVEMENT_TYPES.CONSUMPTION, fields.bags),
@@ -231,22 +235,25 @@ gladys.onWidgetGet(WIDGET_KEY, async ({ settings = {}, language }) => {
   });
 });
 
-// `values` holds what the user typed in the "Pallet delivered" form, validated
-// by the core against the fields declared in the widget. It is absent on a
-// Gladys (or an SDK) without action forms: the declared pallet size applies.
+// `values` holds what the user typed in the form of the button, validated by
+// the core against the fields declared in the widget. It is absent on a
+// Gladys (or an SDK) without action forms: the bags declared in `params`
+// apply (one bag, or the pallet size).
 gladys.onWidgetAction(WIDGET_KEY, (actionKey, params, { settings = {}, values } = {}) => {
+  const form = values || {};
+  const bags = form.bags ?? params.bags;
   switch (actionKey) {
     case WIDGET_ACTIONS.CONSUME:
-      return recordFromUser(settings.stock, MOVEMENT_TYPES.CONSUMPTION, params.bags);
+      return recordFromUser(settings.stock, MOVEMENT_TYPES.CONSUMPTION, bags);
     case WIDGET_ACTIONS.ADD_BAG:
-      return recordFromUser(settings.stock, MOVEMENT_TYPES.DELIVERY, params.bags);
+      return recordFromUser(settings.stock, MOVEMENT_TYPES.DELIVERY, bags, {
+        bagPrice: form.bag_price,
+      });
     case WIDGET_ACTIONS.DELIVERY:
-      return recordFromUser(
-        settings.stock,
-        MOVEMENT_TYPES.DELIVERY,
-        values?.bags ?? params.bags,
-        values?.price,
-      );
+      return recordFromUser(settings.stock, MOVEMENT_TYPES.DELIVERY, bags, {
+        price: form.price,
+        bagWeight: form.bag_weight,
+      });
     case WIDGET_ACTIONS.UNDO:
       return undoFromUser(settings.stock);
     default:

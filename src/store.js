@@ -2,7 +2,7 @@
 // The stock store: the in-memory ledger, its persistence, and what follows a
 // change (device states, widget nudge).
 //
-// Every movement goes through ONE queue: two taps on "−1 bag" from two
+// Every movement goes through ONE queue: two taps on "Remove bag(s)" from two
 // dashboards must never both read the same stock and lose a bag. A movement
 // is applied in memory only once setConfig() succeeded, so a failed write
 // leaves the stock as the user last saw it — and the error reaches the toast.
@@ -171,7 +171,8 @@ function createStockStore({
 
     /**
      * @description Record a movement.
-     * @param {{type: string, bags: unknown, price?: unknown}} movement - The movement.
+     * @param {{type: string, bags: unknown, price?: unknown, bagPrice?: unknown,
+     *   bagWeight?: unknown}} movement - The movement (see recordMovement()).
      * @param {object} [options] - Options.
      * @param {boolean} [options.fromScene] - Made by a scene action (see src/scene.js).
      * @returns {Promise<object>} The recorded movement.

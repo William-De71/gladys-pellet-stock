@@ -21,8 +21,8 @@
         "fr": "Fonctionnement"
       },
       "description": {
-        "en": "Start by entering your current stock with the \"Correct the stock\" action below. Then add the \"Pellet stock\" widget to your dashboard: tap \"−1 bag\" each time you fill the stove, \"+1 bag\" for a bag bought on its own, and \"Pallet delivered\" when a pallet arrives. Counting the stock from time to time with \"Correct the stock\" is enough too: the bags missing are counted as consumed.",
-        "fr": "Commencez par indiquer votre stock actuel avec l'action « Corriger le stock » ci-dessous. Ajoutez ensuite le widget « Stock de pellets » à votre tableau de bord : appuyez sur « −1 sac » à chaque remplissage du poêle, sur « +1 sac » pour un sac acheté à l'unité, et sur « Palette livrée » à chaque palette livrée. Recompter le stock de temps en temps avec « Corriger le stock » suffit aussi : les sacs manquants sont comptés comme consommés."
+        "en": "Start by entering your current stock with the \"Correct the stock\" action below. Then add the \"Pellet stock\" widget to your dashboard: tap \"Remove bag(s)\" each time you fill the stove, \"Add bag(s)\" for bags bought on their own, and \"Pallet delivered\" when a pallet arrives. Counting the stock from time to time with \"Correct the stock\" is enough too: the bags missing are counted as consumed.",
+        "fr": "Commencez par indiquer votre stock actuel avec l'action « Corriger le stock » ci-dessous. Ajoutez ensuite le widget « Stock de pellets » à votre tableau de bord : appuyez sur « Enlever sac(s) » à chaque remplissage du poêle, sur « Ajouter sac(s) » pour des sacs achetés à l'unité, et sur « Palette livrée » à chaque palette livrée. Recompter le stock de temps en temps avec « Corriger le stock » suffit aussi : les sacs manquants sont comptés comme consommés."
       }
     },
     {
@@ -196,6 +196,21 @@
           "required": false,
           "min": 0,
           "max": 20000
+        },
+        {
+          "key": "bag_weight",
+          "type": "number",
+          "label": {
+            "en": "Bag weight (kg)",
+            "fr": "Poids d'un sac (kg)"
+          },
+          "description": {
+            "en": "Optional: the bag weight of the configuration otherwise.",
+            "fr": "Facultatif : sinon, le poids d'un sac de la configuration."
+          },
+          "required": false,
+          "min": 1,
+          "max": 50
         }
       ]
     },

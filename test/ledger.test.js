@@ -111,6 +111,52 @@ test('recordMovement: only a delivery carries a price', () => {
   assert.equal('price' in ledger.movements[1], false);
 });
 
+test('recordMovement: bags bought one by one are priced per bag, stored as the total', () => {
+  const ledger = recordMovement(createLedger(), { type: 'delivery', bags: 3, bagPrice: 7.29 }, NOW);
+  assert.equal(ledger.movements[0].price, 21.87);
+  // The total paid wins over a price per bag.
+  const both = recordMovement(
+    createLedger(),
+    { type: 'delivery', bags: 3, price: 20, bagPrice: 7.29 },
+    NOW,
+  );
+  assert.equal(both.movements[0].price, 20);
+  assert.equal(
+    'price' in
+      recordMovement(createLedger(), { type: 'delivery', bags: 3, bagPrice: 0 }, NOW).movements[0],
+    false,
+  );
+  [-1, 100.01, 'abc'].forEach((bagPrice) => {
+    assert.throws(
+      () => recordMovement(createLedger(), { type: 'delivery', bags: 3, bagPrice }, NOW),
+      (error) => error instanceof StockError && error.code === 'invalid_price',
+      `bagPrice=${bagPrice}`,
+    );
+  });
+});
+
+test('recordMovement: a delivery keeps the weight of its bags', () => {
+  const ledger = recordMovement(
+    createLedger(),
+    { type: 'delivery', bags: 96, bagWeight: '10.5' },
+    NOW,
+  );
+  assert.equal(ledger.movements[0].bagWeight, 10.5);
+  // Left empty: no weight, the configured one applies.
+  const plain = recordMovement(createLedger(), { type: 'delivery', bags: 66, bagWeight: '' }, NOW);
+  assert.equal('bagWeight' in plain.movements[0], false);
+  [0, 51, 'abc'].forEach((bagWeight) => {
+    assert.throws(
+      () => recordMovement(createLedger(), { type: 'delivery', bags: 66, bagWeight }, NOW),
+      (error) => error instanceof StockError && error.code === 'invalid_weight',
+      `bagWeight=${bagWeight}`,
+    );
+  });
+  // Only a delivery carries a weight.
+  const used = recordMovement(ledger, { type: 'consumption', bags: 1, bagWeight: 10 }, NOW);
+  assert.equal('bagWeight' in used.movements[1], false);
+});
+
 test('recordMovement: accepts counts sent as strings', () => {
   const ledger = recordMovement(createLedger(), { type: 'delivery', bags: '12' }, NOW);
   assert.equal(currentStock(ledger), 12);
@@ -174,6 +220,14 @@ test('parseLedger: drops invalid movements, keeps the rest, sorted', () => {
       { t: daysAgo(1).toISOString(), type: 'delivery', bags: -3, before: 0, after: 1 },
       { t: daysAgo(1).toISOString(), type: 'delivery', bags: 3, before: 0, after: 3, price: '9' },
       { t: daysAgo(1).toISOString(), type: 'delivery', bags: 3, before: 0, after: 3, price: 0 },
+      {
+        t: daysAgo(1).toISOString(),
+        type: 'delivery',
+        bags: 3,
+        before: 0,
+        after: 3,
+        bagWeight: '15',
+      },
       null,
     ],
   });
@@ -184,7 +238,11 @@ test('parseLedger: drops invalid movements, keeps the rest, sorted', () => {
 });
 
 test('parseLedger / serializeLedger: the price of a delivery survives a round trip', () => {
-  const ledger = buildLedger([[3, 'delivery', 66, 459.5]]);
+  const ledger = recordMovement(
+    buildLedger([[3, 'delivery', 66, 459.5]]),
+    { type: 'delivery', bags: 10, bagPrice: 7.5, bagWeight: 10 },
+    NOW,
+  );
   assert.deepEqual(parseLedger(serializeLedger(ledger)), ledger);
 });
 
@@ -320,6 +378,21 @@ test('computeStats: the price is the one of the last delivery entered with one',
     WINDOW,
   );
   assert.equal(stats.bagPrice, 7);
+});
+
+test('computeStats: the price comes with the weight of the bags it was paid for', () => {
+  const ledger = recordMovement(
+    buildLedger([[10, 'delivery', 66, 462]]),
+    { type: 'delivery', bags: 96, price: 600, bagWeight: 10 },
+    daysAgo(5),
+  );
+  const stats = computeStats(ledger, NOW, WINDOW);
+  assert.equal(stats.bagPrice, 6.25);
+  assert.equal(stats.pricedBagWeight, 10);
+  assert.equal(
+    computeStats(buildLedger([[3, 'delivery', 66, 462]]), NOW, WINDOW).pricedBagWeight,
+    null,
+  );
 });
 
 test('computeStats: undoing a priced delivery brings the previous price back', () => {

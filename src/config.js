@@ -11,6 +11,7 @@
 // -----------------------------------------------------------------------------
 
 import { CONFIG_KEYS, DEFAULTS, LIMITS, READING_UNITS, STOCK_TYPES } from './constants.js';
+import { resolveLanguage } from './i18n.js';
 import { StockError } from './ledger.js';
 
 const { BAGS, BULK } = STOCK_TYPES;
@@ -109,7 +110,8 @@ function readNumber(raw, fallback, { min, max }) {
  * @returns {{bagWeight: number, palletSize: number, lowStockThreshold: number,
  *   consumptionWindow: number, palletPrice: number|null, bagPrice: number|null,
  *   bulkCapacity: number|null, bulkLowThreshold: number, bulkDelivery: number,
- *   bulkTonnePrice: number|null, bulkReadingUnit: string}} The normalized config.
+ *   bulkTonnePrice: number|null, bulkReadingUnit: string, language: string}} The
+ *   normalized config.
  *   The bag price is the pallet price divided by the bags per pallet; a price
  *   (or a capacity) of 0 counts as none.
  * @example
@@ -142,6 +144,9 @@ function normalizeConfig(raw = {}) {
     palletPrice: palletPrice > 0 ? palletPrice : DEFAULTS.palletPrice,
     bagPrice: palletPrice > 0 ? palletPrice / palletSize : DEFAULTS.bagPrice,
     ...normalizeBulkConfig(raw),
+    // Gladys does not tell an integration the language of its users: the
+    // device names follow this setting, English when it was never saved.
+    language: resolveLanguage(raw[CONFIG_KEYS.LANGUAGE] ?? DEFAULTS.language),
   };
 }
 

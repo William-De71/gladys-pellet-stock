@@ -33,7 +33,15 @@ test('normalizeConfig: reads numbers sent as strings', () => {
     bulkDelivery: DEFAULTS.bulkDelivery,
     bulkTonnePrice: DEFAULTS.bulkTonnePrice,
     bulkReadingUnit: DEFAULTS.bulkReadingUnit,
+    language: DEFAULTS.language,
   });
+});
+
+test('normalizeConfig: the language of the device names, English by default', () => {
+  assert.equal(normalizeConfig({ language: 'de' }).language, 'de');
+  assert.equal(normalizeConfig({ language: 'es' }).language, 'es');
+  assert.equal(normalizeConfig({ language: 'it' }).language, 'en');
+  assert.equal(normalizeConfig({}).language, 'en');
 });
 
 test('normalizeConfig: clamps out-of-range values and ignores garbage', () => {

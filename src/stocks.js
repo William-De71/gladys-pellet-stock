@@ -609,10 +609,11 @@ function createStocks({
 
     /**
      * @description The devices of every stock, for the Discovery screen.
-     * @param {string} [language] - Language of the default names.
+     * @param {string} [language] - Language of the default names, the
+     *   configured one when omitted.
      * @returns {Array<object>} The discovered devices.
      */
-    devices(language) {
+    devices(language = getConfig().language) {
       return list().map((stock) => buildDevice(gladys, language, stock));
     },
 

@@ -15,6 +15,8 @@ const CONFIG_KEYS = {
   BULK_DELIVERY: 'bulk_delivery_default',
   BULK_TONNE_PRICE: 'bulk_tonne_price',
   BULK_READING_UNIT: 'bulk_reading_unit',
+  // The language of the device names offered on the Discovery screen.
+  LANGUAGE: 'language',
 };
 
 // Key stored through setConfig() OUTSIDE the config_schema: the ledger of
@@ -61,6 +63,9 @@ const DEFAULTS = {
   bulkDelivery: 3000,
   bulkTonnePrice: null,
   bulkReadingUnit: READING_UNITS.KG,
+  // Device names in English until the user picks a language (as before the
+  // setting existed).
+  language: 'en',
 };
 
 const LIMITS = {

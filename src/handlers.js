@@ -182,8 +182,13 @@ function registerHandlers({ gladys, stocks, now = () => new Date() }) {
     return Object.fromEntries(
       LANGUAGES.map((language) => {
         const t = (key, params) => translate(language, key, params);
-        // Day first in both languages, as the dates were typed.
-        const day = (date) => date.toLocaleDateString(language === 'en' ? 'en-GB' : language);
+        // Day first in every language, two digits, as the dates were typed.
+        const day = (date) =>
+          date.toLocaleDateString(language === 'en' ? 'en-GB' : language, {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          });
         const euros = (value, digits) =>
           new Intl.NumberFormat(language, {
             style: 'currency',

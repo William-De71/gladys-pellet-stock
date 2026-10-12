@@ -42,10 +42,20 @@ const { publishDevices } = registerHandlers({ gladys, stocks });
 // --- Config & lifecycle ----------------------------------------------------------
 
 gladys.onConfigUpdated(async (newConfig) => {
+  const previousLanguage = config.language;
   config = normalizeConfig(newConfig);
   // The defaults of every stock: the window and the threshold change the
   // autonomy and the widget colors.
   await stocks.notifyChange();
+  // The names offered on the Discovery screen follow the language setting
+  // (the devices already added keep theirs).
+  if (config.language !== previousLanguage) {
+    try {
+      await publishDevices();
+    } catch (error) {
+      logger.error('Could not publish the pellet stock devices', error);
+    }
+  }
 });
 
 gladys.on('connected', async () => {

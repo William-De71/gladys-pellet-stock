@@ -223,3 +223,12 @@ test('handlers: attaching and removing a stock answer in the house name', async 
   assert.equal(kept.fr, 'Le stock principal ne peut pas être supprimé.');
   assert.equal(parseLedger(gladys.storedConfig.stock_ledger_0000000a).movements.length, 0);
 });
+
+test('handlers: the devices offered on Discovery are named in the configured language', async () => {
+  const { gladys, h } = await setup({ language: 'de' });
+  await h.action.add_stock({ house: 'chalet', type: 'bulk' });
+  assert.deepEqual(
+    gladys.discovered.map((device) => device.name),
+    ['Pelletvorrat', 'Pelletsilo – Chalet des Écrins'],
+  );
+});

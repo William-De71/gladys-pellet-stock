@@ -186,7 +186,12 @@ test('widget: the delivery button opens a form with the bags and the price', () 
   );
   assert.equal(action.fields[2].default, DEFAULTS.bagWeight);
   assert.equal(action.fields[0].default, 72);
-  assert.deepEqual(action.fields[0].label, { en: 'Bags delivered', fr: 'Sacs livrés' });
+  assert.deepEqual(action.fields[0].label, {
+    en: 'Bags delivered',
+    fr: 'Sacs livrés',
+    de: 'Gelieferte Säcke',
+    es: 'Sacos entregados',
+  });
   // No price anywhere: the price field starts empty.
   assert.equal('default' in action.fields[1], false);
   // The configured price, then the last one paid.
@@ -265,7 +270,12 @@ test('widget: removing bags opens a form capped at the stock', () => {
     })),
     [{ key: 'bags', required: true, min: 1, max: 94, value: 1 }],
   );
-  assert.deepEqual(action.fields[0].label, { en: 'Bags used', fr: 'Sacs utilisés' });
+  assert.deepEqual(action.fields[0].label, {
+    en: 'Bags used',
+    fr: 'Sacs utilisés',
+    de: 'Verbrauchte Säcke',
+    es: 'Sacos usados',
+  });
 });
 
 test('widget: the price of the last delivery wins over the configured one', () => {

@@ -4,7 +4,9 @@
   "name": "Pellet Stock",
   "description": {
     "en": "Track your wood pellet stock: deliveries, consumption, autonomy, with a dashboard widget.",
-    "fr": "Suivez votre stock de pellets : livraisons, consommation et autonomie, avec un widget dédié."
+    "fr": "Suivez votre stock de pellets : livraisons, consommation et autonomie, avec un widget dédié.",
+    "de": "Verfolgen Sie Ihren Pelletvorrat: Lieferungen, Verbrauch und Reichweite, mit Dashboard-Widget.",
+    "es": "Siga su stock de pellets: entregas, consumo y autonomía, con un widget en el panel."
   },
   "version": "1.2.0",
   "docker_image": "ghcr.io/william-de71/gladys-pellet-stock:1.2.0",
@@ -19,23 +21,87 @@
       "type": "section",
       "label": {
         "en": "How it works",
-        "fr": "Fonctionnement"
+        "fr": "Fonctionnement",
+        "de": "So funktioniert es",
+        "es": "Funcionamiento"
       },
       "description": {
         "en": "Start by entering your current stock with the \"Correct the stock\" action below. Then add the \"Pellet stock\" widget to your dashboard: tap \"Remove bag(s)\" each time you fill the stove, \"Add bag(s)\" for bags bought on their own, and \"Pallet delivered\" when a pallet arrives. Counting the stock from time to time with \"Correct the stock\" is enough too: the bags missing are counted as consumed.",
-        "fr": "Commencez par indiquer votre stock actuel avec l'action « Corriger le stock » ci-dessous. Ajoutez ensuite le widget « Stock de pellets » à votre tableau de bord : appuyez sur « Enlever sac(s) » à chaque remplissage du poêle, sur « Ajouter sac(s) » pour des sacs achetés à l'unité, et sur « Palette livrée » à chaque palette livrée. Recompter le stock de temps en temps avec « Corriger le stock » suffit aussi : les sacs manquants sont comptés comme consommés."
+        "fr": "Commencez par indiquer votre stock actuel avec l'action « Corriger le stock » ci-dessous. Ajoutez ensuite le widget « Stock de pellets » à votre tableau de bord : appuyez sur « Enlever sac(s) » à chaque remplissage du poêle, sur « Ajouter sac(s) » pour des sacs achetés à l'unité, et sur « Palette livrée » à chaque palette livrée. Recompter le stock de temps en temps avec « Corriger le stock » suffit aussi : les sacs manquants sont comptés comme consommés.",
+        "de": "Geben Sie zuerst Ihren aktuellen Vorrat mit der Aktion „Vorrat korrigieren“ unten ein. Fügen Sie dann das Widget „Pelletvorrat“ Ihrem Dashboard hinzu: Tippen Sie bei jedem Befüllen des Ofens auf „Säcke entnehmen“, auf „Säcke hinzufügen“ für einzeln gekaufte Säcke und auf „Palette geliefert“, wenn eine Palette ankommt. Es genügt auch, den Vorrat ab und zu mit „Vorrat korrigieren“ nachzuzählen: Die fehlenden Säcke gelten als verbraucht.",
+        "es": "Empiece indicando su stock actual con la acción «Corregir el stock» de abajo. Después añada el widget «Stock de pellets» a su panel: pulse «Quitar sacos» cada vez que llene la estufa, «Añadir sacos» para sacos comprados sueltos y «Palé entregado» cuando llegue un palé. También basta con recontar el stock de vez en cuando con «Corregir el stock»: los sacos que faltan se cuentan como consumidos."
       }
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of the device names",
+        "fr": "Langue des noms d'appareils",
+        "de": "Sprache der Gerätenamen",
+        "es": "Idioma de los nombres de dispositivos"
+      },
+      "description": {
+        "en": "The names offered on the Discovery tab for the stock and silo devices. Gladys does not tell an integration the language of its users. Devices already added keep their name.",
+        "fr": "Les noms proposés dans l'onglet Découverte pour les appareils de stock et de silo. Gladys n'indique pas à une intégration la langue de ses utilisateurs. Les appareils déjà ajoutés gardent leur nom.",
+        "de": "Die Namen, die im Tab „Entdecken“ für die Vorrats- und Silogeräte vorgeschlagen werden. Gladys teilt einer Integration die Sprache ihrer Benutzer nicht mit. Bereits hinzugefügte Geräte behalten ihren Namen.",
+        "es": "Los nombres propuestos en la pestaña «Descubrir» para los dispositivos de stock y de silo. Gladys no indica a una integración el idioma de sus usuarios. Los dispositivos ya añadidos conservan su nombre."
+      },
+      "required": false,
+      "default": "en",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     },
     {
       "key": "defaults",
       "type": "section",
       "label": {
         "en": "Default settings",
-        "fr": "Réglages par défaut"
+        "fr": "Réglages par défaut",
+        "de": "Standardeinstellungen",
+        "es": "Ajustes por defecto"
       },
       "description": {
         "en": "Used by every stock, except the settings given to one stock with the \"Set up a stock\" action.",
-        "fr": "Utilisés par tous les stocks, sauf les réglages donnés à un stock avec l'action « Régler un stock »."
+        "fr": "Utilisés par tous les stocks, sauf les réglages donnés à un stock avec l'action « Régler un stock ».",
+        "de": "Gelten für jeden Vorrat, außer den Einstellungen, die einem Vorrat mit der Aktion „Vorrat einrichten“ gegeben wurden.",
+        "es": "Se aplican a todos los stocks, salvo los ajustes dados a un stock con la acción «Configurar un stock»."
       }
     },
     {
@@ -43,11 +109,15 @@
       "type": "number",
       "label": {
         "en": "Bag weight (kg)",
-        "fr": "Poids d'un sac (kg)"
+        "fr": "Poids d'un sac (kg)",
+        "de": "Sackgewicht (kg)",
+        "es": "Peso de un saco (kg)"
       },
       "description": {
         "en": "Used to display the remaining weight. Most bags weigh 15 kg.",
-        "fr": "Sert à afficher le poids restant. La plupart des sacs pèsent 15 kg."
+        "fr": "Sert à afficher le poids restant. La plupart des sacs pèsent 15 kg.",
+        "de": "Dient zur Anzeige des Restgewichts. Die meisten Säcke wiegen 15 kg.",
+        "es": "Sirve para mostrar el peso restante. La mayoría de los sacos pesan 15 kg."
       },
       "required": false,
       "default": 15,
@@ -59,11 +129,15 @@
       "type": "number",
       "label": {
         "en": "Bags per pallet",
-        "fr": "Sacs par palette"
+        "fr": "Sacs par palette",
+        "de": "Säcke pro Palette",
+        "es": "Sacos por palé"
       },
       "description": {
         "en": "Number of bags the \"Pallet delivered\" button adds. A pallet of 15 kg bags usually holds 66 or 72 bags.",
-        "fr": "Nombre de sacs ajoutés par le bouton « Palette livrée ». Une palette de sacs de 15 kg compte en général 66 ou 72 sacs."
+        "fr": "Nombre de sacs ajoutés par le bouton « Palette livrée ». Une palette de sacs de 15 kg compte en général 66 ou 72 sacs.",
+        "de": "Anzahl der Säcke, die die Schaltfläche „Palette geliefert“ hinzufügt. Eine Palette mit 15-kg-Säcken umfasst meist 66 oder 72 Säcke.",
+        "es": "Número de sacos que añade el botón «Palé entregado». Un palé de sacos de 15 kg suele tener 66 o 72 sacos."
       },
       "required": false,
       "default": 66,
@@ -75,11 +149,15 @@
       "type": "number",
       "label": {
         "en": "Low stock threshold (bags)",
-        "fr": "Seuil de stock bas (sacs)"
+        "fr": "Seuil de stock bas (sacs)",
+        "de": "Schwelle für niedrigen Vorrat (Säcke)",
+        "es": "Umbral de stock bajo (sacos)"
       },
       "description": {
         "en": "At or below this number of bags, the widget shows the stock in orange and reminds you to order.",
-        "fr": "À partir de ce nombre de sacs, le widget affiche le stock en orange et vous rappelle de commander."
+        "fr": "À partir de ce nombre de sacs, le widget affiche le stock en orange et vous rappelle de commander.",
+        "de": "Ab dieser Anzahl Säcke zeigt das Widget den Vorrat in Orange an und erinnert Sie an die Bestellung.",
+        "es": "A partir de este número de sacos, el widget muestra el stock en naranja y le recuerda que haga el pedido."
       },
       "required": false,
       "default": 10,
@@ -91,11 +169,15 @@
       "type": "number",
       "label": {
         "en": "Consumption window (days)",
-        "fr": "Période de calcul (jours)"
+        "fr": "Période de calcul (jours)",
+        "de": "Berechnungszeitraum (Tage)",
+        "es": "Periodo de cálculo (días)"
       },
       "description": {
         "en": "The average daily consumption, hence the autonomy, is computed over this many past days. Shorter follows the weather faster, longer is steadier.",
-        "fr": "La consommation moyenne par jour, et donc l'autonomie, est calculée sur ce nombre de jours passés. Plus court suit plus vite la météo, plus long est plus stable."
+        "fr": "La consommation moyenne par jour, et donc l'autonomie, est calculée sur ce nombre de jours passés. Plus court suit plus vite la météo, plus long est plus stable.",
+        "de": "Der durchschnittliche Tagesverbrauch und damit die Reichweite werden über diese Anzahl vergangener Tage berechnet. Kürzer folgt dem Wetter schneller, länger ist stabiler.",
+        "es": "El consumo medio diario, y por tanto la autonomía, se calcula sobre este número de días pasados. Más corto sigue antes al tiempo que hace, más largo es más estable."
       },
       "required": false,
       "default": 14,
@@ -107,11 +189,15 @@
       "type": "number",
       "label": {
         "en": "Pallet price (€)",
-        "fr": "Prix d'une palette (€)"
+        "fr": "Prix d'une palette (€)",
+        "de": "Palettenpreis (€)",
+        "es": "Precio de un palé (€)"
       },
       "description": {
         "en": "Optional. Shows the value of the stock and the cost per month in the widget. The price of a bag is this price divided by the bags per pallet. Once a delivery is entered in the widget with its price, that price is used instead.",
-        "fr": "Facultatif. Affiche la valeur du stock et le coût par mois dans le widget. Le prix d'un sac est ce prix divisé par le nombre de sacs par palette. Dès qu'une livraison est saisie dans le widget avec son prix, c'est ce prix qui est utilisé."
+        "fr": "Facultatif. Affiche la valeur du stock et le coût par mois dans le widget. Le prix d'un sac est ce prix divisé par le nombre de sacs par palette. Dès qu'une livraison est saisie dans le widget avec son prix, c'est ce prix qui est utilisé.",
+        "de": "Optional. Zeigt im Widget den Wert des Vorrats und die Kosten pro Monat an. Der Preis eines Sacks ist dieser Preis geteilt durch die Säcke pro Palette. Sobald eine Lieferung mit ihrem Preis im Widget eingegeben wurde, gilt dieser Preis.",
+        "es": "Opcional. Muestra en el widget el valor del stock y el coste mensual. El precio de un saco es este precio dividido entre los sacos por palé. En cuanto se introduce en el widget una entrega con su precio, se usa ese precio."
       },
       "required": false,
       "min": 0,
@@ -122,11 +208,15 @@
       "type": "section",
       "label": {
         "en": "Silo (bulk pellets)",
-        "fr": "Silo (pellets en vrac)"
+        "fr": "Silo (pellets en vrac)",
+        "de": "Silo (lose Pellets)",
+        "es": "Silo (pellets a granel)"
       },
       "description": {
         "en": "The defaults of the silos, added with \"Add a stock\" (type: silo) and followed with the \"Pellet silo\" widget.",
-        "fr": "Les réglages par défaut des silos, ajoutés avec « Ajouter un stock » (type : silo) et suivis avec le widget « Silo de pellets »."
+        "fr": "Les réglages par défaut des silos, ajoutés avec « Ajouter un stock » (type : silo) et suivis avec le widget « Silo de pellets ».",
+        "de": "Die Standardwerte der Silos, die mit „Vorrat hinzufügen“ (Typ: Silo) angelegt und mit dem Widget „Pelletsilo“ verfolgt werden.",
+        "es": "Los ajustes por defecto de los silos, añadidos con «Añadir un stock» (tipo: silo) y seguidos con el widget «Silo de pellets»."
       }
     },
     {
@@ -134,11 +224,15 @@
       "type": "number",
       "label": {
         "en": "Silo capacity (kg)",
-        "fr": "Capacité du silo (kg)"
+        "fr": "Capacité du silo (kg)",
+        "de": "Silokapazität (kg)",
+        "es": "Capacidad del silo (kg)"
       },
       "description": {
         "en": "Optional. Gives the fill rate, and lets you read the level in %.",
-        "fr": "Facultatif. Donne le taux de remplissage, et permet de relever le niveau en %."
+        "fr": "Facultatif. Donne le taux de remplissage, et permet de relever le niveau en %.",
+        "de": "Optional. Liefert den Füllgrad und erlaubt, den Füllstand in % abzulesen.",
+        "es": "Opcional. Da el porcentaje de llenado y permite leer el nivel en %."
       },
       "required": false,
       "min": 0,
@@ -149,11 +243,15 @@
       "type": "number",
       "label": {
         "en": "Low stock threshold (kg)",
-        "fr": "Seuil de stock bas (kg)"
+        "fr": "Seuil de stock bas (kg)",
+        "de": "Schwelle für niedrigen Vorrat (kg)",
+        "es": "Umbral de stock bajo (kg)"
       },
       "description": {
         "en": "From this level, the silo widget turns orange and reminds you to order.",
-        "fr": "À partir de ce niveau, le widget du silo passe en orange et vous rappelle de commander."
+        "fr": "À partir de ce niveau, le widget du silo passe en orange et vous rappelle de commander.",
+        "de": "Ab diesem Füllstand wird das Silo-Widget orange und erinnert Sie an die Bestellung.",
+        "es": "A partir de este nivel, el widget del silo pasa a naranja y le recuerda que haga el pedido."
       },
       "required": false,
       "default": 500,
@@ -165,11 +263,15 @@
       "type": "number",
       "label": {
         "en": "Usual delivery (kg)",
-        "fr": "Livraison habituelle (kg)"
+        "fr": "Livraison habituelle (kg)",
+        "de": "Übliche Liefermenge (kg)",
+        "es": "Entrega habitual (kg)"
       },
       "description": {
         "en": "Pre-fills the \"Delivery\" form of the silo widget.",
-        "fr": "Pré-remplit le formulaire « Livraison » du widget du silo."
+        "fr": "Pré-remplit le formulaire « Livraison » du widget du silo.",
+        "de": "Füllt das Formular „Lieferung“ des Silo-Widgets vor.",
+        "es": "Rellena de antemano el formulario «Entrega» del widget del silo."
       },
       "required": false,
       "default": 3000,
@@ -181,11 +283,15 @@
       "type": "number",
       "label": {
         "en": "Price per tonne (€)",
-        "fr": "Prix à la tonne (€)"
+        "fr": "Prix à la tonne (€)",
+        "de": "Preis pro Tonne (€)",
+        "es": "Precio por tonelada (€)"
       },
       "description": {
         "en": "Optional. The price paid for the last delivery wins over it.",
-        "fr": "Facultatif. Le prix payé lors de la dernière livraison l'emporte."
+        "fr": "Facultatif. Le prix payé lors de la dernière livraison l'emporte.",
+        "de": "Optional. Der bei der letzten Lieferung bezahlte Preis hat Vorrang.",
+        "es": "Opcional. Prevalece el precio pagado en la última entrega."
       },
       "required": false,
       "min": 0,
@@ -196,11 +302,15 @@
       "type": "select",
       "label": {
         "en": "Level reading",
-        "fr": "Relevé du niveau"
+        "fr": "Relevé du niveau",
+        "de": "Füllstandsablesung",
+        "es": "Lectura del nivel"
       },
       "description": {
         "en": "How the \"Level reading\" form asks for the level. In % needs the capacity.",
-        "fr": "Comment le formulaire « Relevé de niveau » demande le niveau. En % demande la capacité."
+        "fr": "Comment le formulaire « Relevé de niveau » demande le niveau. En % demande la capacité.",
+        "de": "Wie das Formular „Füllstand ablesen“ nach dem Füllstand fragt. In % erfordert die Kapazität.",
+        "es": "Cómo pide el nivel el formulario «Leer el nivel». En % requiere la capacidad."
       },
       "required": false,
       "default": "kg",
@@ -209,14 +319,18 @@
           "value": "kg",
           "label": {
             "en": "In kg",
-            "fr": "En kg"
+            "fr": "En kg",
+            "de": "In kg",
+            "es": "En kg"
           }
         },
         {
           "value": "percent",
           "label": {
             "en": "In % of the capacity",
-            "fr": "En % de la capacité"
+            "fr": "En % de la capacité",
+            "de": "In % der Kapazität",
+            "es": "En % de la capacidad"
           }
         }
       ]
@@ -227,11 +341,15 @@
       "key": "set_stock",
       "label": {
         "en": "Correct the stock",
-        "fr": "Corriger le stock"
+        "fr": "Corriger le stock",
+        "de": "Vorrat korrigieren",
+        "es": "Corregir el stock"
       },
       "description": {
         "en": "Enter the number of bags you actually counted.",
-        "fr": "Indiquez le nombre de sacs réellement comptés."
+        "fr": "Indiquez le nombre de sacs réellement comptés.",
+        "de": "Geben Sie die tatsächlich gezählte Anzahl Säcke ein.",
+        "es": "Indique el número de sacos que ha contado realmente."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -241,11 +359,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -254,7 +376,9 @@
           "type": "number",
           "label": {
             "en": "Bags in stock",
-            "fr": "Sacs en stock"
+            "fr": "Sacs en stock",
+            "de": "Säcke im Vorrat",
+            "es": "Sacos en stock"
           },
           "required": true,
           "min": 0,
@@ -265,11 +389,15 @@
           "type": "number",
           "label": {
             "en": "Price per bag (€)",
-            "fr": "Prix au sac (€)"
+            "fr": "Prix au sac (€)",
+            "de": "Preis pro Sack (€)",
+            "es": "Precio por saco (€)"
           },
           "description": {
             "en": "Optional: the price of the bags counted above the recorded stock, for the cost of the season. Without it, they cost the last price known.",
-            "fr": "Facultatif : le prix des sacs comptés en plus du stock enregistré, pour le coût de la saison. Sans lui, ils coûtent le dernier prix connu."
+            "fr": "Facultatif : le prix des sacs comptés en plus du stock enregistré, pour le coût de la saison. Sans lui, ils coûtent le dernier prix connu.",
+            "de": "Optional: der Preis der Säcke, die über den erfassten Vorrat hinaus gezählt wurden, für die Kosten der Saison. Ohne ihn kosten sie den zuletzt bekannten Preis.",
+            "es": "Opcional: el precio de los sacos contados por encima del stock registrado, para el coste de la temporada. Sin él, cuestan el último precio conocido."
           },
           "required": false,
           "min": 0,
@@ -281,11 +409,15 @@
       "key": "add_delivery",
       "label": {
         "en": "Record a delivery",
-        "fr": "Enregistrer une livraison"
+        "fr": "Enregistrer une livraison",
+        "de": "Lieferung erfassen",
+        "es": "Registrar una entrega"
       },
       "description": {
         "en": "For a delivery that is not a full pallet.",
-        "fr": "Pour une livraison qui n'est pas une palette complète."
+        "fr": "Pour une livraison qui n'est pas une palette complète.",
+        "de": "Für eine Lieferung, die keine volle Palette ist.",
+        "es": "Para una entrega que no es un palé completo."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -295,11 +427,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -308,7 +444,9 @@
           "type": "number",
           "label": {
             "en": "Bags delivered",
-            "fr": "Sacs livrés"
+            "fr": "Sacs livrés",
+            "de": "Gelieferte Säcke",
+            "es": "Sacos entregados"
           },
           "required": true,
           "min": 1,
@@ -319,11 +457,15 @@
           "type": "number",
           "label": {
             "en": "Price paid (€)",
-            "fr": "Prix payé (€)"
+            "fr": "Prix payé (€)",
+            "de": "Bezahlter Preis (€)",
+            "es": "Precio pagado (€)"
           },
           "description": {
             "en": "For the whole delivery. Optional: gives the stock value and the cost per month.",
-            "fr": "Pour toute la livraison. Facultatif : donne la valeur du stock et le coût par mois."
+            "fr": "Pour toute la livraison. Facultatif : donne la valeur du stock et le coût par mois.",
+            "de": "Für die gesamte Lieferung. Optional: liefert den Wert des Vorrats und die Kosten pro Monat.",
+            "es": "Por toda la entrega. Opcional: da el valor del stock y el coste mensual."
           },
           "required": false,
           "min": 0,
@@ -334,11 +476,15 @@
           "type": "number",
           "label": {
             "en": "Bag weight (kg)",
-            "fr": "Poids d'un sac (kg)"
+            "fr": "Poids d'un sac (kg)",
+            "de": "Sackgewicht (kg)",
+            "es": "Peso de un saco (kg)"
           },
           "description": {
             "en": "Optional: the bag weight of the configuration otherwise.",
-            "fr": "Facultatif : sinon, le poids d'un sac de la configuration."
+            "fr": "Facultatif : sinon, le poids d'un sac de la configuration.",
+            "de": "Optional: sonst das Sackgewicht der Konfiguration.",
+            "es": "Opcional: si no, el peso de un saco de la configuración."
           },
           "required": false,
           "min": 1,
@@ -350,7 +496,9 @@
       "key": "consume",
       "label": {
         "en": "Record a consumption",
-        "fr": "Déclarer une consommation"
+        "fr": "Déclarer une consommation",
+        "de": "Verbrauch erfassen",
+        "es": "Declarar un consumo"
       },
       "timeout_seconds": 15,
       "fields": [
@@ -360,11 +508,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -373,7 +525,9 @@
           "type": "number",
           "label": {
             "en": "Bags used",
-            "fr": "Sacs utilisés"
+            "fr": "Sacs utilisés",
+            "de": "Verbrauchte Säcke",
+            "es": "Sacos usados"
           },
           "required": true,
           "default": 1,
@@ -386,7 +540,9 @@
       "key": "undo",
       "label": {
         "en": "Undo the last operation",
-        "fr": "Annuler la dernière opération"
+        "fr": "Annuler la dernière opération",
+        "de": "Letzten Vorgang rückgängig machen",
+        "es": "Deshacer la última operación"
       },
       "timeout_seconds": 15,
       "fields": [
@@ -396,11 +552,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         }
@@ -410,11 +570,15 @@
       "key": "analyze_cost",
       "label": {
         "en": "Analyze the cost",
-        "fr": "Analyser le coût"
+        "fr": "Analyser le coût",
+        "de": "Kosten analysieren",
+        "es": "Analizar el coste"
       },
       "description": {
         "en": "The bags used over a period, their weight and their cost: the oldest bags are used first, at the price they were bought.",
-        "fr": "Les sacs utilisés sur une période, leur poids et leur coût : les sacs les plus anciens partent en premier, au prix où ils ont été achetés."
+        "fr": "Les sacs utilisés sur une période, leur poids et leur coût : les sacs les plus anciens partent en premier, au prix où ils ont été achetés.",
+        "de": "Die in einem Zeitraum verbrauchten Säcke, ihr Gewicht und ihre Kosten: Die ältesten Säcke werden zuerst verbraucht, zu dem Preis, zu dem sie gekauft wurden.",
+        "es": "Los sacos usados en un periodo, su peso y su coste: los sacos más antiguos se gastan primero, al precio al que se compraron."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -424,11 +588,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -437,11 +605,15 @@
           "type": "string",
           "label": {
             "en": "From (DD/MM/YYYY)",
-            "fr": "Du (JJ/MM/AAAA)"
+            "fr": "Du (JJ/MM/AAAA)",
+            "de": "Von (TT/MM/JJJJ)",
+            "es": "Desde (DD/MM/AAAA)"
           },
           "placeholder": {
             "en": "01/10/2026",
-            "fr": "01/10/2026"
+            "fr": "01/10/2026",
+            "de": "01/10/2026",
+            "es": "01/10/2026"
           },
           "required": true
         },
@@ -450,15 +622,21 @@
           "type": "string",
           "label": {
             "en": "To (DD/MM/YYYY)",
-            "fr": "Au (JJ/MM/AAAA)"
+            "fr": "Au (JJ/MM/AAAA)",
+            "de": "Bis (TT/MM/JJJJ)",
+            "es": "Hasta (DD/MM/AAAA)"
           },
           "description": {
             "en": "Included. Leave empty for today.",
-            "fr": "Inclus. Laissez vide pour aujourd'hui."
+            "fr": "Inclus. Laissez vide pour aujourd'hui.",
+            "de": "Einschließlich. Leer lassen für heute.",
+            "es": "Incluido. Déjelo vacío para hoy."
           },
           "placeholder": {
             "en": "01/06/2027",
-            "fr": "01/06/2027"
+            "fr": "01/06/2027",
+            "de": "01/06/2027",
+            "es": "01/06/2027"
           },
           "required": false
         }
@@ -468,11 +646,15 @@
       "key": "add_stock",
       "label": {
         "en": "Add a stock",
-        "fr": "Ajouter un stock"
+        "fr": "Ajouter un stock",
+        "de": "Vorrat hinzufügen",
+        "es": "Añadir un stock"
       },
       "description": {
         "en": "To follow the pellets of another house, in bags or in a silo: the new stock gets its own device, to add from the Discovery tab, and takes the name of the house. One stock of each type per house.",
-        "fr": "Pour suivre les pellets d'une autre maison, en sacs ou en silo : le nouveau stock a son propre appareil, à ajouter depuis l'onglet Découverte, et prend le nom de la maison. Un stock de chaque type par maison."
+        "fr": "Pour suivre les pellets d'une autre maison, en sacs ou en silo : le nouveau stock a son propre appareil, à ajouter depuis l'onglet Découverte, et prend le nom de la maison. Un stock de chaque type par maison.",
+        "de": "Um die Pellets eines anderen Hauses zu verfolgen, in Säcken oder im Silo: Der neue Vorrat erhält ein eigenes Gerät, das im Tab „Entdecken“ hinzugefügt wird, und trägt den Namen des Hauses. Ein Vorrat je Typ pro Haus.",
+        "es": "Para seguir los pellets de otra casa, en sacos o en silo: el nuevo stock tiene su propio dispositivo, que se añade desde la pestaña «Descubrir», y toma el nombre de la casa. Un stock de cada tipo por casa."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -482,7 +664,9 @@
           "source": "houses",
           "label": {
             "en": "House",
-            "fr": "Maison"
+            "fr": "Maison",
+            "de": "Haus",
+            "es": "Casa"
           },
           "required": true
         },
@@ -491,7 +675,9 @@
           "type": "select",
           "label": {
             "en": "Type",
-            "fr": "Type"
+            "fr": "Type",
+            "de": "Typ",
+            "es": "Tipo"
           },
           "required": false,
           "default": "bags",
@@ -500,14 +686,18 @@
               "value": "bags",
               "label": {
                 "en": "Bags",
-                "fr": "Sacs"
+                "fr": "Sacs",
+                "de": "Säcke",
+                "es": "Sacos"
               }
             },
             {
               "value": "bulk",
               "label": {
                 "en": "Silo (bulk)",
-                "fr": "Silo (vrac)"
+                "fr": "Silo (vrac)",
+                "de": "Silo (lose)",
+                "es": "Silo (granel)"
               }
             }
           ]
@@ -518,11 +708,15 @@
       "key": "attach_stock",
       "label": {
         "en": "Attach a stock to a house",
-        "fr": "Rattacher un stock à une maison"
+        "fr": "Rattacher un stock à une maison",
+        "de": "Vorrat einem Haus zuordnen",
+        "es": "Asignar un stock a una casa"
       },
       "description": {
         "en": "For the main stock, or a stock added by name in an earlier version: it then takes the name of the house. Its device and its history stay as they are.",
-        "fr": "Pour le stock principal, ou un stock ajouté avec un nom dans une version précédente : il prend alors le nom de la maison. Son appareil et son historique restent les mêmes."
+        "fr": "Pour le stock principal, ou un stock ajouté avec un nom dans une version précédente : il prend alors le nom de la maison. Son appareil et son historique restent les mêmes.",
+        "de": "Für den Hauptvorrat oder einen Vorrat, der in einer früheren Version mit einem Namen angelegt wurde: Er trägt dann den Namen des Hauses. Sein Gerät und sein Verlauf bleiben unverändert.",
+        "es": "Para el stock principal, o un stock añadido con un nombre en una versión anterior: toma entonces el nombre de la casa. Su dispositivo y su historial no cambian."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -532,11 +726,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -546,7 +744,9 @@
           "source": "houses",
           "label": {
             "en": "House",
-            "fr": "Maison"
+            "fr": "Maison",
+            "de": "Haus",
+            "es": "Casa"
           },
           "required": true
         }
@@ -556,11 +756,15 @@
       "key": "configure_stock",
       "label": {
         "en": "Set up a stock",
-        "fr": "Régler un stock"
+        "fr": "Régler un stock",
+        "de": "Vorrat einrichten",
+        "es": "Configurar un stock"
       },
       "description": {
         "en": "Settings of one stock, over those of the configuration above. A field left empty keeps the current value; the answer lists the settings in use.",
-        "fr": "Les réglages d'un seul stock, à la place de ceux de la configuration ci-dessus. Un champ laissé vide garde la valeur actuelle ; la réponse récapitule les réglages en vigueur."
+        "fr": "Les réglages d'un seul stock, à la place de ceux de la configuration ci-dessus. Un champ laissé vide garde la valeur actuelle ; la réponse récapitule les réglages en vigueur.",
+        "de": "Einstellungen eines einzelnen Vorrats, anstelle derer der Konfiguration oben. Ein leer gelassenes Feld behält den aktuellen Wert; die Antwort listet die geltenden Einstellungen auf.",
+        "es": "Los ajustes de un solo stock, en lugar de los de la configuración de arriba. Un campo vacío conserva el valor actual; la respuesta resume los ajustes vigentes."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -570,11 +774,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -583,7 +791,9 @@
           "type": "number",
           "label": {
             "en": "Consumption window (days)",
-            "fr": "Période de calcul (jours)"
+            "fr": "Période de calcul (jours)",
+            "de": "Berechnungszeitraum (Tage)",
+            "es": "Periodo de cálculo (días)"
           },
           "required": false,
           "min": 3,
@@ -594,11 +804,15 @@
           "type": "section",
           "label": {
             "en": "Stock of bags",
-            "fr": "Stock de sacs"
+            "fr": "Stock de sacs",
+            "de": "Sackvorrat",
+            "es": "Stock de sacos"
           },
           "description": {
             "en": "Ignored for a silo.",
-            "fr": "Ignorés pour un silo."
+            "fr": "Ignorés pour un silo.",
+            "de": "Für ein Silo ignoriert.",
+            "es": "Se ignoran para un silo."
           }
         },
         {
@@ -606,7 +820,9 @@
           "type": "number",
           "label": {
             "en": "Bag weight (kg)",
-            "fr": "Poids d'un sac (kg)"
+            "fr": "Poids d'un sac (kg)",
+            "de": "Sackgewicht (kg)",
+            "es": "Peso de un saco (kg)"
           },
           "required": false,
           "min": 1,
@@ -617,7 +833,9 @@
           "type": "number",
           "label": {
             "en": "Bags per pallet",
-            "fr": "Sacs par palette"
+            "fr": "Sacs par palette",
+            "de": "Säcke pro Palette",
+            "es": "Sacos por palé"
           },
           "required": false,
           "min": 1,
@@ -628,7 +846,9 @@
           "type": "number",
           "label": {
             "en": "Low stock threshold (bags)",
-            "fr": "Seuil de stock bas (sacs)"
+            "fr": "Seuil de stock bas (sacs)",
+            "de": "Schwelle für niedrigen Vorrat (Säcke)",
+            "es": "Umbral de stock bajo (sacos)"
           },
           "required": false,
           "min": 0,
@@ -639,7 +859,9 @@
           "type": "number",
           "label": {
             "en": "Pallet price (€)",
-            "fr": "Prix d'une palette (€)"
+            "fr": "Prix d'une palette (€)",
+            "de": "Palettenpreis (€)",
+            "es": "Precio de un palé (€)"
           },
           "required": false,
           "min": 0,
@@ -650,11 +872,15 @@
           "type": "section",
           "label": {
             "en": "Silo",
-            "fr": "Silo"
+            "fr": "Silo",
+            "de": "Silo",
+            "es": "Silo"
           },
           "description": {
             "en": "Ignored for a stock of bags. The consumption window above applies to both.",
-            "fr": "Ignorés pour un stock de sacs. La période de calcul ci-dessus vaut pour les deux."
+            "fr": "Ignorés pour un stock de sacs. La période de calcul ci-dessus vaut pour les deux.",
+            "de": "Für einen Sackvorrat ignoriert. Der Berechnungszeitraum oben gilt für beide.",
+            "es": "Se ignoran para un stock de sacos. El periodo de cálculo de arriba vale para ambos."
           }
         },
         {
@@ -662,7 +888,9 @@
           "type": "number",
           "label": {
             "en": "Silo capacity (kg)",
-            "fr": "Capacité du silo (kg)"
+            "fr": "Capacité du silo (kg)",
+            "de": "Silokapazität (kg)",
+            "es": "Capacidad del silo (kg)"
           },
           "required": false,
           "min": 0,
@@ -673,7 +901,9 @@
           "type": "number",
           "label": {
             "en": "Low stock threshold (kg)",
-            "fr": "Seuil de stock bas (kg)"
+            "fr": "Seuil de stock bas (kg)",
+            "de": "Schwelle für niedrigen Vorrat (kg)",
+            "es": "Umbral de stock bajo (kg)"
           },
           "required": false,
           "min": 0,
@@ -684,7 +914,9 @@
           "type": "number",
           "label": {
             "en": "Usual delivery (kg)",
-            "fr": "Livraison habituelle (kg)"
+            "fr": "Livraison habituelle (kg)",
+            "de": "Übliche Liefermenge (kg)",
+            "es": "Entrega habitual (kg)"
           },
           "required": false,
           "min": 1,
@@ -695,7 +927,9 @@
           "type": "number",
           "label": {
             "en": "Price per tonne (€)",
-            "fr": "Prix à la tonne (€)"
+            "fr": "Prix à la tonne (€)",
+            "de": "Preis pro Tonne (€)",
+            "es": "Precio por tonelada (€)"
           },
           "required": false,
           "min": 0,
@@ -706,7 +940,9 @@
           "type": "select",
           "label": {
             "en": "Level reading",
-            "fr": "Relevé du niveau"
+            "fr": "Relevé du niveau",
+            "de": "Füllstandsablesung",
+            "es": "Lectura del nivel"
           },
           "required": false,
           "options": [
@@ -714,14 +950,18 @@
               "value": "kg",
               "label": {
                 "en": "In kg",
-                "fr": "En kg"
+                "fr": "En kg",
+                "de": "In kg",
+                "es": "En kg"
               }
             },
             {
               "value": "percent",
               "label": {
                 "en": "In % of the capacity",
-                "fr": "En % de la capacité"
+                "fr": "En % de la capacité",
+                "de": "In % der Kapazität",
+                "es": "En % de la capacidad"
               }
             }
           ]
@@ -731,11 +971,15 @@
           "type": "boolean",
           "label": {
             "en": "Back to the defaults",
-            "fr": "Revenir aux valeurs par défaut"
+            "fr": "Revenir aux valeurs par défaut",
+            "de": "Zurück zu den Standardwerten",
+            "es": "Volver a los valores por defecto"
           },
           "description": {
             "en": "Drops the settings of this stock first: it then follows the configuration above.",
-            "fr": "Retire d'abord les réglages propres à ce stock : il suit alors la configuration ci-dessus."
+            "fr": "Retire d'abord les réglages propres à ce stock : il suit alors la configuration ci-dessus.",
+            "de": "Entfernt zuerst die eigenen Einstellungen dieses Vorrats: Er folgt dann der Konfiguration oben.",
+            "es": "Quita primero los ajustes propios de este stock: sigue entonces la configuración de arriba."
           },
           "required": false
         }
@@ -745,11 +989,15 @@
       "key": "remove_stock",
       "label": {
         "en": "Remove a stock",
-        "fr": "Supprimer un stock"
+        "fr": "Supprimer un stock",
+        "de": "Vorrat entfernen",
+        "es": "Eliminar un stock"
       },
       "description": {
         "en": "Removes an added stock and its history. The main stock cannot be removed.",
-        "fr": "Supprime un stock ajouté et son historique. Le stock principal ne peut pas être supprimé."
+        "fr": "Supprime un stock ajouté et son historique. Le stock principal ne peut pas être supprimé.",
+        "de": "Entfernt einen hinzugefügten Vorrat und seinen Verlauf. Der Hauptvorrat kann nicht entfernt werden.",
+        "es": "Elimina un stock añadido y su historial. El stock principal no se puede eliminar."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -759,7 +1007,9 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "required": true
         }
@@ -771,11 +1021,15 @@
       "key": "low_stock",
       "label": {
         "en": "Pellet stock low",
-        "fr": "Stock de pellets bas"
+        "fr": "Stock de pellets bas",
+        "de": "Pelletvorrat niedrig",
+        "es": "Stock de pellets bajo"
       },
       "description": {
         "en": "The stock falls to the low stock threshold of the configuration.",
-        "fr": "Le stock descend au seuil de stock bas de la configuration."
+        "fr": "Le stock descend au seuil de stock bas de la configuration.",
+        "de": "Der Vorrat fällt auf die Schwelle für niedrigen Vorrat der Konfiguration.",
+        "es": "El stock baja hasta el umbral de stock bajo de la configuración."
       },
       "fields": [
         {
@@ -784,11 +1038,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for every stock.",
-            "fr": "Laissez vide pour tous les stocks."
+            "fr": "Laissez vide pour tous les stocks.",
+            "de": "Leer lassen für alle Vorräte.",
+            "es": "Déjelo vacío para todos los stocks."
           },
           "required": false
         }
@@ -799,7 +1057,9 @@
           "type": "number",
           "label": {
             "en": "Bags left",
-            "fr": "Sacs restants"
+            "fr": "Sacs restants",
+            "de": "Verbleibende Säcke",
+            "es": "Sacos restantes"
           }
         },
         {
@@ -807,7 +1067,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -815,7 +1077,9 @@
           "type": "number",
           "label": {
             "en": "Bags per day",
-            "fr": "Sacs par jour"
+            "fr": "Sacs par jour",
+            "de": "Säcke pro Tag",
+            "es": "Sacos por día"
           }
         },
         {
@@ -823,7 +1087,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         },
         {
@@ -831,7 +1097,9 @@
           "type": "number",
           "label": {
             "en": "Remaining weight (kg)",
-            "fr": "Poids restant (kg)"
+            "fr": "Poids restant (kg)",
+            "de": "Restgewicht (kg)",
+            "es": "Peso restante (kg)"
           }
         }
       ]
@@ -840,11 +1108,15 @@
       "key": "stock_empty",
       "label": {
         "en": "Pellet stock empty",
-        "fr": "Stock de pellets épuisé"
+        "fr": "Stock de pellets épuisé",
+        "de": "Pelletvorrat leer",
+        "es": "Stock de pellets agotado"
       },
       "description": {
         "en": "The last bag was used.",
-        "fr": "Le dernier sac a été utilisé."
+        "fr": "Le dernier sac a été utilisé.",
+        "de": "Der letzte Sack wurde verbraucht.",
+        "es": "Se ha usado el último saco."
       },
       "fields": [
         {
@@ -853,11 +1125,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for every stock.",
-            "fr": "Laissez vide pour tous les stocks."
+            "fr": "Laissez vide pour tous les stocks.",
+            "de": "Leer lassen für alle Vorräte.",
+            "es": "Déjelo vacío para todos los stocks."
           },
           "required": false
         }
@@ -868,7 +1144,9 @@
           "type": "number",
           "label": {
             "en": "Bags left",
-            "fr": "Sacs restants"
+            "fr": "Sacs restants",
+            "de": "Verbleibende Säcke",
+            "es": "Sacos restantes"
           }
         },
         {
@@ -876,7 +1154,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -884,7 +1164,9 @@
           "type": "number",
           "label": {
             "en": "Bags per day",
-            "fr": "Sacs par jour"
+            "fr": "Sacs par jour",
+            "de": "Säcke pro Tag",
+            "es": "Sacos por día"
           }
         },
         {
@@ -892,7 +1174,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         },
         {
@@ -900,7 +1184,9 @@
           "type": "number",
           "label": {
             "en": "Remaining weight (kg)",
-            "fr": "Poids restant (kg)"
+            "fr": "Poids restant (kg)",
+            "de": "Restgewicht (kg)",
+            "es": "Peso restante (kg)"
           }
         }
       ]
@@ -909,11 +1195,15 @@
       "key": "pallet_delivered",
       "label": {
         "en": "Pellet pallet delivered",
-        "fr": "Palette de pellets livrée"
+        "fr": "Palette de pellets livrée",
+        "de": "Pelletpalette geliefert",
+        "es": "Palé de pellets entregado"
       },
       "description": {
         "en": "A delivery of several bags was recorded (from the widget or the configuration, not from a scene).",
-        "fr": "Une livraison de plusieurs sacs a été enregistrée (depuis le widget ou la configuration, pas depuis une scène)."
+        "fr": "Une livraison de plusieurs sacs a été enregistrée (depuis le widget ou la configuration, pas depuis une scène).",
+        "de": "Eine Lieferung mehrerer Säcke wurde erfasst (über das Widget oder die Konfiguration, nicht über eine Szene).",
+        "es": "Se ha registrado una entrega de varios sacos (desde el widget o la configuración, no desde una escena)."
       },
       "fields": [
         {
@@ -922,11 +1212,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for every stock.",
-            "fr": "Laissez vide pour tous les stocks."
+            "fr": "Laissez vide pour tous les stocks.",
+            "de": "Leer lassen für alle Vorräte.",
+            "es": "Déjelo vacío para todos los stocks."
           },
           "required": false
         }
@@ -937,7 +1231,9 @@
           "type": "number",
           "label": {
             "en": "Bags left",
-            "fr": "Sacs restants"
+            "fr": "Sacs restants",
+            "de": "Verbleibende Säcke",
+            "es": "Sacos restantes"
           }
         },
         {
@@ -945,7 +1241,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -953,7 +1251,9 @@
           "type": "number",
           "label": {
             "en": "Bags per day",
-            "fr": "Sacs par jour"
+            "fr": "Sacs par jour",
+            "de": "Säcke pro Tag",
+            "es": "Sacos por día"
           }
         },
         {
@@ -961,7 +1261,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         },
         {
@@ -969,7 +1271,9 @@
           "type": "number",
           "label": {
             "en": "Remaining weight (kg)",
-            "fr": "Poids restant (kg)"
+            "fr": "Poids restant (kg)",
+            "de": "Restgewicht (kg)",
+            "es": "Peso restante (kg)"
           }
         },
         {
@@ -977,7 +1281,9 @@
           "type": "number",
           "label": {
             "en": "Bags delivered",
-            "fr": "Sacs livrés"
+            "fr": "Sacs livrés",
+            "de": "Gelieferte Säcke",
+            "es": "Sacos entregados"
           }
         }
       ]
@@ -988,11 +1294,15 @@
       "key": "consume_bags",
       "label": {
         "en": "Use pellet bags",
-        "fr": "Utiliser des sacs de pellets"
+        "fr": "Utiliser des sacs de pellets",
+        "de": "Pelletsäcke verbrauchen",
+        "es": "Usar sacos de pellets"
       },
       "description": {
         "en": "Remove bags from the stock, e.g. when a button next to the stove is pressed.",
-        "fr": "Retire des sacs du stock, par exemple à l'appui sur un bouton placé près du poêle."
+        "fr": "Retire des sacs du stock, par exemple à l'appui sur un bouton placé près du poêle.",
+        "de": "Entnimmt Säcke aus dem Vorrat, z. B. beim Drücken eines Tasters neben dem Ofen.",
+        "es": "Quita sacos del stock, por ejemplo al pulsar un botón situado junto a la estufa."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1002,11 +1312,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -1015,7 +1329,9 @@
           "type": "number",
           "label": {
             "en": "Bags",
-            "fr": "Sacs"
+            "fr": "Sacs",
+            "de": "Säcke",
+            "es": "Sacos"
           },
           "required": true,
           "default": 1,
@@ -1029,7 +1345,9 @@
           "type": "number",
           "label": {
             "en": "Bags left",
-            "fr": "Sacs restants"
+            "fr": "Sacs restants",
+            "de": "Verbleibende Säcke",
+            "es": "Sacos restantes"
           }
         },
         {
@@ -1037,7 +1355,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -1045,7 +1365,9 @@
           "type": "number",
           "label": {
             "en": "Bags per day",
-            "fr": "Sacs par jour"
+            "fr": "Sacs par jour",
+            "de": "Säcke pro Tag",
+            "es": "Sacos por día"
           }
         },
         {
@@ -1053,7 +1375,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         },
         {
@@ -1061,7 +1385,9 @@
           "type": "number",
           "label": {
             "en": "Remaining weight (kg)",
-            "fr": "Poids restant (kg)"
+            "fr": "Poids restant (kg)",
+            "de": "Restgewicht (kg)",
+            "es": "Peso restante (kg)"
           }
         }
       ]
@@ -1070,11 +1396,15 @@
       "key": "add_bags",
       "label": {
         "en": "Add pellet bags",
-        "fr": "Ajouter des sacs de pellets"
+        "fr": "Ajouter des sacs de pellets",
+        "de": "Pelletsäcke hinzufügen",
+        "es": "Añadir sacos de pellets"
       },
       "description": {
         "en": "Adds bags bought on their own, or a delivery when \"Delivery\" is ticked.",
-        "fr": "Ajoute des sacs achetés à l'unité, ou une livraison si « Livraison » est coché."
+        "fr": "Ajoute des sacs achetés à l'unité, ou une livraison si « Livraison » est coché.",
+        "de": "Fügt einzeln gekaufte Säcke hinzu, oder eine Lieferung, wenn „Lieferung“ angehakt ist.",
+        "es": "Añade sacos comprados sueltos, o una entrega si «Entrega» está marcado."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1084,11 +1414,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -1097,7 +1431,9 @@
           "type": "number",
           "label": {
             "en": "Bags",
-            "fr": "Sacs"
+            "fr": "Sacs",
+            "de": "Säcke",
+            "es": "Sacos"
           },
           "required": true,
           "default": 1,
@@ -1109,11 +1445,15 @@
           "type": "number",
           "label": {
             "en": "Price per bag (€)",
-            "fr": "Prix au sac (€)"
+            "fr": "Prix au sac (€)",
+            "de": "Preis pro Sack (€)",
+            "es": "Precio por saco (€)"
           },
           "description": {
             "en": "Optional: for the stock value and the cost of the season. Without it, the last price known.",
-            "fr": "Facultatif : pour la valeur du stock et le coût de la saison. Sans lui, le dernier prix connu."
+            "fr": "Facultatif : pour la valeur du stock et le coût de la saison. Sans lui, le dernier prix connu.",
+            "de": "Optional: für den Wert des Vorrats und die Kosten der Saison. Ohne ihn der zuletzt bekannte Preis.",
+            "es": "Opcional: para el valor del stock y el coste de la temporada. Sin él, el último precio conocido."
           },
           "required": false,
           "min": 0,
@@ -1124,11 +1464,15 @@
           "type": "number",
           "label": {
             "en": "Bag weight (kg)",
-            "fr": "Poids d'un sac (kg)"
+            "fr": "Poids d'un sac (kg)",
+            "de": "Sackgewicht (kg)",
+            "es": "Peso de un saco (kg)"
           },
           "description": {
             "en": "Optional: the bag weight of the stock otherwise.",
-            "fr": "Facultatif : sinon, le poids d'un sac du stock."
+            "fr": "Facultatif : sinon, le poids d'un sac du stock.",
+            "de": "Optional: sonst das Sackgewicht des Vorrats.",
+            "es": "Opcional: si no, el peso de un saco del stock."
           },
           "required": false,
           "min": 1,
@@ -1139,11 +1483,15 @@
           "type": "boolean",
           "label": {
             "en": "Delivery",
-            "fr": "Livraison"
+            "fr": "Livraison",
+            "de": "Lieferung",
+            "es": "Entrega"
           },
           "description": {
             "en": "Ticked: a delivery (marked on the chart, \"Last delivery\"). Otherwise, bags bought on their own.",
-            "fr": "Coché : une livraison (repérée sur le graphique, « Dernière livraison »). Sinon, des sacs achetés à l'unité."
+            "fr": "Coché : une livraison (repérée sur le graphique, « Dernière livraison »). Sinon, des sacs achetés à l'unité.",
+            "de": "Angehakt: eine Lieferung (im Diagramm markiert, „Letzte Lieferung“). Sonst einzeln gekaufte Säcke.",
+            "es": "Marcado: una entrega (señalada en el gráfico, «Última entrega»). Si no, sacos comprados sueltos."
           },
           "required": false,
           "default": false
@@ -1155,7 +1503,9 @@
           "type": "number",
           "label": {
             "en": "Bags left",
-            "fr": "Sacs restants"
+            "fr": "Sacs restants",
+            "de": "Verbleibende Säcke",
+            "es": "Sacos restantes"
           }
         },
         {
@@ -1163,7 +1513,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -1171,7 +1523,9 @@
           "type": "number",
           "label": {
             "en": "Bags per day",
-            "fr": "Sacs par jour"
+            "fr": "Sacs par jour",
+            "de": "Säcke pro Tag",
+            "es": "Sacos por día"
           }
         },
         {
@@ -1179,7 +1533,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         },
         {
@@ -1187,7 +1543,9 @@
           "type": "number",
           "label": {
             "en": "Remaining weight (kg)",
-            "fr": "Poids restant (kg)"
+            "fr": "Poids restant (kg)",
+            "de": "Restgewicht (kg)",
+            "es": "Peso restante (kg)"
           }
         }
       ]
@@ -1196,11 +1554,15 @@
       "key": "set_stock",
       "label": {
         "en": "Correct the pellet stock",
-        "fr": "Corriger le stock de pellets"
+        "fr": "Corriger le stock de pellets",
+        "de": "Pelletvorrat korrigieren",
+        "es": "Corregir el stock de pellets"
       },
       "description": {
         "en": "Set the stock to the number of bags counted. Missing bags are counted as used.",
-        "fr": "Fixe le stock au nombre de sacs comptés. Les sacs manquants sont comptés comme consommés."
+        "fr": "Fixe le stock au nombre de sacs comptés. Les sacs manquants sont comptés comme consommés.",
+        "de": "Setzt den Vorrat auf die gezählte Anzahl Säcke. Fehlende Säcke gelten als verbraucht.",
+        "es": "Fija el stock en el número de sacos contados. Los sacos que faltan se cuentan como usados."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1210,11 +1572,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -1223,7 +1589,9 @@
           "type": "number",
           "label": {
             "en": "Bags in stock",
-            "fr": "Sacs en stock"
+            "fr": "Sacs en stock",
+            "de": "Säcke im Vorrat",
+            "es": "Sacos en stock"
           },
           "required": true,
           "min": 0,
@@ -1236,7 +1604,9 @@
           "type": "number",
           "label": {
             "en": "Bags left",
-            "fr": "Sacs restants"
+            "fr": "Sacs restants",
+            "de": "Verbleibende Säcke",
+            "es": "Sacos restantes"
           }
         },
         {
@@ -1244,7 +1614,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -1252,7 +1624,9 @@
           "type": "number",
           "label": {
             "en": "Bags per day",
-            "fr": "Sacs par jour"
+            "fr": "Sacs par jour",
+            "de": "Säcke pro Tag",
+            "es": "Sacos por día"
           }
         },
         {
@@ -1260,7 +1634,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         },
         {
@@ -1268,7 +1644,9 @@
           "type": "number",
           "label": {
             "en": "Remaining weight (kg)",
-            "fr": "Poids restant (kg)"
+            "fr": "Poids restant (kg)",
+            "de": "Restgewicht (kg)",
+            "es": "Peso restante (kg)"
           }
         }
       ]
@@ -1277,11 +1655,15 @@
       "key": "read_stock",
       "label": {
         "en": "Read the pellet stock",
-        "fr": "Lire le stock de pellets"
+        "fr": "Lire le stock de pellets",
+        "de": "Pelletvorrat lesen",
+        "es": "Leer el stock de pellets"
       },
       "description": {
         "en": "Changes nothing: gives the figures of the stock to the next actions, the cost of the heating season included.",
-        "fr": "Ne modifie rien : donne les chiffres du stock aux actions suivantes, coût de la saison de chauffe compris."
+        "fr": "Ne modifie rien : donne les chiffres du stock aux actions suivantes, coût de la saison de chauffe compris.",
+        "de": "Ändert nichts: gibt die Zahlen des Vorrats an die nächsten Aktionen weiter, einschließlich der Kosten der Heizsaison.",
+        "es": "No cambia nada: pasa las cifras del stock a las acciones siguientes, incluido el coste de la temporada de calefacción."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1291,11 +1673,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock.",
-            "fr": "Laissez vide pour le stock principal."
+            "fr": "Laissez vide pour le stock principal.",
+            "de": "Leer lassen für den Hauptvorrat.",
+            "es": "Déjelo vacío para el stock principal."
           },
           "required": false
         },
@@ -1304,11 +1690,15 @@
           "type": "select",
           "label": {
             "en": "Heating season starts in",
-            "fr": "Début de la saison de chauffe"
+            "fr": "Début de la saison de chauffe",
+            "de": "Beginn der Heizsaison",
+            "es": "Inicio de la temporada de calefacción"
           },
           "description": {
             "en": "The \"Season cost\" row adds up the bags used since the first day of this month.",
-            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois."
+            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois.",
+            "de": "Die Zeile „Kosten der Saison“ zählt die seit dem ersten Tag dieses Monats verbrauchten Säcke zusammen.",
+            "es": "La fila «Coste de la temporada» suma los sacos usados desde el primer día de este mes."
           },
           "default": "10",
           "options": [
@@ -1316,84 +1706,108 @@
               "value": "1",
               "label": {
                 "en": "January",
-                "fr": "Janvier"
+                "fr": "Janvier",
+                "de": "Januar",
+                "es": "Enero"
               }
             },
             {
               "value": "2",
               "label": {
                 "en": "February",
-                "fr": "Février"
+                "fr": "Février",
+                "de": "Februar",
+                "es": "Febrero"
               }
             },
             {
               "value": "3",
               "label": {
                 "en": "March",
-                "fr": "Mars"
+                "fr": "Mars",
+                "de": "März",
+                "es": "Marzo"
               }
             },
             {
               "value": "4",
               "label": {
                 "en": "April",
-                "fr": "Avril"
+                "fr": "Avril",
+                "de": "April",
+                "es": "Abril"
               }
             },
             {
               "value": "5",
               "label": {
                 "en": "May",
-                "fr": "Mai"
+                "fr": "Mai",
+                "de": "Mai",
+                "es": "Mayo"
               }
             },
             {
               "value": "6",
               "label": {
                 "en": "June",
-                "fr": "Juin"
+                "fr": "Juin",
+                "de": "Juni",
+                "es": "Junio"
               }
             },
             {
               "value": "7",
               "label": {
                 "en": "July",
-                "fr": "Juillet"
+                "fr": "Juillet",
+                "de": "Juli",
+                "es": "Julio"
               }
             },
             {
               "value": "8",
               "label": {
                 "en": "August",
-                "fr": "Août"
+                "fr": "Août",
+                "de": "August",
+                "es": "Agosto"
               }
             },
             {
               "value": "9",
               "label": {
                 "en": "September",
-                "fr": "Septembre"
+                "fr": "Septembre",
+                "de": "September",
+                "es": "Septiembre"
               }
             },
             {
               "value": "10",
               "label": {
                 "en": "October",
-                "fr": "Octobre"
+                "fr": "Octobre",
+                "de": "Oktober",
+                "es": "Octubre"
               }
             },
             {
               "value": "11",
               "label": {
                 "en": "November",
-                "fr": "Novembre"
+                "fr": "Novembre",
+                "de": "November",
+                "es": "Noviembre"
               }
             },
             {
               "value": "12",
               "label": {
                 "en": "December",
-                "fr": "Décembre"
+                "fr": "Décembre",
+                "de": "Dezember",
+                "es": "Diciembre"
               }
             }
           ],
@@ -1406,7 +1820,9 @@
           "type": "number",
           "label": {
             "en": "Bags left",
-            "fr": "Sacs restants"
+            "fr": "Sacs restants",
+            "de": "Verbleibende Säcke",
+            "es": "Sacos restantes"
           }
         },
         {
@@ -1414,7 +1830,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -1422,7 +1840,9 @@
           "type": "number",
           "label": {
             "en": "Bags per day",
-            "fr": "Sacs par jour"
+            "fr": "Sacs par jour",
+            "de": "Säcke pro Tag",
+            "es": "Sacos por día"
           }
         },
         {
@@ -1430,7 +1850,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         },
         {
@@ -1438,7 +1860,9 @@
           "type": "number",
           "label": {
             "en": "Remaining weight (kg)",
-            "fr": "Poids restant (kg)"
+            "fr": "Poids restant (kg)",
+            "de": "Restgewicht (kg)",
+            "es": "Peso restante (kg)"
           }
         },
         {
@@ -1446,7 +1870,9 @@
           "type": "string",
           "label": {
             "en": "Type (bags or bulk)",
-            "fr": "Type (bags ou bulk)"
+            "fr": "Type (bags ou bulk)",
+            "de": "Typ (bags oder bulk)",
+            "es": "Tipo (bags o bulk)"
           }
         },
         {
@@ -1454,7 +1880,9 @@
           "type": "string",
           "label": {
             "en": "Unit (bag or kg)",
-            "fr": "Unité (bag ou kg)"
+            "fr": "Unité (bag ou kg)",
+            "de": "Einheit (bag oder kg)",
+            "es": "Unidad (bag o kg)"
           }
         },
         {
@@ -1462,7 +1890,9 @@
           "type": "number",
           "label": {
             "en": "Season cost (€)",
-            "fr": "Coût de la saison (€)"
+            "fr": "Coût de la saison (€)",
+            "de": "Kosten der Saison (€)",
+            "es": "Coste de la temporada (€)"
           }
         },
         {
@@ -1470,7 +1900,9 @@
           "type": "number",
           "label": {
             "en": "Used this season (bags, kg for a silo)",
-            "fr": "Utilisés cette saison (sacs, kg pour un silo)"
+            "fr": "Utilisés cette saison (sacs, kg pour un silo)",
+            "de": "Diese Saison verbraucht (Säcke, kg bei einem Silo)",
+            "es": "Usados esta temporada (sacos, kg para un silo)"
           }
         },
         {
@@ -1478,7 +1910,9 @@
           "type": "number",
           "label": {
             "en": "Used this season (kg)",
-            "fr": "Utilisés cette saison (kg)"
+            "fr": "Utilisés cette saison (kg)",
+            "de": "Diese Saison verbraucht (kg)",
+            "es": "Usados esta temporada (kg)"
           }
         },
         {
@@ -1486,7 +1920,9 @@
           "type": "number",
           "label": {
             "en": "Used without a known price",
-            "fr": "Utilisés sans prix connu"
+            "fr": "Utilisés sans prix connu",
+            "de": "Ohne bekannten Preis verbraucht",
+            "es": "Usados sin precio conocido"
           }
         }
       ]
@@ -1495,11 +1931,15 @@
       "key": "silo_delivery",
       "label": {
         "en": "Record a silo delivery",
-        "fr": "Enregistrer une livraison du silo"
+        "fr": "Enregistrer une livraison du silo",
+        "de": "Silolieferung erfassen",
+        "es": "Registrar una entrega del silo"
       },
       "description": {
         "en": "Adds the kg delivered to the silo.",
-        "fr": "Ajoute les kg livrés au silo."
+        "fr": "Ajoute les kg livrés au silo.",
+        "de": "Fügt die gelieferten kg dem Silo hinzu.",
+        "es": "Añade al silo los kg entregados."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1509,11 +1949,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the only silo.",
-            "fr": "Laissez vide pour le seul silo."
+            "fr": "Laissez vide pour le seul silo.",
+            "de": "Leer lassen für das einzige Silo.",
+            "es": "Déjelo vacío para el único silo."
           },
           "required": false
         },
@@ -1522,7 +1966,9 @@
           "type": "number",
           "label": {
             "en": "kg delivered",
-            "fr": "kg livrés"
+            "fr": "kg livrés",
+            "de": "Gelieferte kg",
+            "es": "kg entregados"
           },
           "required": true,
           "min": 1,
@@ -1533,7 +1979,9 @@
           "type": "number",
           "label": {
             "en": "Price paid (€)",
-            "fr": "Prix payé (€)"
+            "fr": "Prix payé (€)",
+            "de": "Bezahlter Preis (€)",
+            "es": "Precio pagado (€)"
           },
           "required": false,
           "min": 0,
@@ -1546,7 +1994,9 @@
           "type": "number",
           "label": {
             "en": "Level (kg)",
-            "fr": "Niveau (kg)"
+            "fr": "Niveau (kg)",
+            "de": "Füllstand (kg)",
+            "es": "Nivel (kg)"
           }
         },
         {
@@ -1554,7 +2004,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -1562,7 +2014,9 @@
           "type": "number",
           "label": {
             "en": "kg per day",
-            "fr": "kg par jour"
+            "fr": "kg par jour",
+            "de": "kg pro Tag",
+            "es": "kg por día"
           }
         },
         {
@@ -1570,7 +2024,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         }
       ]
@@ -1579,11 +2035,15 @@
       "key": "silo_reading",
       "label": {
         "en": "Read the silo level",
-        "fr": "Relever le niveau du silo"
+        "fr": "Relever le niveau du silo",
+        "de": "Silofüllstand ablesen",
+        "es": "Leer el nivel del silo"
       },
       "description": {
         "en": "Sets the level of the silo: a level sensor can feed it. A lower level than the last one counts as consumption.",
-        "fr": "Fixe le niveau du silo : un capteur de niveau peut l'alimenter. Un niveau plus bas que le précédent compte comme consommation."
+        "fr": "Fixe le niveau du silo : un capteur de niveau peut l'alimenter. Un niveau plus bas que le précédent compte comme consommation.",
+        "de": "Setzt den Füllstand des Silos: Ein Füllstandssensor kann ihn speisen. Ein niedrigerer Füllstand als der letzte zählt als Verbrauch.",
+        "es": "Fija el nivel del silo: un sensor de nivel puede alimentarlo. Un nivel inferior al anterior cuenta como consumo."
       },
       "timeout_seconds": 15,
       "fields": [
@@ -1593,11 +2053,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the only silo.",
-            "fr": "Laissez vide pour le seul silo."
+            "fr": "Laissez vide pour le seul silo.",
+            "de": "Leer lassen für das einzige Silo.",
+            "es": "Déjelo vacío para el único silo."
           },
           "required": false
         },
@@ -1606,7 +2070,9 @@
           "type": "number",
           "label": {
             "en": "Level (kg)",
-            "fr": "Niveau (kg)"
+            "fr": "Niveau (kg)",
+            "de": "Füllstand (kg)",
+            "es": "Nivel (kg)"
           },
           "required": false,
           "min": 0,
@@ -1617,11 +2083,15 @@
           "type": "number",
           "label": {
             "en": "Level (%)",
-            "fr": "Niveau (%)"
+            "fr": "Niveau (%)",
+            "de": "Füllstand (%)",
+            "es": "Nivel (%)"
           },
           "description": {
             "en": "Instead of the kg: needs the capacity of the silo.",
-            "fr": "À la place des kg : demande la capacité du silo."
+            "fr": "À la place des kg : demande la capacité du silo.",
+            "de": "Anstelle der kg: erfordert die Kapazität des Silos.",
+            "es": "En lugar de los kg: requiere la capacidad del silo."
           },
           "required": false,
           "min": 0,
@@ -1634,7 +2104,9 @@
           "type": "number",
           "label": {
             "en": "Level (kg)",
-            "fr": "Niveau (kg)"
+            "fr": "Niveau (kg)",
+            "de": "Füllstand (kg)",
+            "es": "Nivel (kg)"
           }
         },
         {
@@ -1642,7 +2114,9 @@
           "type": "number",
           "label": {
             "en": "Autonomy (days)",
-            "fr": "Autonomie (jours)"
+            "fr": "Autonomie (jours)",
+            "de": "Reichweite (Tage)",
+            "es": "Autonomía (días)"
           }
         },
         {
@@ -1650,7 +2124,9 @@
           "type": "number",
           "label": {
             "en": "kg per day",
-            "fr": "kg par jour"
+            "fr": "kg par jour",
+            "de": "kg pro Tag",
+            "es": "kg por día"
           }
         },
         {
@@ -1658,7 +2134,9 @@
           "type": "number",
           "label": {
             "en": "Days before ordering",
-            "fr": "Jours avant de commander"
+            "fr": "Jours avant de commander",
+            "de": "Tage bis zur Bestellung",
+            "es": "Días antes de pedir"
           }
         }
       ]
@@ -1669,11 +2147,15 @@
       "key": "pellet_stock",
       "label": {
         "en": "Pellet stock",
-        "fr": "Stock de pellets"
+        "fr": "Stock de pellets",
+        "de": "Pelletvorrat",
+        "es": "Stock de pellets"
       },
       "description": {
         "en": "Stock, autonomy and consumption, with quick buttons.",
-        "fr": "Stock, autonomie et consommation, avec boutons rapides."
+        "fr": "Stock, autonomie et consommation, avec boutons rapides.",
+        "de": "Vorrat, Reichweite und Verbrauch, mit Schnelltasten.",
+        "es": "Stock, autonomía y consumo, con botones rápidos."
       },
       "icon": "package",
       "settings": [
@@ -1683,11 +2165,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the main stock. An added stock appears here once its device was added from the Discovery tab.",
-            "fr": "Laissez vide pour le stock principal. Un stock ajouté apparaît ici une fois son appareil ajouté depuis l'onglet Découverte."
+            "fr": "Laissez vide pour le stock principal. Un stock ajouté apparaît ici une fois son appareil ajouté depuis l'onglet Découverte.",
+            "de": "Leer lassen für den Hauptvorrat. Ein hinzugefügter Vorrat erscheint hier, sobald sein Gerät im Tab „Entdecken“ hinzugefügt wurde.",
+            "es": "Déjelo vacío para el stock principal. Un stock añadido aparece aquí una vez añadido su dispositivo desde la pestaña «Descubrir»."
           },
           "required": false
         },
@@ -1696,11 +2182,15 @@
           "type": "select",
           "label": {
             "en": "Chart",
-            "fr": "Graphique"
+            "fr": "Graphique",
+            "de": "Diagramm",
+            "es": "Gráfico"
           },
           "description": {
             "en": "Put two widgets side by side to see both.",
-            "fr": "Mettez deux widgets côte à côte pour voir les deux."
+            "fr": "Mettez deux widgets côte à côte pour voir les deux.",
+            "de": "Stellen Sie zwei Widgets nebeneinander, um beide zu sehen.",
+            "es": "Ponga dos widgets uno al lado del otro para ver ambos."
           },
           "default": "stock",
           "options": [
@@ -1708,14 +2198,18 @@
               "value": "stock",
               "label": {
                 "en": "Stock over time",
-                "fr": "Évolution du stock"
+                "fr": "Évolution du stock",
+                "de": "Vorrat im Zeitverlauf",
+                "es": "Evolución del stock"
               }
             },
             {
               "value": "consumption",
               "label": {
                 "en": "Bags used per day",
-                "fr": "Sacs utilisés par jour"
+                "fr": "Sacs utilisés par jour",
+                "de": "Verbrauchte Säcke pro Tag",
+                "es": "Sacos usados por día"
               }
             }
           ]
@@ -1725,7 +2219,9 @@
           "type": "select",
           "label": {
             "en": "Chart period",
-            "fr": "Période du graphique"
+            "fr": "Période du graphique",
+            "de": "Diagrammzeitraum",
+            "es": "Periodo del gráfico"
           },
           "default": "90",
           "options": [
@@ -1733,21 +2229,27 @@
               "value": "30",
               "label": {
                 "en": "1 month",
-                "fr": "1 mois"
+                "fr": "1 mois",
+                "de": "1 Monat",
+                "es": "1 mes"
               }
             },
             {
               "value": "90",
               "label": {
                 "en": "3 months",
-                "fr": "3 mois"
+                "fr": "3 mois",
+                "de": "3 Monate",
+                "es": "3 meses"
               }
             },
             {
               "value": "365",
               "label": {
                 "en": "1 year",
-                "fr": "1 an"
+                "fr": "1 an",
+                "de": "1 Jahr",
+                "es": "1 año"
               }
             }
           ]
@@ -1757,11 +2259,15 @@
           "type": "select",
           "label": {
             "en": "Heating season starts in",
-            "fr": "Début de la saison de chauffe"
+            "fr": "Début de la saison de chauffe",
+            "de": "Beginn der Heizsaison",
+            "es": "Inicio de la temporada de calefacción"
           },
           "description": {
             "en": "The \"Season cost\" row adds up the bags used since the first day of this month.",
-            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois."
+            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois.",
+            "de": "Die Zeile „Kosten der Saison“ zählt die seit dem ersten Tag dieses Monats verbrauchten Säcke zusammen.",
+            "es": "La fila «Coste de la temporada» suma los sacos usados desde el primer día de este mes."
           },
           "default": "10",
           "options": [
@@ -1769,84 +2275,108 @@
               "value": "1",
               "label": {
                 "en": "January",
-                "fr": "Janvier"
+                "fr": "Janvier",
+                "de": "Januar",
+                "es": "Enero"
               }
             },
             {
               "value": "2",
               "label": {
                 "en": "February",
-                "fr": "Février"
+                "fr": "Février",
+                "de": "Februar",
+                "es": "Febrero"
               }
             },
             {
               "value": "3",
               "label": {
                 "en": "March",
-                "fr": "Mars"
+                "fr": "Mars",
+                "de": "März",
+                "es": "Marzo"
               }
             },
             {
               "value": "4",
               "label": {
                 "en": "April",
-                "fr": "Avril"
+                "fr": "Avril",
+                "de": "April",
+                "es": "Abril"
               }
             },
             {
               "value": "5",
               "label": {
                 "en": "May",
-                "fr": "Mai"
+                "fr": "Mai",
+                "de": "Mai",
+                "es": "Mayo"
               }
             },
             {
               "value": "6",
               "label": {
                 "en": "June",
-                "fr": "Juin"
+                "fr": "Juin",
+                "de": "Juni",
+                "es": "Junio"
               }
             },
             {
               "value": "7",
               "label": {
                 "en": "July",
-                "fr": "Juillet"
+                "fr": "Juillet",
+                "de": "Juli",
+                "es": "Julio"
               }
             },
             {
               "value": "8",
               "label": {
                 "en": "August",
-                "fr": "Août"
+                "fr": "Août",
+                "de": "August",
+                "es": "Agosto"
               }
             },
             {
               "value": "9",
               "label": {
                 "en": "September",
-                "fr": "Septembre"
+                "fr": "Septembre",
+                "de": "September",
+                "es": "Septiembre"
               }
             },
             {
               "value": "10",
               "label": {
                 "en": "October",
-                "fr": "Octobre"
+                "fr": "Octobre",
+                "de": "Oktober",
+                "es": "Octubre"
               }
             },
             {
               "value": "11",
               "label": {
                 "en": "November",
-                "fr": "Novembre"
+                "fr": "Novembre",
+                "de": "November",
+                "es": "Noviembre"
               }
             },
             {
               "value": "12",
               "label": {
                 "en": "December",
-                "fr": "Décembre"
+                "fr": "Décembre",
+                "de": "Dezember",
+                "es": "Diciembre"
               }
             }
           ]
@@ -1856,11 +2386,15 @@
           "type": "boolean",
           "label": {
             "en": "Show the buttons",
-            "fr": "Afficher les boutons"
+            "fr": "Afficher les boutons",
+            "de": "Schaltflächen anzeigen",
+            "es": "Mostrar los botones"
           },
           "description": {
             "en": "Turn off for a read-only wall display.",
-            "fr": "À désactiver pour un écran mural en lecture seule."
+            "fr": "À désactiver pour un écran mural en lecture seule.",
+            "de": "Für eine reine Wandanzeige ausschalten.",
+            "es": "Desactívelo para una pantalla de pared de solo lectura."
           },
           "default": true
         }
@@ -1871,11 +2405,15 @@
       "key": "pellet_silo",
       "label": {
         "en": "Pellet silo",
-        "fr": "Silo de pellets"
+        "fr": "Silo de pellets",
+        "de": "Pelletsilo",
+        "es": "Silo de pellets"
       },
       "description": {
         "en": "Level, autonomy and cost of a silo of bulk pellets, with delivery and level reading.",
-        "fr": "Niveau, autonomie et coût d'un silo de pellets en vrac, avec livraison et relevé de niveau."
+        "fr": "Niveau, autonomie et coût d'un silo de pellets en vrac, avec livraison et relevé de niveau.",
+        "de": "Füllstand, Reichweite und Kosten eines Silos mit losen Pellets, mit Lieferung und Ablesung.",
+        "es": "Nivel, autonomía y coste de un silo de pellets a granel, con entrega y lectura del nivel."
       },
       "icon": "database",
       "settings": [
@@ -1885,11 +2423,15 @@
           "source": "devices",
           "label": {
             "en": "Stock",
-            "fr": "Stock"
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
           },
           "description": {
             "en": "Leave empty for the only silo. A silo appears here once its device was added from the Discovery tab.",
-            "fr": "Laissez vide pour le seul silo. Un silo apparaît ici une fois son appareil ajouté depuis l'onglet Découverte."
+            "fr": "Laissez vide pour le seul silo. Un silo apparaît ici une fois son appareil ajouté depuis l'onglet Découverte.",
+            "de": "Leer lassen für das einzige Silo. Ein Silo erscheint hier, sobald sein Gerät im Tab „Entdecken“ hinzugefügt wurde.",
+            "es": "Déjelo vacío para el único silo. Un silo aparece aquí una vez añadido su dispositivo desde la pestaña «Descubrir»."
           },
           "required": false
         },
@@ -1898,11 +2440,15 @@
           "type": "select",
           "label": {
             "en": "Chart",
-            "fr": "Graphique"
+            "fr": "Graphique",
+            "de": "Diagramm",
+            "es": "Gráfico"
           },
           "description": {
             "en": "Put two widgets side by side to see both.",
-            "fr": "Mettez deux widgets côte à côte pour voir les deux."
+            "fr": "Mettez deux widgets côte à côte pour voir les deux.",
+            "de": "Stellen Sie zwei Widgets nebeneinander, um beide zu sehen.",
+            "es": "Ponga dos widgets uno al lado del otro para ver ambos."
           },
           "default": "stock",
           "options": [
@@ -1910,14 +2456,18 @@
               "value": "stock",
               "label": {
                 "en": "Level over time",
-                "fr": "Évolution du niveau"
+                "fr": "Évolution du niveau",
+                "de": "Füllstand im Zeitverlauf",
+                "es": "Evolución del nivel"
               }
             },
             {
               "value": "consumption",
               "label": {
                 "en": "kg used per day",
-                "fr": "kg utilisés par jour"
+                "fr": "kg utilisés par jour",
+                "de": "Verbrauchte kg pro Tag",
+                "es": "kg usados por día"
               }
             }
           ]
@@ -1927,7 +2477,9 @@
           "type": "select",
           "label": {
             "en": "Chart period",
-            "fr": "Période du graphique"
+            "fr": "Période du graphique",
+            "de": "Diagrammzeitraum",
+            "es": "Periodo del gráfico"
           },
           "default": "90",
           "options": [
@@ -1935,21 +2487,27 @@
               "value": "30",
               "label": {
                 "en": "1 month",
-                "fr": "1 mois"
+                "fr": "1 mois",
+                "de": "1 Monat",
+                "es": "1 mes"
               }
             },
             {
               "value": "90",
               "label": {
                 "en": "3 months",
-                "fr": "3 mois"
+                "fr": "3 mois",
+                "de": "3 Monate",
+                "es": "3 meses"
               }
             },
             {
               "value": "365",
               "label": {
                 "en": "1 year",
-                "fr": "1 an"
+                "fr": "1 an",
+                "de": "1 Jahr",
+                "es": "1 año"
               }
             }
           ]
@@ -1959,11 +2517,15 @@
           "type": "select",
           "label": {
             "en": "Heating season starts in",
-            "fr": "Début de la saison de chauffe"
+            "fr": "Début de la saison de chauffe",
+            "de": "Beginn der Heizsaison",
+            "es": "Inicio de la temporada de calefacción"
           },
           "description": {
             "en": "The \"Season cost\" row adds up the bags used since the first day of this month.",
-            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois."
+            "fr": "La ligne « Coût de la saison » additionne les sacs utilisés depuis le premier jour de ce mois.",
+            "de": "Die Zeile „Kosten der Saison“ zählt die seit dem ersten Tag dieses Monats verbrauchten Säcke zusammen.",
+            "es": "La fila «Coste de la temporada» suma los sacos usados desde el primer día de este mes."
           },
           "default": "10",
           "options": [
@@ -1971,84 +2533,108 @@
               "value": "1",
               "label": {
                 "en": "January",
-                "fr": "Janvier"
+                "fr": "Janvier",
+                "de": "Januar",
+                "es": "Enero"
               }
             },
             {
               "value": "2",
               "label": {
                 "en": "February",
-                "fr": "Février"
+                "fr": "Février",
+                "de": "Februar",
+                "es": "Febrero"
               }
             },
             {
               "value": "3",
               "label": {
                 "en": "March",
-                "fr": "Mars"
+                "fr": "Mars",
+                "de": "März",
+                "es": "Marzo"
               }
             },
             {
               "value": "4",
               "label": {
                 "en": "April",
-                "fr": "Avril"
+                "fr": "Avril",
+                "de": "April",
+                "es": "Abril"
               }
             },
             {
               "value": "5",
               "label": {
                 "en": "May",
-                "fr": "Mai"
+                "fr": "Mai",
+                "de": "Mai",
+                "es": "Mayo"
               }
             },
             {
               "value": "6",
               "label": {
                 "en": "June",
-                "fr": "Juin"
+                "fr": "Juin",
+                "de": "Juni",
+                "es": "Junio"
               }
             },
             {
               "value": "7",
               "label": {
                 "en": "July",
-                "fr": "Juillet"
+                "fr": "Juillet",
+                "de": "Juli",
+                "es": "Julio"
               }
             },
             {
               "value": "8",
               "label": {
                 "en": "August",
-                "fr": "Août"
+                "fr": "Août",
+                "de": "August",
+                "es": "Agosto"
               }
             },
             {
               "value": "9",
               "label": {
                 "en": "September",
-                "fr": "Septembre"
+                "fr": "Septembre",
+                "de": "September",
+                "es": "Septiembre"
               }
             },
             {
               "value": "10",
               "label": {
                 "en": "October",
-                "fr": "Octobre"
+                "fr": "Octobre",
+                "de": "Oktober",
+                "es": "Octubre"
               }
             },
             {
               "value": "11",
               "label": {
                 "en": "November",
-                "fr": "Novembre"
+                "fr": "Novembre",
+                "de": "November",
+                "es": "Noviembre"
               }
             },
             {
               "value": "12",
               "label": {
                 "en": "December",
-                "fr": "Décembre"
+                "fr": "Décembre",
+                "de": "Dezember",
+                "es": "Diciembre"
               }
             }
           ]
@@ -2058,11 +2644,15 @@
           "type": "boolean",
           "label": {
             "en": "Show the buttons",
-            "fr": "Afficher les boutons"
+            "fr": "Afficher les boutons",
+            "de": "Schaltflächen anzeigen",
+            "es": "Mostrar los botones"
           },
           "description": {
             "en": "Turn off for a read-only wall display.",
-            "fr": "À désactiver pour un écran mural en lecture seule."
+            "fr": "À désactiver pour un écran mural en lecture seule.",
+            "de": "Für eine reine Wandanzeige ausschalten.",
+            "es": "Desactívelo para una pantalla de pared de solo lectura."
           },
           "default": true
         }

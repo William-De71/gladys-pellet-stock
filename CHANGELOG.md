@@ -5,6 +5,13 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions
 follow [Semantic Versioning](https://semver.org/). This file is generated at
 each release from the Conventional Commits: do not edit it by hand.
 
+## [1.4.0] - 2026-10-12
+
+### Added
+
+- **i18n:** name the devices in the language of the user who looks at the widgets ([cd88a5d](https://github.com/William-De71/gladys-pellet-stock/commit/cd88a5d16d0fadb6cd0866fe8e93ca356f08df39))
+- **widgets:** a "Pellet prices" widget, the price history and the heating seasons compared ([6f02fb2](https://github.com/William-De71/gladys-pellet-stock/commit/6f02fb2a602bba5ed3a51b593233e05aedb665fe))
+
 ## [1.3.0] - 2026-10-12
 
 ### Added
@@ -64,4 +71,5 @@ each release from the Conventional Commits: do not edit it by hand.
 
 * enrich the README and add a widget example image ([bfd5023](https://github.com/William-De71/gladys-pellet-stock/commit/bfd5023f327eddedb9cf348cfb0646f5dcaf42f3))
 
+[1.4.0]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.2.0...v1.3.0

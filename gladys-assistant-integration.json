@@ -8,8 +8,8 @@
     "de": "Verfolgen Sie Ihren Pelletvorrat: Lieferungen, Verbrauch und Reichweite, mit Dashboard-Widget.",
     "es": "Siga su stock de pellets: entregas, consumo y autonomía, con un widget en el panel."
   },
-  "version": "1.3.0",
-  "docker_image": "ghcr.io/william-de71/gladys-pellet-stock:1.3.0",
+  "version": "1.4.0",
+  "docker_image": "ghcr.io/william-de71/gladys-pellet-stock:1.4.0",
   "gladys_version": ">=5.2.0",
   "location": true,
   "categories": ["climate", "energy"],

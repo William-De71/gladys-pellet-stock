@@ -4,6 +4,7 @@ import { createStocks, ledgerKeyOf, parseStocks, readHouse } from '../src/stocks
 import {
   DEFAULTS,
   LEDGER_CONFIG_KEY,
+  PRICE_WIDGET_KEY,
   SILO_WIDGET_KEY,
   STOCKS_CONFIG_KEY,
   WIDGET_KEY,
@@ -68,7 +69,7 @@ test('stocks: a stock added for a house has its own ledger and device, named aft
   assert.deepEqual(JSON.parse(gladys.storedConfig[STOCKS_CONFIG_KEY]), [
     { id: 'chalet:bags', type: 'bags', house: 'chalet', ledger: '0000000a' },
   ]);
-  assert.deepEqual(gladys.refreshes, [WIDGET_KEY, SILO_WIDGET_KEY]);
+  assert.deepEqual(gladys.refreshes, [WIDGET_KEY, SILO_WIDGET_KEY, PRICE_WIDGET_KEY]);
 
   await stocks.storeOf(CHALET).record({ type: 'delivery', bags: 20 });
   assert.equal(stocks.storeOf(CHALET).getStats().stock, 20);
@@ -311,7 +312,7 @@ test('stocks: a silo next to the bags of a house, counted in kg', async () => {
   // No scene trigger in bags for a silo, the silo widget nudged.
   await store.record({ type: 'inventory', bags: 0 });
   assert.deepEqual(gladys.sceneEvents, []);
-  assert.equal(gladys.refreshes.at(-1), 'pellet_silo');
+  assert.deepEqual(gladys.refreshes.slice(-2), ['pellet_silo', 'pellet_prices']);
 });
 
 test('stocks: states are published for every stock', async () => {

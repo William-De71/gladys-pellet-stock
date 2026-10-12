@@ -170,7 +170,11 @@ test('every action, scene action and widget of the manifest has its handler, and
     sorted(keys(manifest.scene_actions)),
   );
   assert.deepEqual(sorted(Object.keys(fake.handlers.widgetGet)), sorted(keys(manifest.widgets)));
-  // The buttons are declared by the widget contents: both widgets have some.
-  assert.deepEqual(sorted(Object.keys(fake.handlers.widgetAction)), sorted(keys(manifest.widgets)));
+  // The buttons are declared by the widget contents: the stock and silo
+  // widgets have some, the prices widget is read only.
+  assert.deepEqual(sorted(Object.keys(fake.handlers.widgetAction)), [
+    'pellet_silo',
+    'pellet_stock',
+  ]);
   assert.deepEqual(sorted(Object.values(SCENE_TRIGGERS)), sorted(keys(manifest.scene_triggers)));
 });

@@ -39,7 +39,7 @@ test('store: a movement is persisted, published and nudges the widget', async ()
   assert.equal(movement.after, 66);
   assert.equal(parseLedger(gladys.storedConfig[LEDGER_CONFIG_KEY]).movements.length, 1);
   assert.deepEqual(gladys.publishedStates, [[{ device_feature_external_id: STOCK_ID, state: 66 }]]);
-  assert.deepEqual(gladys.refreshes, [WIDGET_KEY]);
+  assert.deepEqual(gladys.refreshes, [WIDGET_KEY, 'pellet_prices']);
 });
 
 test('store: a failed write leaves the stock unchanged', async () => {

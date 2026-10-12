@@ -38,6 +38,7 @@ import {
   LIMITS,
   STOCK_TYPES,
   STOCKS_CONFIG_KEY,
+  PRICE_WIDGET_KEY,
   SILO_WIDGET_KEY,
   WIDGET_KEY,
 } from './constants.js';
@@ -376,12 +377,12 @@ function createStocks({
   }
 
   /**
-   * @description Ask Gladys to refetch both widgets: a stock added, removed or
-   * renamed changes what either of them shows (a first silo replaces the
+   * @description Ask Gladys to refetch every widget: a stock added, removed or
+   * renamed changes what each of them shows (a first silo replaces the
    * "No silo yet" of the silo widget).
    */
   function refreshWidgets() {
-    for (const key of [WIDGET_KEY, SILO_WIDGET_KEY]) {
+    for (const key of [WIDGET_KEY, SILO_WIDGET_KEY, PRICE_WIDGET_KEY]) {
       try {
         gladys.requestWidgetRefresh(key);
       } catch (error) {
@@ -649,7 +650,7 @@ function createStocks({
     },
 
     /**
-     * @description Ask Gladys to refetch both widgets.
+     * @description Ask Gladys to refetch every widget.
      */
     refreshWidgets,
 

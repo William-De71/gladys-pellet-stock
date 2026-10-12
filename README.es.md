@@ -18,6 +18,8 @@ Sin hardware ni cuenta en línea: la integración lleva un registro de movimient
 
 ![El formulario «Palé entregado» abierto en el widget «Stock de pellets», junto al widget «Silo de pellets» (ilustración)](docs/assets/widget-silo.es.png)
 
+![El widget «Precio de los pellets»: el último precio, su evolución en un año, el precio por saco en tres años y las temporadas de calefacción comparadas (ilustración)](docs/assets/widget-prices.es.png)
+
 _Ilustraciones generadas, no capturas de pantalla: los contenidos salen del código de la integración, dibujados como los widgets de Gladys (modo oscuro). La evolución del stock con sus botones, y los sacos usados por día con los botones ocultos; debajo, el formulario «Palé entregado» y un silo._
 
 Documentación de usuario: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch](docs/de.md) ·
@@ -52,6 +54,11 @@ Documentación de usuario: [English](docs/en.md) · [Français](docs/fr.md) · [
 - **Botones**: **Quitar sacos** (un formulario para los sacos), **Añadir sacos** (los sacos y el precio por saco),
   **Palé entregado** (los sacos, el precio pagado y el peso de un saco) y **Deshacer**. Se pueden ocultar por
   widget, para una pantalla de pared de solo lectura.
+
+**«Precio de los pellets»** (sacos o silo, solo lectura): el último precio pagado y su evolución en un año, una
+línea escalonada del precio por saco (por tonelada para un silo) en 1, 3 o 5 años, y una fila por temporada de
+calefacción, la actual en azul: lo que costaron los pellets usados (primero en entrar, primero en salir), cuántos y el
+precio medio de uno.
 
 **«Silo de pellets»** (granel): nivel, autonomía, gráfico del nivel o de los kg por día, llenado, última lectura,
 valor y precio por kg, coste de la temporada, fecha de pedido; **Entrega**, **Leer el nivel** (en kg o en % de la
@@ -237,18 +244,19 @@ descartaría.
 partir del código de la integración, dibujadas como el front de Gladys (se necesitan Chrome o Chromium, ImageMagick y
 Pillow).
 
-| Ruta                 | Función                                                                 |
-| -------------------- | ----------------------------------------------------------------------- |
-| `index.js`           | Punto de entrada: ciclo de vida, actualización cada hora                |
-| `src/handlers.js`    | Handlers de las acciones, acciones de escena, widgets y descubrimiento  |
-| `src/stocks.js`      | Los stocks: el principal y los añadidos (casas, ajustes)                |
-| `src/store.js`       | Un stock: persistencia, estados del dispositivo, disparadores de escena |
-| `src/ledger.js`      | El registro y todas las cifras que se derivan de él (funciones puras)   |
-| `src/cost.js`        | Coste primero en entrar, primero en salir                               |
-| `src/widget.js`      | El contenido del widget «Stock de pellets»                              |
-| `src/silo-widget.js` | El contenido del widget «Silo de pellets»                               |
-| `src/scene.js`       | Outputs de las acciones de escena y detección de los disparadores       |
-| `src/i18n.js`        | Textos en ejecución, en / fr / de / es                                  |
+| Ruta                  | Función                                                                 |
+| --------------------- | ----------------------------------------------------------------------- |
+| `index.js`            | Punto de entrada: ciclo de vida, actualización cada hora                |
+| `src/handlers.js`     | Handlers de las acciones, acciones de escena, widgets y descubrimiento  |
+| `src/stocks.js`       | Los stocks: el principal y los añadidos (casas, ajustes)                |
+| `src/store.js`        | Un stock: persistencia, estados del dispositivo, disparadores de escena |
+| `src/ledger.js`       | El registro y todas las cifras que se derivan de él (funciones puras)   |
+| `src/cost.js`         | Coste primero en entrar, primero en salir                               |
+| `src/widget.js`       | El contenido del widget «Stock de pellets»                              |
+| `src/silo-widget.js`  | El contenido del widget «Silo de pellets»                               |
+| `src/price-widget.js` | El contenido del widget «Precio de los pellets»                         |
+| `src/scene.js`        | Outputs de las acciones de escena y detección de los disparadores       |
+| `src/i18n.js`         | Textos en ejecución, en / fr / de / es                                  |
 
 `gladys_version` es `>=5.2.0` (formularios de los botones de widget, listas de casas). Gladys 5.1 conserva la
 versión 1.2.0 de la integración y no recibe las versiones siguientes.

@@ -122,6 +122,7 @@ const MAX_LEDGER_MOVEMENTS = 2000;
 // and the silo.
 const WIDGET_KEY = 'pellet_stock';
 const SILO_WIDGET_KEY = 'pellet_silo';
+const PRICE_WIDGET_KEY = 'pellet_prices';
 
 // Keys of the widget buttons (`^[a-z0-9_]{2,32}$`).
 const WIDGET_ACTIONS = {
@@ -162,9 +163,9 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export {
   CONFIG_KEYS,
-  LEDGER_CONFIG_KEY,
   LANGUAGE_AUTO,
   LAST_LANGUAGE_CONFIG_KEY,
+  LEDGER_CONFIG_KEY,
   STOCKS_CONFIG_KEY,
   STOCK_TYPES,
   READING_UNITS,
@@ -174,6 +175,7 @@ export {
   MAX_LEDGER_MOVEMENTS,
   WIDGET_KEY,
   SILO_WIDGET_KEY,
+  PRICE_WIDGET_KEY,
   WIDGET_ACTIONS,
   SILO_ACTIONS,
   DEVICE_TYPE,

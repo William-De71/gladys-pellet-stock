@@ -47,6 +47,17 @@ Les sacs les plus anciens partent en premier (« premier entré, premier sorti �
 
 Pour une période précise, lancez l'action **« Analyser le coût »** avec une date de début et de fin (JJ/MM/AAAA) : « Du 01/10/2026 au 01/06/2027 : 100 sacs, 1 500 kg, 712 € (0,47 €/kg) ».
 
+## Widget « Prix des pellets »
+
+Le widget **« Prix des pellets »** (modifier le tableau de bord → ajouter une boîte → Prix des pellets) suit ce que coûtent les pellets au fil des années, pour un stock de sacs ou un silo (en € la tonne). Il ne modifie rien : il lit les prix indiqués avec les livraisons.
+
+![Le widget « Prix des pellets » : le dernier prix, son évolution sur un an, le prix au sac sur trois ans et les saisons de chauffe comparées (illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-prices.fr.png)
+
+- **Dernier prix** : le prix au sac de la dernière livraison saisie avec un prix.
+- **Sur un an** : son évolution par rapport au prix payé un an plus tôt (orange s'il a augmenté, vert s'il a baissé).
+- Un **graphique** du prix au sac, d'une livraison à la suivante, sur 1, 3 ou 5 ans (réglages du widget).
+- Une **ligne par saison de chauffe**, la saison en cours en bleu : ce qu'ont coûté les sacs utilisés (premier entré, premier sorti), leur nombre et le prix moyen d'un sac. Les saisons commencent en octobre par défaut (réglages du widget). Les sacs sans prix connu sont indiqués à part.
+
 ## Comment l'autonomie est calculée
 
 La consommation moyenne est calculée sur les **14 derniers jours** (réglable de 3 à 90 jours dans la configuration). Plus court, elle suit plus vite la météo ; plus long, elle est plus stable.

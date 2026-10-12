@@ -17,6 +17,8 @@ No hardware and no cloud account: the integration keeps a ledger of movements an
 
 ![The "Pallet delivered" form open on the "Pellet stock" widget, next to the "Pellet silo" widget (illustration)](docs/assets/widget-silo.en.png)
 
+![The "Pellet prices" widget: the last price, its change over one year, the price per bag over three years and the heating seasons compared (illustration)](docs/assets/widget-prices.en.png)
+
 _Generated illustrations, not screenshots: the contents come from the integration's code, drawn like the Gladys widgets (dark mode). Left, the stock over time with its buttons, and the bags used per day with the buttons hidden; below, the "Pallet delivered" form and a silo._
 
 User documentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch](docs/de.md) · [Español](docs/es.md).
@@ -49,6 +51,10 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch
 - **Buttons**: **Remove bag(s)** (a form for the bags), **Add bag(s)** (the bags and the price per bag),
   **Pallet delivered** (the bags, the price paid and the bag weight) and **Undo**. They can be hidden per widget,
   for a read-only wall display.
+
+**"Pellet prices"** (bags or silo, read only): the last price paid and its change over one year, a step line of
+the price per bag (per tonne for a silo) over 1, 3 or 5 years, and one row per heating season, the current one in
+blue: what the pellets used cost (first in, first out), how many, and the average price of one.
 
 **"Pellet silo"** (bulk): level, autonomy, level or kg-per-day chart, fill, last reading, value and price per kg,
 season cost, order date; **Delivery**, **Level reading** (in kg or in % of the capacity) and **Undo**.
@@ -222,18 +228,19 @@ validate every widget content against the core vocabulary and budget, and log wh
 `docs/illustrations/render.sh` regenerates the widget illustrations of `docs/assets/` in the four languages, from
 the integration's code, drawn like the Gladys front (Chrome or Chromium, ImageMagick and Pillow needed).
 
-| Path                 | Role                                                           |
-| -------------------- | -------------------------------------------------------------- |
-| `index.js`           | Entry point: lifecycle, hourly refresh                         |
-| `src/handlers.js`    | Actions, scene actions, widgets and discovery handlers         |
-| `src/stocks.js`      | The stocks: the main one and the added ones (houses, settings) |
-| `src/store.js`       | One stock: persistence, device states, scene triggers          |
-| `src/ledger.js`      | The ledger and every figure derived from it (pure functions)   |
-| `src/cost.js`        | First in, first out cost                                       |
-| `src/widget.js`      | The "Pellet stock" widget content                              |
-| `src/silo-widget.js` | The "Pellet silo" widget content                               |
-| `src/scene.js`       | Scene action outputs and trigger detection                     |
-| `src/i18n.js`        | Runtime texts, en / fr / de / es                               |
+| Path                  | Role                                                           |
+| --------------------- | -------------------------------------------------------------- |
+| `index.js`            | Entry point: lifecycle, hourly refresh                         |
+| `src/handlers.js`     | Actions, scene actions, widgets and discovery handlers         |
+| `src/stocks.js`       | The stocks: the main one and the added ones (houses, settings) |
+| `src/store.js`        | One stock: persistence, device states, scene triggers          |
+| `src/ledger.js`       | The ledger and every figure derived from it (pure functions)   |
+| `src/cost.js`         | First in, first out cost                                       |
+| `src/widget.js`       | The "Pellet stock" widget content                              |
+| `src/silo-widget.js`  | The "Pellet silo" widget content                               |
+| `src/price-widget.js` | The "Pellet prices" widget content                             |
+| `src/scene.js`        | Scene action outputs and trigger detection                     |
+| `src/i18n.js`         | Runtime texts, en / fr / de / es                               |
 
 `gladys_version` is `>=5.2.0` (widget action forms, house selects). Gladys 5.1 keeps version 1.2.0 of the
 integration and does not receive the later versions.

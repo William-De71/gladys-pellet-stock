@@ -233,7 +233,7 @@ test('handlers: the devices offered on Discovery are named in the configured lan
   );
 });
 
-test('handlers: a device added, or a silo added, refreshes both widgets', async () => {
+test('handlers: a device added, or a silo added, refreshes every widget', async () => {
   const { gladys, h } = await setup();
   gladys.refreshes.length = 0;
   await h.action.add_stock({ house: 'chalet', type: 'bulk' });
@@ -241,8 +241,26 @@ test('handlers: a device added, or a silo added, refreshes both widgets', async 
   gladys.refreshes.length = 0;
   gladys.publishedStates.length = 0;
   await gladys.handlers.deviceCreated({ external_id: CHALET_SILO });
-  assert.deepEqual([...new Set(gladys.refreshes)].sort(), [SILO, BAGS]);
+  assert.deepEqual([...new Set(gladys.refreshes)].sort(), ['pellet_prices', SILO, BAGS]);
   assert.ok(gladys.publishedStates.length > 0, 'the states are published again');
+});
+
+test('handlers: the prices widget, for the main stock or a silo', async () => {
+  const { h } = await setup();
+  const empty = await h.widgetGet.pellet_prices({ settings: {}, language: 'en' });
+  assert.match(empty.components[0].text, /No price recorded yet/);
+  await h.action.add_delivery({ bags: 66, price: 462 });
+  const priced = await h.widgetGet.pellet_prices({ settings: {}, language: 'en' });
+  assert.equal(priced.components[0].value, '€7.00');
+  await h.action.add_stock({ house: 'chalet', type: 'bulk' });
+  await h.sceneAction.silo_delivery({ stock: CHALET_SILO, kg: 3000, price: 1170 });
+  const silo = await h.widgetGet.pellet_prices({
+    settings: { stock: CHALET_SILO },
+    language: 'fr',
+  });
+  assert.equal(silo.components[0].unit, '/t');
+  const gone = await h.widgetGet.pellet_prices({ settings: { stock: 'ext:test:pellet:nope' } });
+  assert.match(gone.components[0].text, /removed/);
 });
 
 test('handlers: the device names follow the language of the last widget request', async () => {
@@ -257,7 +275,7 @@ test('handlers: the device names follow the language of the last widget request'
   );
   // The same language again: nothing to publish.
   gladys.discovered = [];
-  await h.widgetGet.pellet_silo({ settings: {}, language: 'fr-FR' });
+  await h.widgetGet.pellet_prices({ settings: {}, language: 'fr-FR' });
   assert.deepEqual(gladys.discovered, []);
   // A forced language wins.
   const forced = await setup({ language: 'de' });

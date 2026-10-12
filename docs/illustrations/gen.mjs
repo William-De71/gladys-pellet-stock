@@ -9,6 +9,7 @@ const { normalizeConfig, withStockSettings } = await load('src/config.js');
 const { computeStats, createLedger, recordMovement } = await load('src/ledger.js');
 const { buildWidgetContent } = await load('src/widget.js');
 const { buildSiloContent } = await load('src/silo-widget.js');
+const { buildPriceContent } = await load('src/price-widget.js');
 
 // A winter evening: the illustrations are dated mid-January 2027.
 const NOW = new Date('2027-01-18T18:30:00');
@@ -19,9 +20,10 @@ const at = (daysAgo, hour = 19) => {
   return date;
 };
 
-// Bags: a pallet in October, one in December, a few bags bought on their own,
-// about one bag a day in autumn and two in the cold weeks.
-// Seeded, so the illustrations are reproducible.
+// Bags: two earlier winters (a pallet whenever the stock runs low, at the
+// price of its year), then this one: a pallet in October, one in December, a
+// few bags bought on their own, about one bag a day in autumn and two in the
+// cold weeks. Seeded, so the illustrations are reproducible.
 let seed = 7;
 const random = () => {
   seed = (seed * 16807) % 2147483647;
@@ -31,11 +33,31 @@ let ledger = createLedger();
 const add = (movement, date, type = 'bags') => {
   ledger = recordMovement(ledger, movement, date, type);
 };
+// Bags a day, per month (January first): nothing out of the heating season.
+const MONTHLY_RATE = [1.8, 1.5, 1.0, 0.5, 0, 0, 0, 0, 0, 0.5, 1.0, 1.6];
+const priceOfYear = (date) => (date < new Date('2025-06-01') ? 6.75 : 6.55);
+let stock = 10;
+add({ type: 'inventory', bags: stock }, at(840));
+for (let d = 839; d > 110; d -= 1) {
+  const date = at(d);
+  if (stock < 10 && MONTHLY_RATE[date.getMonth()] > 0) {
+    add({ type: 'delivery', bags: 66, price: 66 * priceOfYear(date), bagWeight: 15 }, at(d, 10));
+    stock += 66;
+  }
+  const used = Math.min(
+    stock,
+    Math.max(0, Math.round(MONTHLY_RATE[date.getMonth()] + (random() - 0.5) * 1.6)),
+  );
+  if (used > 0) {
+    add({ type: 'consumption', bags: used }, date);
+    stock -= used;
+  }
+}
 add({ type: 'inventory', bags: 12 }, at(110));
 add({ type: 'delivery', bags: 66, price: 445.5, bagWeight: 15 }, at(105, 10));
 for (let d = 104; d >= 0; d -= 1) {
   if (d === 31) add({ type: 'delivery', bags: 66, price: 471.9, bagWeight: 15 }, at(31, 11));
-  if (d === 58) add({ type: 'delivery', bags: 5, price: 7.4, purchase: true }, at(58, 15));
+  if (d === 58) add({ type: 'delivery', bags: 5, bagPrice: 7.4, purchase: true }, at(58, 15));
   const rate = d > 70 ? 0.6 : d > 40 ? 1.0 : 1.6;
   const bags = Math.max(0, Math.round(rate + (random() - 0.5) * 1.6));
   if (bags > 0) add({ type: 'consumption', bags }, at(d, d === 0 ? 17 : 19));
@@ -84,6 +106,13 @@ for (const language of ['en', 'fr', 'de', 'es']) {
         season_start: '10',
         show_buttons: false,
       },
+      language,
+      now: NOW,
+    }),
+    prices: buildPriceContent({
+      ledger: bags,
+      config: bagsConfig,
+      settings: { chart_period: '1095', season_start: '10' },
       language,
       now: NOW,
     }),

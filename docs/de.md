@@ -47,6 +47,17 @@ Die ältesten Säcke werden zuerst verbraucht („first in, first out“): Jeder
 
 Für einen bestimmten Zeitraum starten Sie die Aktion **„Kosten analysieren“** mit einem Start- und einem Enddatum (TT/MM/JJJJ): „Vom 01.10.2026 bis 01.06.2027: 100 Sack/Säcke, 1.500 kg, 712 € (0,47 €/kg)“.
 
+## Widget „Pelletpreise“
+
+Das Widget **„Pelletpreise“** (Dashboard bearbeiten → Box hinzufügen → Pelletpreise) verfolgt, was die Pellets über die Jahre kosten, für einen Sackvorrat oder ein Silo (in € pro Tonne). Es ändert nichts: Es liest die mit den Lieferungen eingegebenen Preise.
+
+![Das Widget „Pelletpreise“: der letzte Preis, seine Entwicklung über ein Jahr, der Preis pro Sack über drei Jahre und die Heizsaisons im Vergleich (Illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-prices.de.png)
+
+- **Letzter Preis**: der Preis pro Sack der letzten mit Preis eingegebenen Lieferung.
+- **Über ein Jahr**: wie er sich gegenüber dem ein Jahr zuvor bezahlten Preis verändert hat (orange bei einem Anstieg, grün bei einem Rückgang).
+- Ein **Diagramm** des Preises pro Sack, von einer Lieferung zur nächsten, über 1, 3 oder 5 Jahre (Widget-Einstellungen).
+- Eine **Zeile pro Heizsaison**, die laufende in Blau: was die verbrauchten Säcke gekostet haben (first in, first out), wie viele, und der Durchschnittspreis eines Sacks. Die Saisons beginnen standardmäßig im Oktober (Widget-Einstellungen). Säcke ohne bekannten Preis werden gesondert ausgewiesen.
+
 ## Wie die Reichweite berechnet wird
 
 Der durchschnittliche Verbrauch wird über die **letzten 14 Tage** berechnet (3 bis 90 Tage, in der Konfiguration einstellbar). Kürzer folgt dem Wetter schneller, länger ist stabiler.

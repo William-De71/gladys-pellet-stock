@@ -37,6 +37,7 @@ src/ledger.js           the ledger and every figure derived from it (pure functi
 src/cost.js             first in, first out cost
 src/widget.js           "Pellet stock" widget content
 src/silo-widget.js      "Pellet silo" widget content
+src/price-widget.js     "Pellet prices" widget content (price history, seasons compared)
 src/scene.js            scene action outputs, trigger transitions
 src/device.js           the devices and their states
 src/config.js           config normalization, per-stock settings

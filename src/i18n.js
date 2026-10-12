@@ -152,6 +152,20 @@ const MESSAGES = {
     device_name: 'Pellet stock',
     feature_stock: 'Pellet stock',
     feature_autonomy: 'Pellet autonomy',
+    // Prices widget
+    prices_empty:
+      'No price recorded yet: enter the price paid with "Pallet delivered" or "Add bag(s)".',
+    prices_empty_silo:
+      'No price recorded yet: enter the price paid with the "Delivery" button of the silo widget.',
+    unit_per_bag: '/bag',
+    unit_per_tonne: '/t',
+    price_last: 'Last price',
+    price_change_year: 'Over one year',
+    price_chart_bag: 'Price per bag (€)',
+    price_chart_tonne: 'Price per tonne (€)',
+    price_series_bag: 'Price per bag',
+    price_series_tonne: 'Price per tonne',
+    price_unpriced: '{count} unpriced',
   },
   fr: {
     invalid_count: 'Indiquez un nombre entier de sacs entre {min} et {max}.',
@@ -293,6 +307,19 @@ const MESSAGES = {
     device_name: 'Stock de pellets',
     feature_stock: 'Stock de pellets',
     feature_autonomy: 'Autonomie pellets',
+    prices_empty:
+      'Aucun prix enregistré : indiquez le prix payé avec « Palette livrée » ou « Ajouter sac(s) ».',
+    prices_empty_silo:
+      'Aucun prix enregistré : indiquez le prix payé avec le bouton « Livraison » du widget du silo.',
+    unit_per_bag: '/sac',
+    unit_per_tonne: '/t',
+    price_last: 'Dernier prix',
+    price_change_year: 'Sur un an',
+    price_chart_bag: 'Prix au sac (€)',
+    price_chart_tonne: 'Prix à la tonne (€)',
+    price_series_bag: 'Prix au sac',
+    price_series_tonne: 'Prix à la tonne',
+    price_unpriced: '{count} sans prix',
   },
   de: {
     invalid_count: 'Geben Sie eine ganze Anzahl Säcke zwischen {min} und {max} ein.',
@@ -435,6 +462,19 @@ const MESSAGES = {
     device_name: 'Pelletvorrat',
     feature_stock: 'Pelletvorrat',
     feature_autonomy: 'Pellet-Reichweite',
+    prices_empty:
+      'Noch kein Preis erfasst: Geben Sie den bezahlten Preis mit „Palette geliefert“ oder „Säcke hinzufügen“ ein.',
+    prices_empty_silo:
+      'Noch kein Preis erfasst: Geben Sie den bezahlten Preis mit der Schaltfläche „Lieferung“ des Silo-Widgets ein.',
+    unit_per_bag: '/Sack',
+    unit_per_tonne: '/t',
+    price_last: 'Letzter Preis',
+    price_change_year: 'Über ein Jahr',
+    price_chart_bag: 'Preis pro Sack (€)',
+    price_chart_tonne: 'Preis pro Tonne (€)',
+    price_series_bag: 'Preis pro Sack',
+    price_series_tonne: 'Preis pro Tonne',
+    price_unpriced: '{count} ohne Preis',
   },
   es: {
     invalid_count: 'Indique un número entero de sacos entre {min} y {max}.',
@@ -577,6 +617,19 @@ const MESSAGES = {
     device_name: 'Stock de pellets',
     feature_stock: 'Stock de pellets',
     feature_autonomy: 'Autonomía de pellets',
+    prices_empty:
+      'Todavía no hay ningún precio registrado: indique el precio pagado con «Palé entregado» o «Añadir sacos».',
+    prices_empty_silo:
+      'Todavía no hay ningún precio registrado: indique el precio pagado con el botón «Entrega» del widget del silo.',
+    unit_per_bag: '/saco',
+    unit_per_tonne: '/t',
+    price_last: 'Último precio',
+    price_change_year: 'En un año',
+    price_chart_bag: 'Precio por saco (€)',
+    price_chart_tonne: 'Precio por tonelada (€)',
+    price_series_bag: 'Precio por saco',
+    price_series_tonne: 'Precio por tonelada',
+    price_unpriced: '{count} sin precio',
   },
 };
 

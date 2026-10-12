@@ -47,6 +47,17 @@ Los sacos más antiguos se gastan primero («primero en entrar, primero en salir
 
 Para un periodo concreto, ejecute la acción **«Analizar el coste»** con una fecha de inicio y una de fin (DD/MM/AAAA): «Del 01/10/2026 al 01/06/2027: 100 saco(s), 1500 kg, 712 € (0,47 €/kg)».
 
+## Widget «Precio de los pellets»
+
+El widget **«Precio de los pellets»** (editar el panel → añadir una caja → Precio de los pellets) sigue lo que cuestan los pellets a lo largo de los años, para un stock de sacos o un silo (en € por tonelada). No cambia nada: lee los precios indicados con las entregas.
+
+![El widget «Precio de los pellets»: el último precio, su evolución en un año, el precio por saco en tres años y las temporadas de calefacción comparadas (ilustración)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-prices.es.png)
+
+- **Último precio**: el precio por saco de la última entrega introducida con precio.
+- **En un año**: cuánto ha cambiado respecto al precio pagado un año antes (naranja si ha subido, verde si ha bajado).
+- Un **gráfico** del precio por saco, de una entrega a la siguiente, en 1, 3 o 5 años (configuración del widget).
+- Una **fila por temporada de calefacción**, la actual en azul: lo que costaron los sacos usados (primero en entrar, primero en salir), cuántos y el precio medio de un saco. Las temporadas empiezan en octubre por defecto (configuración del widget). Los sacos sin precio conocido se indican aparte.
+
 ## Cómo se calcula la autonomía
 
 El consumo medio se calcula sobre los **últimos 14 días** (de 3 a 90 días, ajustable en la configuración). Más corto sigue antes al tiempo que hace; más largo es más estable.

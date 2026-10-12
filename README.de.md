@@ -18,6 +18,8 @@ Weder Hardware noch Online-Konto: Die Integration führt ein Buch über die Bewe
 
 ![Das Formular „Palette geliefert“, geöffnet im Widget „Pelletvorrat“, neben dem Widget „Pelletsilo“ (Illustration)](docs/assets/widget-silo.de.png)
 
+![Das Widget „Pelletpreise“: der letzte Preis, seine Entwicklung über ein Jahr, der Preis pro Sack über drei Jahre und die Heizsaisons im Vergleich (Illustration)](docs/assets/widget-prices.de.png)
+
 _Erzeugte Illustrationen, keine Bildschirmfotos: Die Inhalte stammen aus dem Code der Integration und sind wie die Widgets von Gladys gezeichnet (dunkler Modus). Der Vorrat im Zeitverlauf mit seinen Schaltflächen und die verbrauchten Säcke pro Tag mit ausgeblendeten Schaltflächen; darunter das Formular „Palette geliefert“ und ein Silo._
 
 Benutzerdokumentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch](docs/de.md) ·
@@ -52,6 +54,11 @@ Benutzerdokumentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deut
 - **Schaltflächen**: **Säcke entnehmen** (ein Formular für die Säcke), **Säcke hinzufügen** (die Säcke und der Preis
   pro Sack), **Palette geliefert** (die Säcke, der bezahlte Preis und das Sackgewicht) und **Rückgängig**. Sie lassen
   sich pro Widget ausblenden, für eine reine Wandanzeige.
+
+**„Pelletpreise“** (Säcke oder Silo, schreibgeschützt): der zuletzt bezahlte Preis und seine Entwicklung über ein
+Jahr, eine Stufenlinie des Preises pro Sack (pro Tonne bei einem Silo) über 1, 3 oder 5 Jahre und eine Zeile pro
+Heizsaison, die laufende in Blau: was die verbrauchten Pellets gekostet haben (first in, first out), wie viele, und
+der Durchschnittspreis eines Sacks.
 
 **„Pelletsilo“** (lose): Füllstand, Reichweite, Diagramm des Füllstands oder der kg pro Tag, Füllgrad, letzte
 Ablesung, Wert und Preis pro kg, Kosten der Saison, Bestelldatum; **Lieferung**, **Füllstand ablesen** (in kg oder in
@@ -239,18 +246,19 @@ verwerfen würde.
 `docs/illustrations/render.sh` erzeugt die Widget-Illustrationen in `docs/assets/` in den vier Sprachen neu, aus dem
 Code der Integration, gezeichnet wie das Gladys-Frontend (Chrome oder Chromium, ImageMagick und Pillow nötig).
 
-| Pfad                 | Rolle                                                                      |
-| -------------------- | -------------------------------------------------------------------------- |
-| `index.js`           | Einstiegspunkt: Lebenszyklus, stündliche Aktualisierung                    |
-| `src/handlers.js`    | Handler der Aktionen, Szenenaktionen, Widgets und der Erkennung            |
-| `src/stocks.js`      | Die Vorräte: der Hauptvorrat und die hinzugefügten (Häuser, Einstellungen) |
-| `src/store.js`       | Ein Vorrat: Speicherung, Gerätezustände, Szenenauslöser                    |
-| `src/ledger.js`      | Das Buch und alle daraus abgeleiteten Zahlen (reine Funktionen)            |
-| `src/cost.js`        | Kosten nach first in, first out                                            |
-| `src/widget.js`      | Der Inhalt des Widgets „Pelletvorrat“                                      |
-| `src/silo-widget.js` | Der Inhalt des Widgets „Pelletsilo“                                        |
-| `src/scene.js`       | Outputs der Szenenaktionen und Erkennung der Auslöser                      |
-| `src/i18n.js`        | Laufzeittexte, en / fr / de / es                                           |
+| Pfad                  | Rolle                                                                      |
+| --------------------- | -------------------------------------------------------------------------- |
+| `index.js`            | Einstiegspunkt: Lebenszyklus, stündliche Aktualisierung                    |
+| `src/handlers.js`     | Handler der Aktionen, Szenenaktionen, Widgets und der Erkennung            |
+| `src/stocks.js`       | Die Vorräte: der Hauptvorrat und die hinzugefügten (Häuser, Einstellungen) |
+| `src/store.js`        | Ein Vorrat: Speicherung, Gerätezustände, Szenenauslöser                    |
+| `src/ledger.js`       | Das Buch und alle daraus abgeleiteten Zahlen (reine Funktionen)            |
+| `src/cost.js`         | Kosten nach first in, first out                                            |
+| `src/widget.js`       | Der Inhalt des Widgets „Pelletvorrat“                                      |
+| `src/silo-widget.js`  | Der Inhalt des Widgets „Pelletsilo“                                        |
+| `src/price-widget.js` | Der Inhalt des Widgets „Pelletpreise“                                      |
+| `src/scene.js`        | Outputs der Szenenaktionen und Erkennung der Auslöser                      |
+| `src/i18n.js`         | Laufzeittexte, en / fr / de / es                                           |
 
 `gladys_version` ist `>=5.2.0` (Formulare der Widget-Schaltflächen, Hauslisten). Gladys 5.1 behält Version 1.2.0
 der Integration und erhält die späteren Versionen nicht.

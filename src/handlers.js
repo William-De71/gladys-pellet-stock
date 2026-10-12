@@ -18,6 +18,7 @@ import { costOver, nextDay, parseDay, seasonStart } from './cost.js';
 import {
   LAST_LANGUAGE_CONFIG_KEY,
   MOVEMENT_TYPES,
+  PRICE_WIDGET_KEY,
   SILO_ACTIONS,
   SILO_WIDGET_KEY,
   STOCK_TYPES,
@@ -26,6 +27,7 @@ import {
 } from './constants.js';
 import { LANGUAGES, message, resolveLanguage, translate } from './i18n.js';
 import { StockError } from './ledger.js';
+import { buildPriceContent } from './price-widget.js';
 import { buildSceneOutputs } from './scene.js';
 import { buildSiloContent, readLevel } from './silo-widget.js';
 import { buildWidgetContent, buildUnknownStockContent, readSeasonMonth } from './widget.js';
@@ -573,6 +575,26 @@ function registerHandlers({ gladys, stocks, now = () => new Date() }) {
     }
     return { stock: silos[0], externalId: stocks.externalIdOf(silos[0].id), problem: null };
   }
+
+  // The prices of a stock of bags or of a silo: read only, no buttons.
+  gladys.onWidgetGet(PRICE_WIDGET_KEY, async ({ settings = {}, language }) => {
+    rememberLanguage(language);
+    await stocks.ready();
+    await stocks.settled();
+    const stock = stocks.find(settings.stock);
+    if (!stock) {
+      return buildUnknownStockContent(language);
+    }
+    return buildPriceContent({
+      ledger: stocks.storeOf(settings.stock).getLedger(),
+      config: stocks.configOf(settings.stock),
+      settings,
+      language,
+      stockName: stock.name,
+      type: stock.type,
+      now: now(),
+    });
+  });
 
   gladys.onWidgetGet(SILO_WIDGET_KEY, async ({ settings = {}, language }) => {
     rememberLanguage(language);

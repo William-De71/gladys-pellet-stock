@@ -11,8 +11,14 @@ const [FORM_CARD, FORM] = (params.get('form') || ':').split(':');
 const TITLES = {
   stock: { en: 'Pellet stock', fr: 'Stock de pellets', de: 'Pelletvorrat', es: 'Stock de pellets' },
   silo: { en: 'Pellet silo', fr: 'Silo de pellets', de: 'Pelletsilo', es: 'Silo de pellets' },
+  prices: {
+    en: 'Pellet prices',
+    fr: 'Prix des pellets',
+    de: 'Pelletpreise',
+    es: 'Precio de los pellets',
+  },
 };
-const ICONS = { stock: 'package', silo: 'database' };
+const ICONS = { stock: 'package', silo: 'database', prices: 'tag' };
 const FORM_BUTTONS = {
   en: ['Close', 'Send'],
   fr: ['Fermer', 'Envoyer'],
@@ -270,7 +276,7 @@ function actionForm(component) {
 
 function card(name) {
   const content = DATA.contents[LANG][name];
-  const kind = name === 'silo' ? 'silo' : 'stock';
+  const kind = ['silo', 'prices'].includes(name) ? name : 'stock';
   const slots = splitIntoSlots(content.components);
   const formOpen = FORM_CARD === name;
   const formButton = formOpen && slots.buttons.find((b) => b.action && b.action.key === FORM);
@@ -284,9 +290,9 @@ function card(name) {
       'div',
       'card-body',
       el('div', 'slots', [
-        slots.header.length ? null : null,
         slots.tiles.length ? tiles(slots.tiles) : null,
         slots.focal && slots.focal.type === 'chart' ? chart(slots.focal) : null,
+        slots.body ? el('p', 'body', text(slots.body.text)) : null,
         slots.status ? statusList(slots.status) : null,
         slots.buttons.length ? buttons(slots.buttons, formOpen) : null,
         formButton ? actionForm(formButton) : null,

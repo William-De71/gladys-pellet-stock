@@ -11,6 +11,7 @@
 import {
   DEVICE_ID,
   LEDGER_CONFIG_KEY,
+  PRICE_WIDGET_KEY,
   SILO_WIDGET_KEY,
   STOCK_TYPES,
   WIDGET_KEY,
@@ -101,15 +102,21 @@ function createStockStore({
   }
 
   /**
-   * @description Tell Gladys the stock changed: device states and widget.
+   * @description Tell Gladys the stock changed: device states and widgets
+   * (the one of its type, and the prices).
    * @returns {Promise<void>}
    */
   async function notifyChange() {
     await publishStates();
-    try {
-      gladys.requestWidgetRefresh(type === STOCK_TYPES.BULK ? SILO_WIDGET_KEY : WIDGET_KEY);
-    } catch (error) {
-      logger.debug(`Widget refresh not requested: ${error.message}`);
+    for (const key of [
+      type === STOCK_TYPES.BULK ? SILO_WIDGET_KEY : WIDGET_KEY,
+      PRICE_WIDGET_KEY,
+    ]) {
+      try {
+        gladys.requestWidgetRefresh(key);
+      } catch (error) {
+        logger.debug(`Widget refresh not requested: ${error.message}`);
+      }
     }
   }
 

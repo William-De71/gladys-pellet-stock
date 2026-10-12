@@ -2667,6 +2667,209 @@
         }
       ],
       "action_timeout_seconds": 15
+    },
+    {
+      "key": "pellet_prices",
+      "label": {
+        "en": "Pellet prices",
+        "fr": "Prix des pellets",
+        "de": "Pelletpreise",
+        "es": "Precio de los pellets"
+      },
+      "description": {
+        "en": "The price paid over the years, and the heating seasons compared.",
+        "fr": "Le prix payé au fil des années, et les saisons de chauffe comparées.",
+        "de": "Der bezahlte Preis über die Jahre und die Heizsaisons im Vergleich.",
+        "es": "El precio pagado a lo largo de los años, y las temporadas comparadas."
+      },
+      "icon": "tag",
+      "settings": [
+        {
+          "key": "stock",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Stock",
+            "fr": "Stock",
+            "de": "Vorrat",
+            "es": "Stock"
+          },
+          "description": {
+            "en": "Leave empty for the main stock. A stock of bags or a silo, once its device was added from the Discovery tab.",
+            "fr": "Laissez vide pour le stock principal. Un stock de sacs ou un silo, une fois son appareil ajouté depuis l'onglet Découverte.",
+            "de": "Leer lassen für den Hauptvorrat. Ein Sackvorrat oder ein Silo, sobald sein Gerät im Tab „Entdecken“ hinzugefügt wurde.",
+            "es": "Déjelo vacío para el stock principal. Un stock de sacos o un silo, una vez añadido su dispositivo desde la pestaña «Descubrir»."
+          },
+          "required": false
+        },
+        {
+          "key": "chart_period",
+          "type": "select",
+          "label": {
+            "en": "Chart period",
+            "fr": "Période du graphique",
+            "de": "Diagrammzeitraum",
+            "es": "Periodo del gráfico"
+          },
+          "default": "1095",
+          "options": [
+            {
+              "value": "365",
+              "label": {
+                "en": "1 year",
+                "fr": "1 an",
+                "de": "1 Jahr",
+                "es": "1 año"
+              }
+            },
+            {
+              "value": "1095",
+              "label": {
+                "en": "3 years",
+                "fr": "3 ans",
+                "de": "3 Jahre",
+                "es": "3 años"
+              }
+            },
+            {
+              "value": "1825",
+              "label": {
+                "en": "5 years",
+                "fr": "5 ans",
+                "de": "5 Jahre",
+                "es": "5 años"
+              }
+            }
+          ]
+        },
+        {
+          "key": "season_start",
+          "type": "select",
+          "label": {
+            "en": "Heating season starts in",
+            "fr": "Début de la saison de chauffe",
+            "de": "Beginn der Heizsaison",
+            "es": "Inicio de la temporada de calefacción"
+          },
+          "description": {
+            "en": "Each row compares one heating season, starting on the first day of this month.",
+            "fr": "Chaque ligne compare une saison de chauffe, qui commence le premier jour de ce mois.",
+            "de": "Jede Zeile vergleicht eine Heizsaison, die am ersten Tag dieses Monats beginnt.",
+            "es": "Cada fila compara una temporada de calefacción, que empieza el primer día de este mes."
+          },
+          "default": "10",
+          "options": [
+            {
+              "value": "1",
+              "label": {
+                "en": "January",
+                "fr": "Janvier",
+                "de": "Januar",
+                "es": "Enero"
+              }
+            },
+            {
+              "value": "2",
+              "label": {
+                "en": "February",
+                "fr": "Février",
+                "de": "Februar",
+                "es": "Febrero"
+              }
+            },
+            {
+              "value": "3",
+              "label": {
+                "en": "March",
+                "fr": "Mars",
+                "de": "März",
+                "es": "Marzo"
+              }
+            },
+            {
+              "value": "4",
+              "label": {
+                "en": "April",
+                "fr": "Avril",
+                "de": "April",
+                "es": "Abril"
+              }
+            },
+            {
+              "value": "5",
+              "label": {
+                "en": "May",
+                "fr": "Mai",
+                "de": "Mai",
+                "es": "Mayo"
+              }
+            },
+            {
+              "value": "6",
+              "label": {
+                "en": "June",
+                "fr": "Juin",
+                "de": "Juni",
+                "es": "Junio"
+              }
+            },
+            {
+              "value": "7",
+              "label": {
+                "en": "July",
+                "fr": "Juillet",
+                "de": "Juli",
+                "es": "Julio"
+              }
+            },
+            {
+              "value": "8",
+              "label": {
+                "en": "August",
+                "fr": "Août",
+                "de": "August",
+                "es": "Agosto"
+              }
+            },
+            {
+              "value": "9",
+              "label": {
+                "en": "September",
+                "fr": "Septembre",
+                "de": "September",
+                "es": "Septiembre"
+              }
+            },
+            {
+              "value": "10",
+              "label": {
+                "en": "October",
+                "fr": "Octobre",
+                "de": "Oktober",
+                "es": "Octubre"
+              }
+            },
+            {
+              "value": "11",
+              "label": {
+                "en": "November",
+                "fr": "Novembre",
+                "de": "November",
+                "es": "Noviembre"
+              }
+            },
+            {
+              "value": "12",
+              "label": {
+                "en": "December",
+                "fr": "Décembre",
+                "de": "Dezember",
+                "es": "Diciembre"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

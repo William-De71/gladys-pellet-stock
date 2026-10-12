@@ -3,6 +3,7 @@
 # Generated illustrations of the widgets, in the four languages:
 #   docs/assets/widget-stock.<lang>.png  the two views of "Pellet stock"
 #   docs/assets/widget-silo.<lang>.png   "Pallet delivered" form + "Pellet silo"
+#   docs/assets/widget-prices.<lang>.png "Pellet prices"
 #
 # They are NOT screenshots of a running Gladys: the contents come from the
 # integration's own code (gen.mjs, on a made-up winter), and render.js draws
@@ -70,6 +71,7 @@ for language in en fr de es; do
     "lang=$language&cards=stock,consumption&theme=dark"
   shot "$out/widget-silo.$language.png" 880,1800 \
     "lang=$language&cards=stock,silo&form=stock:delivery&theme=dark"
+  shot "$out/widget-prices.$language.png" 460,1000 "lang=$language&cards=prices&theme=dark"
 done
 
 # 128 colors are plenty for a flat interface: about 50 to 80 KB per image.

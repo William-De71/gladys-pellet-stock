@@ -47,6 +47,17 @@ The oldest bags go first ("first in, first out"): each bag used costs the price 
 
 For a given period, run the **"Analyze the cost"** action with a start and an end date (DD/MM/YYYY): "From 01/10/2026 to 01/06/2027: 100 bags, 1,500 kg, €712 (€0.47/kg)".
 
+## Pellet prices widget
+
+The **"Pellet prices"** widget (edit the dashboard → add a box → Pellet prices) follows what the pellets cost over the years, for a stock of bags or a silo (in € per tonne). It changes nothing: it reads the prices entered with the deliveries.
+
+![The "Pellet prices" widget: the last price, its change over one year, the price per bag over three years and the heating seasons compared (illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-prices.en.png)
+
+- **Last price**: the price per bag of the last delivery entered with a price.
+- **Over one year**: how much it moved compared with the price paid one year before (orange when it went up, green when it went down).
+- A **chart** of the price per bag, from one delivery to the next, over 1, 3 or 5 years (widget settings).
+- One **row per heating season**, the current one in blue: what the bags used cost (first in, first out), how many, and the average price of a bag. Seasons start in October by default (widget settings). Bags without a known price are told apart.
+
 ## How the autonomy is computed
 
 The average consumption is computed over the **last 14 days** (3 to 90 days, set in the configuration). Shorter follows the weather faster; longer is steadier.

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture of the Pellet Stock integration</title>
+  <desc id="desc">Diagram: the widget buttons, the configuration actions and the scene actions of Gladys reach the integration container, which records each movement in a ledger per stock, stores the ledgers in the Gladys database through setConfig, and publishes the devices, their states, the scene events and the widget contents back to Gladys.</desc>
+  <style>
+    .box { fill: #ffffff; stroke: #4a5568; stroke-width: 1.5; }
+    .inner { fill: #f7fafc; stroke: #a0aec0; stroke-width: 1; }
+    .user { fill: #fff7e6; stroke: #c27c0e; stroke-width: 1.5; }
+    .gladys { fill: #ebf4ff; stroke: #3b82f6; stroke-width: 1.5; }
+    .h { font-size: 15px; font-weight: bold; fill: #1a202c; }
+    .t { font-size: 12px; fill: #2d3748; }
+    .s { font-size: 11px; fill: #4a5568; }
+    .arrow { stroke: #4a5568; stroke-width: 1.5; fill: none; marker-end: url(#a); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a5568"/>
+    </marker>
+  </defs>
+  <rect width="900" height="380" fill="#ffffff"/>
+
+  <!-- Inputs -->
+  <rect class="user" x="20" y="60" width="190" height="250" rx="10"/>
+  <text class="h" x="115" y="90" text-anchor="middle">The user, in Gladys</text>
+  <text class="t" x="115" y="125" text-anchor="middle">Widget buttons</text>
+  <text class="s" x="115" y="142" text-anchor="middle">remove, add, pallet, undo</text>
+  <text class="t" x="115" y="180" text-anchor="middle">Configuration actions</text>
+  <text class="s" x="115" y="197" text-anchor="middle">correct, deliver, cost, stocks</text>
+  <text class="t" x="115" y="235" text-anchor="middle">Scene actions</text>
+  <text class="s" x="115" y="252" text-anchor="middle">a Zigbee button by the stove</text>
+  <text class="s" x="115" y="290" text-anchor="middle">(no hardware, no cloud)</text>
+
+  <!-- Container -->
+  <rect class="box" x="290" y="30" width="330" height="320" rx="10"/>
+  <text class="h" x="455" y="58" text-anchor="middle">Integration container</text>
+  <rect class="inner" x="310" y="75" width="290" height="44" rx="6"/>
+  <text class="t" x="455" y="95" text-anchor="middle">handlers</text>
+  <text class="s" x="455" y="111" text-anchor="middle">actions, scene actions, widgets, discovery</text>
+  <rect class="inner" x="310" y="131" width="290" height="44" rx="6"/>
+  <text class="t" x="455" y="151" text-anchor="middle">stocks / store</text>
+  <text class="s" x="455" y="167" text-anchor="middle">one ledger per stock (bags or silo, per house)</text>
+  <rect class="inner" x="310" y="187" width="290" height="44" rx="6"/>
+  <text class="t" x="455" y="207" text-anchor="middle">ledger / cost</text>
+  <text class="s" x="455" y="223" text-anchor="middle">rate, autonomy, order date, FIFO cost</text>
+  <rect class="inner" x="310" y="243" width="290" height="44" rx="6"/>
+  <text class="t" x="455" y="263" text-anchor="middle">widget / silo-widget / scene</text>
+  <text class="s" x="455" y="279" text-anchor="middle">contents, outputs, trigger transitions</text>
+  <text class="s" x="455" y="320" text-anchor="middle">Node.js, read-only rootfs, non-root</text>
+
+  <!-- Gladys -->
+  <rect class="gladys" x="700" y="60" width="180" height="250" rx="10"/>
+  <text class="h" x="790" y="90" text-anchor="middle">Gladys</text>
+  <text class="t" x="790" y="125" text-anchor="middle">Devices and states</text>
+  <text class="s" x="790" y="142" text-anchor="middle">stock, level, autonomy</text>
+  <text class="t" x="790" y="180" text-anchor="middle">Scene events</text>
+  <text class="s" x="790" y="197" text-anchor="middle">low, empty, delivered</text>
+  <text class="t" x="790" y="235" text-anchor="middle">Widget contents</text>
+  <text class="t" x="790" y="275" text-anchor="middle">Database</text>
+  <text class="s" x="790" y="292" text-anchor="middle">ledgers (setConfig), backups</text>
+
+  <path class="arrow" d="M210,185 L288,185"/>
+  <text class="s" x="249" y="175" text-anchor="middle">WebSocket</text>
+  <path class="arrow" d="M620,135 L698,135"/>
+  <path class="arrow" d="M620,190 L698,190"/>
+  <path class="arrow" d="M620,240 L698,240"/>
+  <path class="arrow" d="M620,285 L698,285"/>
+  <path class="arrow" d="M698,300 C660,340 640,340 620,330"/>
+  <text class="s" x="660" y="125" text-anchor="middle">host API</text>
+  <text class="s" x="660" y="352" text-anchor="middle">read at start</text>
+</svg>

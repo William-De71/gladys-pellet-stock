@@ -1,8 +1,10 @@
 # Pellet Stock
 
-This integration tracks your **wood pellet stock**: deliveries, consumption, average daily consumption and remaining autonomy. It adds a **dashboard widget**, a virtual device for history and scenes, and a scene action.
+This integration tracks your **wood pellet stock**, in bags or in a bulk silo, one per house: deliveries, consumption, average daily consumption, remaining autonomy and heating cost. It adds **dashboard widgets**, a virtual device per stock for history and scenes, scene actions and scene triggers.
 
 No hardware and no online account are needed: the integration keeps a ledger of bag movements and derives everything from it.
+
+![Two "Pellet stock" widgets: the stock over time with its buttons, and the bags used per day](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/widget-example.png)
 
 ## Getting started
 
@@ -115,6 +117,10 @@ Each action has a **Stock** field (empty: the main stock) and returns to the nex
 Each trigger has a **Stock** field (empty: every stock) and gives the same figures as the actions, plus the **bags delivered** for the pallet. Example: "Pellet stock low → send me "{{triggerEvent.data.bags_left}} bags left, time to order"".
 
 A delivery added by a scene does not fire "Pallet delivered", so that a scene can never restart itself in a loop. The low and empty stock triggers fire whatever the origin, a Zigbee button going through a scene included.
+
+## Languages
+
+The integration speaks English, French, German and Spanish: the widgets and the messages follow the language of each Gladys user. Gladys does not tell an integration the language of its users when it offers the devices of the Discovery tab: their names follow the **"Language of the device names"** setting of the configuration (English by default). A device already added keeps its name; rename it from its settings if you wish.
 
 ## Backup
 

@@ -1,0 +1,127 @@
+# Stock de pellets
+
+Esta integración sigue su **stock de pellets**, en sacos o en un silo a granel, uno por casa: entregas, consumo, consumo medio diario, autonomía restante y coste de la calefacción. Añade **widgets** al panel, un dispositivo virtual por stock para el historial y las escenas, acciones y disparadores de escena.
+
+No se necesita ningún hardware ni cuenta en línea: la integración lleva un registro de los movimientos de sacos y deduce todo lo demás a partir de él.
+
+![Dos widgets «Stock de pellets»: la evolución del stock con sus botones, y los sacos usados por día](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/widget-example.png)
+
+## Primeros pasos
+
+1. Abra la pestaña **Configuración** de la integración y compruebe el peso de un saco (15 kg por defecto) y el número de sacos por palé (66 por defecto).
+2. Ejecute la acción **«Corregir el stock»** e indique el número de sacos que tiene actualmente.
+3. Añada el widget **«Stock de pellets»** a su panel (editar el panel → añadir una caja → Stock de pellets).
+
+## En el día a día
+
+- Pulse **«Quitar sacos»** en el widget cada vez que llene la estufa. Se abre un breve formulario, rellenado con 1 saco: envíelo, o indique otra cantidad.
+- Pulse **«Añadir sacos»** para sacos comprados sueltos (en una tienda, por ejemplo). El formulario pide los sacos y el **precio por saco**, rellenado con el último precio conocido; el precio es opcional.
+- Pulse **«Palé entregado»** cuando le entreguen un palé. El formulario viene rellenado con los sacos por palé, el precio de un palé al último precio pagado por saco y el **peso de un saco** de la configuración: corríjalos si hace falta y envíelo. El precio es opcional; indique 0 para una entrega sin precio.
+- En una versión de Gladys sin estos formularios, los botones quitan o añaden 1 saco, y «Palé entregado» añade los sacos por palé (tras una confirmación).
+- ¿Se ha equivocado? **«Deshacer»** elimina la última operación.
+- Para añadir varios sacos de una vez (medio palé, un lote de 10 sacos…), use la acción **«Registrar una entrega»** de la configuración, donde también se puede indicar el precio pagado.
+
+No hace falta pulsar por cada saco: basta con **recontar el stock** de vez en cuando con «Corregir el stock». Los sacos que faltan desde el último recuento se cuentan como consumidos.
+
+## Lo que muestra el widget
+
+- El **stock** en sacos: verde, luego naranja por debajo del umbral de stock bajo (10 sacos por defecto), rojo a cero. Aparece entonces el recordatorio «Hora de pedir».
+- La **autonomía** en días.
+- Un **gráfico**, elegido en la configuración del widget: la **evolución del stock**, con las entregas señaladas, o los **sacos usados por día** en barras (por semana sobre 1 año). Periodo: 1 mes, 3 meses, 1 año. Para ver ambos, ponga dos widgets uno al lado del otro. Los sacos que faltan en un recuento se cuentan el día del recuento.
+- El **consumo medio por día**, el **último saco usado** («hace 2 días»), el **peso restante**, la **última entrega** y el **uso desde entonces** (en sacos y kg).
+- La fecha **antes de la que pedir** (cuando el stock alcance el umbral de stock bajo) y la **fecha estimada** en la que se agotará el stock.
+- En cuanto se conoce un precio: el **valor del stock**, con el **precio por saco y por kg**, y el **coste mensual**. Cuenta el precio pagado en la última entrega o, si no, el **precio de un palé** de la configuración. El precio por kg sigue el peso de los sacos de esa entrega.
+- El **coste de la temporada**: lo que han costado los sacos usados desde el inicio de la temporada de calefacción (octubre por defecto, ajustable en la configuración del widget), con su número.
+
+Solo las entregas («Palé entregado», la acción «Registrar una entrega») cuentan como entregas: los sacos añadidos con «Añadir sacos», aunque sean varios a la vez, no se señalan en el gráfico ni se usan para «Última entrega» y el uso desde entonces. Sí entran en el stock y en su coste.
+
+En la configuración del widget puede **ocultar los botones**, por ejemplo para una pantalla de pared de solo lectura.
+
+## Coste de la calefacción
+
+Los sacos más antiguos se gastan primero («primero en entrar, primero en salir»): cada saco usado cuesta el precio al que se compró. Si compró 40 sacos a 6 € y luego 60 sacos a 8 €, los primeros 40 sacos usados cuentan 6 € cada uno, los siguientes 8 €.
+
+- Una entrega introducida sin precio toma el **último precio por saco conocido**.
+- El stock introducido al principio con «Corregir el stock» no tiene precio: toma el **precio de un palé** de la configuración o, sin él, se indica aparte («12 sin precio»). «Corregir el stock» acepta un **precio por saco** opcional para los sacos contados por encima del stock registrado.
+- El **peso restante** y el uso en kg siguen el peso de los sacos de cada entrega.
+
+Para un periodo concreto, ejecute la acción **«Analizar el coste»** con una fecha de inicio y una de fin (DD/MM/AAAA): «Del 01/10/2026 al 01/06/2027: 100 saco(s), 1500 kg, 712 € (0,47 €/kg)».
+
+## Cómo se calcula la autonomía
+
+El consumo medio se calcula sobre los **últimos 14 días** (de 3 a 90 días, ajustable en la configuración). Más corto sigue antes al tiempo que hace; más largo es más estable.
+
+- Con **menos de un día de historial**, la autonomía sigue siendo desconocida (se muestra un guion): un solo saco usado no basta para extrapolar.
+- **Sin ningún consumo** en el periodo (en verano, por ejemplo), la autonomía también es desconocida.
+
+## Dispositivo «Stock de pellets» (opcional)
+
+Desde la pestaña **Descubrir** puede añadir el dispositivo **«Stock de pellets»**. Expone dos valores con historial:
+
+- **Stock de pellets** (número de sacos);
+- **Autonomía de pellets** (días).
+
+Permite mostrar el historial en una caja de gráfico normal y, sobre todo, crear **escenas**: por ejemplo «cuando el stock baje de 10 sacos, envíame un mensaje». Una autonomía desconocida nunca se envía como 0, así que una escena de «stock agotado» nunca se dispara por error.
+
+El widget funciona sin este dispositivo.
+
+## Varias casas
+
+Para seguir los pellets de otra casa (una segunda residencia, un chalé…), ejecute la acción **«Añadir un stock»** de la configuración y elija la casa en la lista de las casas de Gladys. El stock toma el nombre de la casa, un stock por casa. Cada stock tiene su propio historial y su propio dispositivo:
+
+1. En la pestaña **Descubrir**, añada el dispositivo **«Stock de pellets – Chalé»** (con el nombre de la casa) y colóquelo en una habitación de esa casa.
+2. Ejecute **«Corregir el stock»** con ese stock seleccionado, para indicar sus sacos actuales.
+3. Añada un widget **«Stock de pellets»** y elija ese stock en su configuración. Su nombre aparece en el título del gráfico.
+
+Las acciones de la configuración y las acciones de escena tienen un campo **Stock**: si se deja vacío, se aplican al stock principal. Un botón Zigbee en el chalé puede así descontar solo el stock del chalé.
+
+Los ajustes de la configuración (peso de un saco, sacos por palé, umbral, periodo, precio de un palé) son los **ajustes por defecto** de todos los stocks. Para que un stock tenga otros (sacos de 10 kg en el chalé, por ejemplo), ejecute **«Configurar un stock»**: rellene solo los ajustes que quiera cambiar, los demás conservan su valor. La respuesta resume los ajustes vigentes, los propios del stock o los valores por defecto. La opción **«Volver a los valores por defecto»** quita los ajustes propios del stock.
+
+El stock principal, y los stocks añadidos con un nombre en una versión anterior, se pueden asignar a una casa con **«Asignar un stock a una casa»**: toman entonces el nombre de la casa y conservan su dispositivo y su historial.
+
+Para leer los nombres de las casas, la integración pide acceso a las casas de Gladys (indicado en la instalación); no usa sus coordenadas.
+
+**«Eliminar un stock»** elimina un stock añadido y su historial; el stock principal no se puede eliminar.
+
+## Silo (pellets a granel)
+
+Para una caldera alimentada desde un silo, ejecute **«Añadir un stock»** con el tipo **Silo (granel)** y la casa. Un silo cuenta en **kg** y tiene su propio widget, **«Silo de pellets»**, y su propio dispositivo, **«Silo de pellets – Casa»** (nivel en kg, llenado en %, autonomía). Una casa puede tener un stock de sacos y un silo.
+
+- **«Entrega»**: los kg entregados (rellenados con la entrega habitual) y el precio pagado.
+- **«Leer el nivel»**: el nivel leído en el silo, en kg o en % de su capacidad (ajuste «Lectura del nivel»). Un nivel inferior al anterior cuenta como consumo: el uso por día, la autonomía, la fecha de pedido y el coste de la temporada funcionan como para los sacos.
+- **«Deshacer»** elimina la última operación.
+
+El widget muestra el nivel (en toneladas a partir de 1000 kg), la autonomía, la evolución del nivel o los kg usados por día, el llenado, la última lectura, la última entrega, el valor del stock y el precio por kg, el coste mensual y de la temporada, y la fecha antes de la que pedir.
+
+Los ajustes por defecto de los silos están en la sección **«Silo»** de la configuración: capacidad, umbral de stock bajo (kg), entrega habitual, precio por tonelada, lectura en kg o en %. «Configurar un stock» los cambia para un silo. Sin stock elegido, el widget y las acciones de escena del silo usan el único silo.
+
+Dos acciones de escena, **«Registrar una entrega del silo»** y **«Leer el nivel del silo»**, pueden por ejemplo tomar el nivel de un sensor. Los disparadores de escena cuentan en sacos y dejan fuera los silos: para una alerta, use el dispositivo del silo («nivel del silo por debajo de…»).
+
+## Escenas
+
+### Acciones
+
+- **«Usar sacos de pellets»** quita sacos del stock. Ejemplo: un botón Zigbee junto a la estufa, que dispara una escena que quita un saco en cada pulsación. La acción falla cuando el stock registrado es demasiado bajo: vuelva a contar su stock.
+- **«Añadir sacos de pellets»** añade sacos (una entrega, sacos comprados sueltos), con un precio por saco y un peso de saco opcionales.
+- **«Corregir el stock de pellets»** fija el stock en el número de sacos contados.
+- **«Leer el stock de pellets»** no cambia nada: obtiene las cifras para el resto de la escena, por ejemplo un mensaje semanal. También devuelve el **tipo** de stock (`bags` o `bulk`), su **unidad** (`bag` o `kg`) y el **coste de la temporada**: el coste (€), los sacos (kg para un silo) y los kg usados desde el inicio de la temporada (octubre por defecto, ajustable en la acción), y los que no tienen precio conocido.
+
+Cada acción tiene un campo **Stock** (vacío: el stock principal) y devuelve a las acciones siguientes los **sacos restantes**, la **autonomía** (días), los **sacos por día**, los **días antes de pedir** y el **peso restante** (kg). Una cifra todavía desconocida (la autonomía sin consumo aún, por ejemplo) se omite en lugar de enviarse como 0.
+
+### Disparadores
+
+- **«Stock de pellets bajo»**: el stock baja hasta el umbral de stock bajo de la configuración. Se dispara una vez, al cruzar el umbral, no con cada saco por debajo.
+- **«Stock de pellets agotado»**: se ha usado el último saco.
+- **«Palé de pellets entregado»**: se ha registrado una entrega de varios sacos desde el widget o la configuración.
+
+Cada disparador tiene un campo **Stock** (vacío: todos los stocks) y da las mismas cifras que las acciones, más los **sacos entregados** para el palé. Ejemplo: «Stock de pellets bajo → envíame "Quedan {{triggerEvent.data.bags_left}} sacos, hora de pedir"».
+
+Una entrega añadida por una escena no dispara «Palé entregado», para que una escena nunca pueda reiniciarse a sí misma en bucle. Los disparadores de stock bajo y agotado se disparan sea cual sea el origen, incluido un botón Zigbee que pasa por una escena.
+
+## Idiomas
+
+La integración habla español, inglés, francés y alemán: los widgets y los mensajes siguen el idioma de cada usuario de Gladys. Gladys no indica a una integración el idioma de sus usuarios cuando propone los dispositivos de la pestaña «Descubrir»: sus nombres siguen el ajuste **«Idioma de los nombres de dispositivos»** de la configuración (inglés por defecto). Un dispositivo ya añadido conserva su nombre; cámbielo desde sus ajustes si lo desea.
+
+## Copia de seguridad
+
+El registro de movimientos (los 2000 últimos; más allá, los más antiguos se resumen conservando el precio de los sacos aún en stock) se guarda en la base de datos de Gladys: forma parte de las **copias de seguridad de Gladys** y sobrevive a una actualización de la integración. Se borra si desinstala la integración.

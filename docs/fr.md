@@ -1,8 +1,10 @@
 # Stock de pellets
 
-Cette intégration suit votre **stock de pellets** (granulés de bois) : livraisons, consommation, consommation moyenne par jour et autonomie restante. Elle ajoute un **widget** au tableau de bord, un appareil virtuel pour l'historique et les scènes, et une action de scène.
+Cette intégration suit votre **stock de pellets** (granulés de bois), en sacs ou en silo, un par maison : livraisons, consommation, consommation moyenne par jour, autonomie restante et coût du chauffage. Elle ajoute des **widgets** au tableau de bord, un appareil virtuel par stock pour l'historique et les scènes, des actions et des déclencheurs de scène.
 
 Aucun matériel ni compte en ligne n'est nécessaire : l'intégration tient un registre des mouvements de sacs et en déduit tout le reste.
+
+![Deux widgets « Stock de pellets » : l'évolution du stock avec ses boutons, et les sacs utilisés par jour](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/widget-example.png)
 
 ## Premiers pas
 
@@ -115,6 +117,10 @@ Chaque action a un champ **Stock** (vide : le stock principal) et renvoie aux ac
 Chaque déclencheur a un champ **Stock** (vide : tous les stocks) et fournit les mêmes chiffres que les actions, plus les **sacs livrés** pour la palette. Exemple : « Stock de pellets bas → m'envoyer "Il reste {{triggerEvent.data.bags_left}} sacs, pensez à commander" ».
 
 Une livraison ajoutée par une scène ne déclenche pas « Palette livrée », pour qu'une scène ne puisse pas se relancer elle-même en boucle. Les déclencheurs de stock bas et épuisé, eux, partent quelle que soit l'origine, y compris un bouton Zigbee passant par une scène.
+
+## Langues
+
+L'intégration parle français, anglais, allemand et espagnol : les widgets et les messages suivent la langue de chaque utilisateur de Gladys. Gladys n'indique pas à une intégration la langue de ses utilisateurs quand elle propose les appareils de l'onglet Découverte : leurs noms suivent le réglage **« Langue des noms d'appareils »** de la configuration (anglais par défaut). Un appareil déjà ajouté garde son nom ; renommez-le depuis ses réglages si vous le souhaitez.
 
 ## Sauvegarde
 

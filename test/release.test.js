@@ -146,20 +146,25 @@ test('groups the lines by section, breaking changes first, silent types out', ()
 });
 
 test('adds the section on top of the existing history, with its comparison link', async () => {
+  // The real file, whatever the releases already in it (header, links).
   const history = read('../CHANGELOG.md');
-  const result = changelog(history, [commit('feat: German and Spanish (#4)')], '1.1.0');
+  const sections = history
+    .slice(history.indexOf('\n## ') + 1)
+    .replace(/\n\[[^\]]+\]: [\s\S]*$/, '');
+  const result = changelog(history, [commit('feat: German and Spanish (#4)')], '9.0.0', 'v8.9.9');
   assert.ok(result.startsWith('# Changelog\n'));
-  assert.ok(result.includes(history.trim()), 'the existing history is kept as is');
-  assert.ok(result.indexOf('## [1.1.0] - 2026-10-12') < result.indexOf(history.trim()));
+  assert.equal(result.match(/^# Changelog$/gm).length, 1);
+  assert.ok(result.includes(sections.trim()), 'the existing history is kept as is');
+  assert.ok(result.indexOf('## [9.0.0] - 2026-10-12') < result.indexOf(sections.trim()));
   assert.match(
     result,
-    /\n\[1\.1\.0\]: https:\/\/github\.com\/William-De71\/gladys-pellet-stock\/compare\/v1\.0\.0\.\.\.v1\.1\.0\n$/,
+    /\n\[9\.0\.0\]: https:\/\/github\.com\/William-De71\/gladys-pellet-stock\/compare\/v8\.9\.9\.\.\.v9\.0\.0\n/,
   );
   // Idempotent: a second run changes nothing.
-  assert.equal(changelog(result, [commit('feat: other')], '1.1.0'), result);
+  assert.equal(changelog(result, [commit('feat: other')], '9.0.0', 'v8.9.9'), result);
   // The next release keeps both links, newest first.
-  const next = changelog(result, [commit('fix: x')], '1.1.1', 'v1.1.0');
-  assert.match(next, /\[1\.1\.1\]: .*v1\.1\.0\.\.\.v1\.1\.1\n\[1\.1\.0\]: /);
+  const next = changelog(result, [commit('fix: x')], '9.0.1', 'v9.0.0');
+  assert.match(next, /\[9\.0\.1\]: .*v9\.0\.0\.\.\.v9\.0\.1\n\[9\.0\.0\]: /);
   assert.equal(next.match(/^# Changelog$/gm).length, 1);
 });
 
@@ -220,8 +225,8 @@ test('the generated changelog is Prettier-clean', async () => {
 });
 
 test('the release notes are the section itself', () => {
-  const result = changelog(read('../CHANGELOG.md'), [commit('feat: x')], '1.1.0');
-  const notes = releaseNotes(result, '1.1.0');
+  const result = changelog(read('../CHANGELOG.md'), [commit('feat: x')], '9.0.0', 'v8.9.9');
+  const notes = releaseNotes(result, '9.0.0');
   assert.match(notes, /^### Added\n\n- x \(/);
   assert.doesNotMatch(notes, /^## /m, 'no other section');
   assert.ok(!notes.includes(']: '), 'no link definition');

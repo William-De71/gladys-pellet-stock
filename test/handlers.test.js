@@ -244,3 +244,24 @@ test('handlers: a device added, or a silo added, refreshes both widgets', async 
   assert.deepEqual([...new Set(gladys.refreshes)].sort(), [SILO, BAGS]);
   assert.ok(gladys.publishedStates.length > 0, 'the states are published again');
 });
+
+test('handlers: the device names follow the language of the last widget request', async () => {
+  const { gladys, h } = await setup();
+  await h.action.add_stock({ house: 'chalet', type: 'bulk' });
+  assert.equal(gladys.discovered[0].name, 'Pellet stock', 'English until a widget is seen');
+  await h.widgetGet.pellet_stock({ settings: {}, language: 'fr' });
+  assert.equal(gladys.storedConfig.last_language, 'fr');
+  assert.deepEqual(
+    gladys.discovered.map((device) => device.name),
+    ['Stock de pellets', 'Silo de pellets – Chalet des Écrins'],
+  );
+  // The same language again: nothing to publish.
+  gladys.discovered = [];
+  await h.widgetGet.pellet_silo({ settings: {}, language: 'fr-FR' });
+  assert.deepEqual(gladys.discovered, []);
+  // A forced language wins.
+  const forced = await setup({ language: 'de' });
+  await forced.h.widgetGet.pellet_stock({ settings: {}, language: 'es' });
+  await forced.h.scan();
+  assert.equal(forced.gladys.discovered[0].name, 'Pelletvorrat');
+});

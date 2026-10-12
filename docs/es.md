@@ -122,7 +122,7 @@ Una entrega añadida por una escena no dispara «Palé entregado», para que una
 
 ## Idiomas
 
-La integración habla español, inglés, francés y alemán: los widgets y los mensajes siguen el idioma de cada usuario de Gladys. Gladys no indica a una integración el idioma de sus usuarios cuando propone los dispositivos de la pestaña «Descubrir»: sus nombres siguen el ajuste **«Idioma de los nombres de dispositivos»** de la configuración (inglés por defecto). Un dispositivo ya añadido conserva su nombre; cámbielo desde sus ajustes si lo desea.
+La integración habla español, inglés, francés y alemán: los widgets y los mensajes siguen el idioma de cada usuario de Gladys. Gladys solo indica a una integración el idioma de sus usuarios cuando muestran un widget: por defecto (**«Idioma de los nombres de dispositivos»** en **«Idioma del usuario»**), los nombres de los dispositivos propuestos en la pestaña «Descubrir» siguen el idioma del último usuario que mostró un widget de la integración, inglés hasta entonces. El ajuste también puede imponer un idioma. Un dispositivo ya añadido conserva su nombre; cámbielo desde sus ajustes si lo desea.
 
 ## Copia de seguridad
 

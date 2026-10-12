@@ -19,6 +19,12 @@ const CONFIG_KEYS = {
   LANGUAGE: 'language',
 };
 
+// The `language` value that follows the user: Gladys gives the language of
+// the requesting user to the widgets only, so the last one seen is kept, under
+// a key outside the config_schema (it survives a restart).
+const LANGUAGE_AUTO = 'auto';
+const LAST_LANGUAGE_CONFIG_KEY = 'last_language';
+
 // Key stored through setConfig() OUTSIDE the config_schema: the ledger of
 // stock movements. Config values live in the Gladys database (t_variable), so
 // the stock survives a container rebuild and travels in the Gladys backups —
@@ -63,9 +69,11 @@ const DEFAULTS = {
   bulkDelivery: 3000,
   bulkTonnePrice: null,
   bulkReadingUnit: READING_UNITS.KG,
-  // Device names in English until the user picks a language (as before the
-  // setting existed).
-  language: 'en',
+  // Device names in the language of the last user who looked at a widget
+  // (English until one did).
+  language: 'auto',
+  // No widget seen yet.
+  lastLanguage: null,
 };
 
 const LIMITS = {
@@ -155,6 +163,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export {
   CONFIG_KEYS,
   LEDGER_CONFIG_KEY,
+  LANGUAGE_AUTO,
+  LAST_LANGUAGE_CONFIG_KEY,
   STOCKS_CONFIG_KEY,
   STOCK_TYPES,
   READING_UNITS,

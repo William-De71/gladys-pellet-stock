@@ -117,8 +117,10 @@ un stock.
 ### Langues
 
 Français, anglais, allemand et espagnol : manifeste, messages à l'exécution, widgets et documentation. Gladys ne
-transmet la langue qu'aux widgets ; les noms des appareils proposés dans l'onglet Découverte suivent le réglage
-**Langue des noms d'appareils** (anglais par défaut).
+transmet la langue de ses utilisateurs qu'aux widgets : par défaut (**Langue des noms d'appareils** = `auto`), les
+noms des appareils proposés dans l'onglet Découverte suivent la langue du dernier utilisateur qui a affiché un widget,
+mémorisée dans Gladys (`last_language`). Le réglage peut aussi imposer l'anglais, le français, l'allemand ou
+l'espagnol.
 
 ## Architecture
 
@@ -170,19 +172,19 @@ système de fichiers en lecture seule, labels OCI et manifeste dans le label `io
 
 ## Configuration
 
-| Clé                     | Type     | Défaut | Sert à                                                                              |
-| ----------------------- | -------- | ------ | ----------------------------------------------------------------------------------- |
-| `language`              | `select` | `en`   | Les noms des appareils proposés dans l'onglet Découverte (`en`, `fr`, `de`, `es`)   |
-| `bag_weight`            | `number` | 15     | Le poids restant et le poids utilisé (kg)                                           |
-| `pallet_size`           | `number` | 66     | Ce qu'ajoute le bouton « Palette livrée »                                           |
-| `low_stock_threshold`   | `number` | 10     | Le stock en orange, le rappel, la date de commande, le déclencheur (sacs)           |
-| `consumption_window`    | `number` | 14     | Les jours sur lesquels la consommation moyenne est calculée                         |
-| `pallet_price`          | `number` | —      | Facultatif : valeur du stock et coût par mois, tant qu'aucune livraison n'a de prix |
-| `bulk_capacity`         | `number` | —      | Silo : le taux de remplissage, et le niveau relevé en %                             |
-| `bulk_low_threshold`    | `number` | 500    | Silo : le niveau en orange et le rappel (kg)                                        |
-| `bulk_delivery_default` | `number` | 3000   | Silo : pré-remplit le formulaire « Livraison » (kg)                                 |
-| `bulk_tonne_price`      | `number` | —      | Silo : prix à la tonne facultatif, tant qu'aucune livraison n'a de prix             |
-| `bulk_reading_unit`     | `select` | `kg`   | Silo : le formulaire « Relevé de niveau » demande en `kg` ou en `percent`           |
+| Clé                     | Type     | Défaut | Sert à                                                                                    |
+| ----------------------- | -------- | ------ | ----------------------------------------------------------------------------------------- |
+| `language`              | `select` | `auto` | Les noms des appareils proposés dans l'onglet Découverte (`auto`, `en`, `fr`, `de`, `es`) |
+| `bag_weight`            | `number` | 15     | Le poids restant et le poids utilisé (kg)                                                 |
+| `pallet_size`           | `number` | 66     | Ce qu'ajoute le bouton « Palette livrée »                                                 |
+| `low_stock_threshold`   | `number` | 10     | Le stock en orange, le rappel, la date de commande, le déclencheur (sacs)                 |
+| `consumption_window`    | `number` | 14     | Les jours sur lesquels la consommation moyenne est calculée                               |
+| `pallet_price`          | `number` | —      | Facultatif : valeur du stock et coût par mois, tant qu'aucune livraison n'a de prix       |
+| `bulk_capacity`         | `number` | —      | Silo : le taux de remplissage, et le niveau relevé en %                                   |
+| `bulk_low_threshold`    | `number` | 500    | Silo : le niveau en orange et le rappel (kg)                                              |
+| `bulk_delivery_default` | `number` | 3000   | Silo : pré-remplit le formulaire « Livraison » (kg)                                       |
+| `bulk_tonne_price`      | `number` | —      | Silo : prix à la tonne facultatif, tant qu'aucune livraison n'a de prix                   |
+| `bulk_reading_unit`     | `select` | `kg`   | Silo : le formulaire « Relevé de niveau » demande en `kg` ou en `percent`                 |
 
 Ce sont les valeurs par défaut de tous les stocks : « Régler un stock » les remplace pour un stock.
 
@@ -284,7 +286,7 @@ flowchart LR
 | « Seulement N sac(s) en stock »                | le stock enregistré est inférieur aux sacs retirés : lancez « Corriger le stock »        |
 | Le widget demande de choisir un stock          | le stock a été supprimé, ou c'est un silo dans un widget de sacs (ou l'inverse)          |
 | Un stock ajouté manque dans la liste du widget | son appareil n'a pas encore été ajouté depuis l'onglet Découverte                        |
-| Noms d'appareils en anglais                    | réglez **Langue des noms d'appareils**, puis relancez un scan dans l'onglet Découverte   |
+| Noms d'appareils en anglais                    | aucun widget encore affiché : ouvrez-en un, ou imposez **Langue des noms d'appareils**   |
 | Les boutons ajoutent un sac sans formulaire    | la version de Gladys n'a pas les formulaires de widget (5.2.0 ou plus requis)            |
 | La mise à jour n'est pas proposée              | Gladys antérieur à 5.2.0, ou le store n'a pas encore indexé la version (dans la journée) |
 

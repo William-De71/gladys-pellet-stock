@@ -122,7 +122,7 @@ Eine von einer Szene hinzugefügte Lieferung löst „Palette geliefert“ nicht
 
 ## Sprachen
 
-Die Integration spricht Deutsch, Englisch, Französisch und Spanisch: Die Widgets und die Meldungen folgen der Sprache jedes Gladys-Benutzers. Gladys teilt einer Integration die Sprache ihrer Benutzer nicht mit, wenn sie die Geräte des Tabs „Entdecken“ anbietet: Deren Namen folgen der Einstellung **„Sprache der Gerätenamen“** der Konfiguration (standardmäßig Englisch). Ein bereits hinzugefügtes Gerät behält seinen Namen; benennen Sie es bei Bedarf in seinen Einstellungen um.
+Die Integration spricht Deutsch, Englisch, Französisch und Spanisch: Die Widgets und die Meldungen folgen der Sprache jedes Gladys-Benutzers. Gladys teilt einer Integration die Sprache ihrer Benutzer nur mit, wenn sie ein Widget anzeigen: Standardmäßig (**„Sprache der Gerätenamen“** auf **„Sprache des Benutzers“**) folgen die Namen der im Tab „Entdecken“ angebotenen Geräte der Sprache des letzten Benutzers, der ein Widget der Integration angezeigt hat, bis dahin Englisch. Die Einstellung kann auch eine Sprache erzwingen. Ein bereits hinzugefügtes Gerät behält seinen Namen; benennen Sie es bei Bedarf in seinen Einstellungen um.
 
 ## Sicherung
 

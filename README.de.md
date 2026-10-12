@@ -118,8 +118,10 @@ einrichten oder entfernen.
 ### Sprachen
 
 Deutsch, Englisch, Französisch und Spanisch: Manifest, Laufzeitmeldungen, Widgets und Benutzerdokumentation. Gladys
-übermittelt die Sprache nur an die Widgets; die Namen der im Tab „Entdecken“ angebotenen Geräte folgen der
-Einstellung **Sprache der Gerätenamen** (standardmäßig Englisch).
+übermittelt die Sprache seiner Benutzer nur an die Widgets: Standardmäßig (**Sprache der Gerätenamen** = `auto`)
+folgen die Namen der im Tab „Entdecken“ angebotenen Geräte der Sprache des letzten Benutzers, der ein Widget angezeigt
+hat, gespeichert in Gladys (`last_language`). Die Einstellung kann auch Englisch, Französisch, Deutsch oder Spanisch
+erzwingen.
 
 ## Architektur
 
@@ -174,7 +176,7 @@ schreibgeschütztes Dateisystem, OCI-Labels und das Manifest im Label `io.gladys
 
 | Schlüssel               | Typ      | Standard | Wofür                                                                                    |
 | ----------------------- | -------- | -------- | ---------------------------------------------------------------------------------------- |
-| `language`              | `select` | `en`     | Die Namen der im Tab „Entdecken“ angebotenen Geräte (`en`, `fr`, `de`, `es`)             |
+| `language`              | `select` | `auto`   | Die Namen der im Tab „Entdecken“ angebotenen Geräte (`auto`, `en`, `fr`, `de`, `es`)     |
 | `bag_weight`            | `number` | 15       | Das Restgewicht und das verbrauchte Gewicht (kg)                                         |
 | `pallet_size`           | `number` | 66       | Was die Schaltfläche „Palette geliefert“ hinzufügt                                       |
 | `low_stock_threshold`   | `number` | 10       | Der orange Vorrat, die Erinnerung, das Bestelldatum, der Auslöser (Säcke)                |
@@ -286,7 +288,7 @@ flowchart LR
 | „Nur N Sack/Säcke im Vorrat“                           | der erfasste Vorrat ist kleiner als die entnommenen Säcke: „Vorrat korrigieren“ starten          |
 | Das Widget verlangt, einen Vorrat zu wählen            | der Vorrat wurde entfernt, oder es ist ein Silo in einem Sack-Widget (oder umgekehrt)            |
 | Ein hinzugefügter Vorrat fehlt in der Widget-Liste     | sein Gerät wurde noch nicht im Tab „Entdecken“ hinzugefügt                                       |
-| Gerätenamen auf Englisch                               | **Sprache der Gerätenamen** einstellen, dann im Tab „Entdecken“ erneut scannen                   |
+| Gerätenamen auf Englisch                               | noch kein Widget angezeigt: eines öffnen oder **Sprache der Gerätenamen** erzwingen              |
 | Die Schaltflächen fügen einen Sack ohne Formular hinzu | die Gladys-Version hat keine Widget-Formulare (5.2.0 oder neuer nötig)                           |
 | Das Update wird nicht angeboten                        | Gladys älter als 5.2.0, oder der Store hat die Version noch nicht indexiert (im Laufe des Tages) |
 

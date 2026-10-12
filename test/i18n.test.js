@@ -72,13 +72,14 @@ test('widget labels: 3 to 30 characters, descriptions up to 100, per language', 
   }
 });
 
-test('the language setting offers the four languages, English by default', () => {
+test('the language setting follows the user by default, or forces one of the four', () => {
   const setting = manifest.config_schema.find((field) => field.key === 'language');
   assert.equal(setting.type, 'select');
   assert.equal(setting.default, DEFAULTS.language);
+  assert.equal(DEFAULTS.language, 'auto');
   assert.deepEqual(
     setting.options.map((option) => option.value),
-    LANGUAGES,
+    ['auto', ...LANGUAGES],
   );
 });
 

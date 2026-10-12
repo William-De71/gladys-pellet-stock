@@ -42,14 +42,23 @@
         "es": "Idioma de los nombres de dispositivos"
       },
       "description": {
-        "en": "The names offered on the Discovery tab for the stock and silo devices. Gladys does not tell an integration the language of its users. Devices already added keep their name.",
-        "fr": "Les noms proposés dans l'onglet Découverte pour les appareils de stock et de silo. Gladys n'indique pas à une intégration la langue de ses utilisateurs. Les appareils déjà ajoutés gardent leur nom.",
-        "de": "Die Namen, die im Tab „Entdecken“ für die Vorrats- und Silogeräte vorgeschlagen werden. Gladys teilt einer Integration die Sprache ihrer Benutzer nicht mit. Bereits hinzugefügte Geräte behalten ihren Namen.",
-        "es": "Los nombres propuestos en la pestaña «Descubrir» para los dispositivos de stock y de silo. Gladys no indica a una integración el idioma de sus usuarios. Los dispositivos ya añadidos conservan su nombre."
+        "en": "The names offered on the Discovery tab for the stock and silo devices. Gladys tells an integration the language of its users only when they look at a widget: \"Language of the user\" takes the one of the last user who did (English until then). Devices already added keep their name.",
+        "fr": "Les noms proposés dans l'onglet Découverte pour les appareils de stock et de silo. Gladys n'indique la langue de ses utilisateurs à une intégration que lorsqu'ils affichent un widget : « Langue de l'utilisateur » reprend celle du dernier utilisateur qui l'a fait (anglais d'ici là). Les appareils déjà ajoutés gardent leur nom.",
+        "de": "Die Namen, die im Tab „Entdecken“ für die Vorrats- und Silogeräte vorgeschlagen werden. Gladys teilt einer Integration die Sprache ihrer Benutzer nur mit, wenn sie ein Widget anzeigen: „Sprache des Benutzers“ übernimmt die des letzten Benutzers, der das getan hat (bis dahin Englisch). Bereits hinzugefügte Geräte behalten ihren Namen.",
+        "es": "Los nombres propuestos en la pestaña «Descubrir» para los dispositivos de stock y de silo. Gladys solo indica a una integración el idioma de sus usuarios cuando muestran un widget: «Idioma del usuario» toma el del último usuario que lo hizo (inglés hasta entonces). Los dispositivos ya añadidos conservan su nombre."
       },
       "required": false,
-      "default": "en",
+      "default": "auto",
       "options": [
+        {
+          "value": "auto",
+          "label": {
+            "en": "Language of the user",
+            "fr": "Langue de l'utilisateur",
+            "de": "Sprache des Benutzers",
+            "es": "Idioma del usuario"
+          }
+        },
         {
           "value": "en",
           "label": {

@@ -117,8 +117,9 @@ el coste** de un periodo (primero en entrar, primero en salir), añadir, asignar
 ### Idiomas
 
 Español, inglés, francés y alemán: manifiesto, mensajes en ejecución, widgets y documentación. Gladys solo transmite
-el idioma a los widgets; los nombres de los dispositivos propuestos en la pestaña «Descubrir» siguen el ajuste
-**Idioma de los nombres de dispositivos** (inglés por defecto).
+el idioma de sus usuarios a los widgets: por defecto (**Idioma de los nombres de dispositivos** = `auto`), los nombres
+de los dispositivos propuestos en la pestaña «Descubrir» siguen el idioma del último usuario que mostró un widget,
+guardado en Gladys (`last_language`). El ajuste también puede imponer inglés, francés, alemán o español.
 
 ## Arquitectura
 
@@ -170,19 +171,19 @@ archivos de solo lectura, etiquetas OCI y el manifiesto en la etiqueta `io.glady
 
 ## Configuración
 
-| Clave                   | Tipo     | Por defecto | Sirve para                                                                         |
-| ----------------------- | -------- | ----------- | ---------------------------------------------------------------------------------- |
-| `language`              | `select` | `en`        | Los nombres de los dispositivos propuestos en «Descubrir» (`en`, `fr`, `de`, `es`) |
-| `bag_weight`            | `number` | 15          | El peso restante y el peso usado (kg)                                              |
-| `pallet_size`           | `number` | 66          | Lo que añade el botón «Palé entregado»                                             |
-| `low_stock_threshold`   | `number` | 10          | El stock en naranja, el recordatorio, la fecha de pedido, el disparador (sacos)    |
-| `consumption_window`    | `number` | 14          | Los días sobre los que se calcula el consumo medio                                 |
-| `pallet_price`          | `number` | —           | Opcional: valor del stock y coste mensual, mientras ninguna entrega tenga precio   |
-| `bulk_capacity`         | `number` | —           | Silo: el porcentaje de llenado, y el nivel leído en %                              |
-| `bulk_low_threshold`    | `number` | 500         | Silo: el nivel en naranja y el recordatorio (kg)                                   |
-| `bulk_delivery_default` | `number` | 3000        | Silo: rellena de antemano el formulario «Entrega» (kg)                             |
-| `bulk_tonne_price`      | `number` | —           | Silo: precio por tonelada opcional, mientras ninguna entrega tenga precio          |
-| `bulk_reading_unit`     | `select` | `kg`        | Silo: el formulario «Leer el nivel» pide en `kg` o en `percent`                    |
+| Clave                   | Tipo     | Por defecto | Sirve para                                                                                 |
+| ----------------------- | -------- | ----------- | ------------------------------------------------------------------------------------------ |
+| `language`              | `select` | `auto`      | Los nombres de los dispositivos propuestos en «Descubrir» (`auto`, `en`, `fr`, `de`, `es`) |
+| `bag_weight`            | `number` | 15          | El peso restante y el peso usado (kg)                                                      |
+| `pallet_size`           | `number` | 66          | Lo que añade el botón «Palé entregado»                                                     |
+| `low_stock_threshold`   | `number` | 10          | El stock en naranja, el recordatorio, la fecha de pedido, el disparador (sacos)            |
+| `consumption_window`    | `number` | 14          | Los días sobre los que se calcula el consumo medio                                         |
+| `pallet_price`          | `number` | —           | Opcional: valor del stock y coste mensual, mientras ninguna entrega tenga precio           |
+| `bulk_capacity`         | `number` | —           | Silo: el porcentaje de llenado, y el nivel leído en %                                      |
+| `bulk_low_threshold`    | `number` | 500         | Silo: el nivel en naranja y el recordatorio (kg)                                           |
+| `bulk_delivery_default` | `number` | 3000        | Silo: rellena de antemano el formulario «Entrega» (kg)                                     |
+| `bulk_tonne_price`      | `number` | —           | Silo: precio por tonelada opcional, mientras ninguna entrega tenga precio                  |
+| `bulk_reading_unit`     | `select` | `kg`        | Silo: el formulario «Leer el nivel» pide en `kg` o en `percent`                            |
 
 Son los valores por defecto de todos los stocks: «Configurar un stock» los sustituye para un stock.
 
@@ -285,7 +286,7 @@ flowchart LR
 | «Solo hay N saco(s) en stock»                 | el stock registrado es menor que los sacos quitados: ejecute «Corregir el stock»    |
 | El widget pide elegir un stock                | el stock se ha eliminado, o es un silo en un widget de sacos (o al revés)           |
 | Falta un stock añadido en la lista del widget | su dispositivo todavía no se ha añadido desde la pestaña «Descubrir»                |
-| Nombres de dispositivos en inglés             | ajuste **Idioma de los nombres de dispositivos** y vuelva a escanear en «Descubrir» |
+| Nombres de dispositivos en inglés             | aún no se ha mostrado ningún widget: abra uno, o imponga el idioma en el ajuste     |
 | Los botones añaden un saco sin formulario     | la versión de Gladys no tiene formularios de widget (se necesita 5.2.0 o posterior) |
 | No se propone la actualización                | Gladys anterior a 5.2.0, o el store aún no ha indexado la versión (en el día)       |
 

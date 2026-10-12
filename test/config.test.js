@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  deviceLanguage,
   normalizeConfig,
   parseStockSettings,
   readStockSettings,
@@ -34,14 +35,24 @@ test('normalizeConfig: reads numbers sent as strings', () => {
     bulkTonnePrice: DEFAULTS.bulkTonnePrice,
     bulkReadingUnit: DEFAULTS.bulkReadingUnit,
     language: DEFAULTS.language,
+    lastLanguage: null,
   });
 });
 
-test('normalizeConfig: the language of the device names, English by default', () => {
+test("normalizeConfig: the language of the device names, the user's by default", () => {
   assert.equal(normalizeConfig({ language: 'de' }).language, 'de');
   assert.equal(normalizeConfig({ language: 'es' }).language, 'es');
-  assert.equal(normalizeConfig({ language: 'it' }).language, 'en');
-  assert.equal(normalizeConfig({}).language, 'en');
+  assert.equal(normalizeConfig({ language: 'it' }).language, 'auto');
+  assert.equal(normalizeConfig({}).language, 'auto');
+  assert.equal(normalizeConfig({ last_language: 'fr' }).lastLanguage, 'fr');
+  assert.equal(normalizeConfig({ last_language: 'xx' }).lastLanguage, null);
+});
+
+test('deviceLanguage: a forced language, else the last one seen, else English', () => {
+  assert.equal(deviceLanguage({ language: 'de', lastLanguage: 'fr' }, 'es'), 'de');
+  assert.equal(deviceLanguage({ language: 'auto', lastLanguage: 'fr' }), 'fr');
+  assert.equal(deviceLanguage({ language: 'auto', lastLanguage: 'fr' }, 'es'), 'es');
+  assert.equal(deviceLanguage({ language: 'auto', lastLanguage: null }), 'en');
 });
 
 test('normalizeConfig: clamps out-of-range values and ignores garbage', () => {

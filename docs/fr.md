@@ -122,7 +122,7 @@ Une livraison ajoutée par une scène ne déclenche pas « Palette livrée », p
 
 ## Langues
 
-L'intégration parle français, anglais, allemand et espagnol : les widgets et les messages suivent la langue de chaque utilisateur de Gladys. Gladys n'indique pas à une intégration la langue de ses utilisateurs quand elle propose les appareils de l'onglet Découverte : leurs noms suivent le réglage **« Langue des noms d'appareils »** de la configuration (anglais par défaut). Un appareil déjà ajouté garde son nom ; renommez-le depuis ses réglages si vous le souhaitez.
+L'intégration parle français, anglais, allemand et espagnol : les widgets et les messages suivent la langue de chaque utilisateur de Gladys. Gladys n'indique la langue de ses utilisateurs à une intégration que lorsqu'ils affichent un widget : par défaut (**« Langue des noms d'appareils »** sur **« Langue de l'utilisateur »**), les noms des appareils proposés dans l'onglet Découverte suivent la langue du dernier utilisateur qui a affiché un widget de l'intégration, l'anglais d'ici là. Le réglage peut aussi imposer une langue. Un appareil déjà ajouté garde son nom ; renommez-le depuis ses réglages si vous le souhaitez.
 
 ## Sauvegarde
 

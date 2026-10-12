@@ -10,8 +10,16 @@
 // defaults of every stock.
 // -----------------------------------------------------------------------------
 
-import { CONFIG_KEYS, DEFAULTS, LIMITS, READING_UNITS, STOCK_TYPES } from './constants.js';
-import { resolveLanguage } from './i18n.js';
+import {
+  CONFIG_KEYS,
+  DEFAULTS,
+  LANGUAGE_AUTO,
+  LAST_LANGUAGE_CONFIG_KEY,
+  LIMITS,
+  READING_UNITS,
+  STOCK_TYPES,
+} from './constants.js';
+import { LANGUAGES } from './i18n.js';
 import { StockError } from './ledger.js';
 
 const { BAGS, BULK } = STOCK_TYPES;
@@ -110,7 +118,8 @@ function readNumber(raw, fallback, { min, max }) {
  * @returns {{bagWeight: number, palletSize: number, lowStockThreshold: number,
  *   consumptionWindow: number, palletPrice: number|null, bagPrice: number|null,
  *   bulkCapacity: number|null, bulkLowThreshold: number, bulkDelivery: number,
- *   bulkTonnePrice: number|null, bulkReadingUnit: string, language: string}} The
+ *   bulkTonnePrice: number|null, bulkReadingUnit: string, language: string,
+ *   lastLanguage: string|null}} The
  *   normalized config.
  *   The bag price is the pallet price divided by the bags per pallet; a price
  *   (or a capacity) of 0 counts as none.
@@ -144,9 +153,15 @@ function normalizeConfig(raw = {}) {
     palletPrice: palletPrice > 0 ? palletPrice : DEFAULTS.palletPrice,
     bagPrice: palletPrice > 0 ? palletPrice / palletSize : DEFAULTS.bagPrice,
     ...normalizeBulkConfig(raw),
-    // Gladys does not tell an integration the language of its users: the
-    // device names follow this setting, English when it was never saved.
-    language: resolveLanguage(raw[CONFIG_KEYS.LANGUAGE] ?? DEFAULTS.language),
+    // Gladys tells an integration the language of its users in the widget
+    // requests only: `auto` names the devices in the language of the last
+    // one (lastLanguage), the other values force a language.
+    language: LANGUAGES.includes(raw[CONFIG_KEYS.LANGUAGE])
+      ? raw[CONFIG_KEYS.LANGUAGE]
+      : DEFAULTS.language,
+    lastLanguage: LANGUAGES.includes(raw[LAST_LANGUAGE_CONFIG_KEY])
+      ? raw[LAST_LANGUAGE_CONFIG_KEY]
+      : null,
   };
 }
 
@@ -306,7 +321,24 @@ function withStockSettings(config, settings = {}, type = BAGS) {
   return effective;
 }
 
+/**
+ * @description The language of the device names offered on the Discovery tab.
+ * @param {{language: string, lastLanguage: string|null}} config - The normalized config.
+ * @param {string|null} [seen] - The language of the last widget request, when
+ *   newer than the stored one.
+ * @returns {string} The forced language, else the last one seen, else English.
+ * @example
+ * deviceLanguage({ language: 'auto', lastLanguage: 'fr' }); // -> 'fr'
+ */
+function deviceLanguage(config, seen = null) {
+  if (config.language !== LANGUAGE_AUTO) {
+    return config.language;
+  }
+  return seen ?? config.lastLanguage ?? 'en';
+}
+
 export {
+  deviceLanguage,
   STOCK_SETTINGS,
   settingsOf,
   normalizeConfig,

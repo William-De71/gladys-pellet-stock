@@ -13,9 +13,10 @@
 // goes on).
 // -----------------------------------------------------------------------------
 
-import { settingsOf } from './config.js';
+import { deviceLanguage, settingsOf } from './config.js';
 import { costOver, nextDay, parseDay, seasonStart } from './cost.js';
 import {
+  LAST_LANGUAGE_CONFIG_KEY,
   MOVEMENT_TYPES,
   SILO_ACTIONS,
   SILO_WIDGET_KEY,
@@ -23,7 +24,7 @@ import {
   WIDGET_ACTIONS,
   WIDGET_KEY,
 } from './constants.js';
-import { LANGUAGES, message, translate } from './i18n.js';
+import { LANGUAGES, message, resolveLanguage, translate } from './i18n.js';
 import { StockError } from './ledger.js';
 import { buildSceneOutputs } from './scene.js';
 import { buildSiloContent, readLevel } from './silo-widget.js';
@@ -227,7 +228,40 @@ function registerHandlers({ gladys, stocks, now = () => new Date() }) {
    * await publishDevices();
    */
   function publishDevices() {
-    return gladys.publishDiscoveredDevices(stocks.devices());
+    return gladys.publishDiscoveredDevices(
+      stocks.devices(deviceLanguage(stocks.configOf(), seenLanguage)),
+    );
+  }
+
+  // The language of the last user who looked at a widget: the only moment
+  // Gladys tells it. Kept outside the config_schema, so the device names of a
+  // scan follow it even after a restart.
+  let seenLanguage = null;
+
+  /**
+   * @description Remember the language of a widget request; with the
+   * `auto` language, offer the devices again under names in it.
+   * @param {string} [language] - The language of the requesting user.
+   */
+  function rememberLanguage(language) {
+    if (!language) {
+      return;
+    }
+    const code = resolveLanguage(language);
+    const config = stocks.configOf();
+    if (code === (seenLanguage ?? config.lastLanguage)) {
+      return;
+    }
+    const before = deviceLanguage(config, seenLanguage);
+    seenLanguage = code;
+    gladys.setConfig({ [LAST_LANGUAGE_CONFIG_KEY]: code }).catch(() => {
+      // Kept in memory until the next restart: harmless.
+    });
+    if (deviceLanguage(config, seenLanguage) !== before) {
+      publishDevices().catch(() => {
+        // The next scan publishes them.
+      });
+    }
   }
 
   gladys.onScanRequest(async () => {
@@ -465,6 +499,7 @@ function registerHandlers({ gladys, stocks, now = () => new Date() }) {
   // --- Dashboard widget ----------------------------------------------------------
 
   gladys.onWidgetGet(WIDGET_KEY, async ({ settings = {}, language }) => {
+    rememberLanguage(language);
     // Never an empty widget before the load: a failed one fails the request.
     await stocks.ready();
     await stocks.settled();
@@ -540,6 +575,7 @@ function registerHandlers({ gladys, stocks, now = () => new Date() }) {
   }
 
   gladys.onWidgetGet(SILO_WIDGET_KEY, async ({ settings = {}, language }) => {
+    rememberLanguage(language);
     await stocks.ready();
     await stocks.settled();
     const { stock, externalId, problem } = siloOf(settings);

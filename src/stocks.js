@@ -26,7 +26,12 @@
 // -----------------------------------------------------------------------------
 
 import { randomBytes } from 'node:crypto';
-import { parseStockSettings, readStockSettings, withStockSettings } from './config.js';
+import {
+  deviceLanguage,
+  parseStockSettings,
+  readStockSettings,
+  withStockSettings,
+} from './config.js';
 import {
   DEVICE_ID,
   LEDGER_CONFIG_KEY,
@@ -622,10 +627,10 @@ function createStocks({
     /**
      * @description The devices of every stock, for the Discovery screen.
      * @param {string} [language] - Language of the default names, the
-     *   configured one when omitted.
+     *   configured one (or the last one seen) when omitted.
      * @returns {Array<object>} The discovered devices.
      */
-    devices(language = getConfig().language) {
+    devices(language = deviceLanguage(getConfig())) {
       return list().map((stock) => buildDevice(gladys, language, stock));
     },
 

@@ -109,8 +109,9 @@ a period (first in, first out), add, attach, set up or remove a stock.
 ### Languages
 
 English, French, German and Spanish: manifest, runtime messages, widgets and user docs. Gladys gives the language
-to the widgets only; the device names offered on the Discover tab follow the **Language of the device names**
-setting (English by default).
+of its users to the widgets only: by default (**Language of the device names** = `auto`), the device names offered
+on the Discover tab follow the language of the last user who looked at a widget, kept in Gladys (`last_language`).
+The setting can also force English, French, German or Spanish.
 
 ## Architecture
 
@@ -161,19 +162,19 @@ OCI labels and the manifest as the `io.gladysassistant.manifest` label.
 
 ## Configuration
 
-| Key                     | Type     | Default | Used for                                                                           |
-| ----------------------- | -------- | ------- | ---------------------------------------------------------------------------------- |
-| `language`              | `select` | `en`    | The names of the devices offered on the Discover tab (`en`, `fr`, `de`, `es`)      |
-| `bag_weight`            | `number` | 15      | The remaining weight and the weight used (kg)                                      |
-| `pallet_size`           | `number` | 66      | What the "Pallet delivered" button adds                                            |
-| `low_stock_threshold`   | `number` | 10      | The orange stock, the reminder, the order date, the trigger (bags)                 |
-| `consumption_window`    | `number` | 14      | The days the average consumption is computed over                                  |
-| `pallet_price`          | `number` | —       | Optional: stock value and cost per month, until a delivery is entered with a price |
-| `bulk_capacity`         | `number` | —       | Silo: the fill rate, and the level read in %                                       |
-| `bulk_low_threshold`    | `number` | 500     | Silo: the orange level and the reminder (kg)                                       |
-| `bulk_delivery_default` | `number` | 3000    | Silo: pre-fills the "Delivery" form (kg)                                           |
-| `bulk_tonne_price`      | `number` | —       | Silo: optional price per tonne, until a delivery is entered with a price           |
-| `bulk_reading_unit`     | `select` | `kg`    | Silo: the "Level reading" form asks in `kg` or in `percent`                        |
+| Key                     | Type     | Default | Used for                                                                              |
+| ----------------------- | -------- | ------- | ------------------------------------------------------------------------------------- |
+| `language`              | `select` | `auto`  | The names of the devices offered on the Discover tab (`auto`, `en`, `fr`, `de`, `es`) |
+| `bag_weight`            | `number` | 15      | The remaining weight and the weight used (kg)                                         |
+| `pallet_size`           | `number` | 66      | What the "Pallet delivered" button adds                                               |
+| `low_stock_threshold`   | `number` | 10      | The orange stock, the reminder, the order date, the trigger (bags)                    |
+| `consumption_window`    | `number` | 14      | The days the average consumption is computed over                                     |
+| `pallet_price`          | `number` | —       | Optional: stock value and cost per month, until a delivery is entered with a price    |
+| `bulk_capacity`         | `number` | —       | Silo: the fill rate, and the level read in %                                          |
+| `bulk_low_threshold`    | `number` | 500     | Silo: the orange level and the reminder (kg)                                          |
+| `bulk_delivery_default` | `number` | 3000    | Silo: pre-fills the "Delivery" form (kg)                                              |
+| `bulk_tonne_price`      | `number` | —       | Silo: optional price per tonne, until a delivery is entered with a price              |
+| `bulk_reading_unit`     | `select` | `kg`    | Silo: the "Level reading" form asks in `kg` or in `percent`                           |
 
 These are the defaults of every stock: "Set up a stock" overrides them for one stock.
 
@@ -270,7 +271,7 @@ CHANGE:` → major.
 | "Only N bag(s) in stock"                       | the recorded stock is lower than the bags removed: run "Correct the stock"       |
 | The widget asks to pick a stock                | the stock was removed, or it is a silo in a bags widget (or the opposite)        |
 | An added stock is missing from the widget list | its device was not added from the Discover tab yet                               |
-| Device names in English                        | set **Language of the device names**, then scan again on the Discover tab        |
+| Device names in English                        | no widget looked at yet: open one, or force **Language of the device names**     |
 | The buttons add one bag without a form         | the Gladys version has no widget action forms (5.2.0 or later needed)            |
 | The update is not offered                      | Gladys older than 5.2.0, or the store has not indexed the version yet (same day) |
 

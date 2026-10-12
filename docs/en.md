@@ -122,7 +122,7 @@ A delivery added by a scene does not fire "Pallet delivered", so that a scene ca
 
 ## Languages
 
-The integration speaks English, French, German and Spanish: the widgets and the messages follow the language of each Gladys user. Gladys does not tell an integration the language of its users when it offers the devices of the Discovery tab: their names follow the **"Language of the device names"** setting of the configuration (English by default). A device already added keeps its name; rename it from its settings if you wish.
+The integration speaks English, French, German and Spanish: the widgets and the messages follow the language of each Gladys user. Gladys tells an integration the language of its users only when they look at a widget: by default (**"Language of the device names"** set to **"Language of the user"**), the names of the devices offered on the Discovery tab follow the language of the last user who looked at a widget of the integration, English until then. The setting can also force a language. A device already added keeps its name; rename it from its settings if you wish.
 
 ## Backup
 

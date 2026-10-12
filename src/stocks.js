@@ -33,6 +33,7 @@ import {
   LIMITS,
   STOCK_TYPES,
   STOCKS_CONFIG_KEY,
+  SILO_WIDGET_KEY,
   WIDGET_KEY,
 } from './constants.js';
 import { buildDevice, deviceExternalId } from './device.js';
@@ -366,10 +367,21 @@ function createStocks({
   async function saveStocks(next) {
     await gladys.setConfig({ [STOCKS_CONFIG_KEY]: serializeStocks(next) });
     stocks = next;
-    try {
-      gladys.requestWidgetRefresh(WIDGET_KEY);
-    } catch (error) {
-      logger.debug(`Widget refresh not requested: ${error.message}`);
+    refreshWidgets();
+  }
+
+  /**
+   * @description Ask Gladys to refetch both widgets: a stock added, removed or
+   * renamed changes what either of them shows (a first silo replaces the
+   * "No silo yet" of the silo widget).
+   */
+  function refreshWidgets() {
+    for (const key of [WIDGET_KEY, SILO_WIDGET_KEY]) {
+      try {
+        gladys.requestWidgetRefresh(key);
+      } catch (error) {
+        logger.debug(`Widget refresh not requested: ${error.message}`);
+      }
     }
   }
 
@@ -630,6 +642,11 @@ function createStocks({
       }
       await Promise.all([...stores.values()].map((store) => store.publishStates(options)));
     },
+
+    /**
+     * @description Ask Gladys to refetch both widgets.
+     */
+    refreshWidgets,
 
     /**
      * @description Tell Gladys every stock may have changed (config updated).

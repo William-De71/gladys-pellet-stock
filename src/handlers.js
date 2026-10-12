@@ -237,8 +237,11 @@ function registerHandlers({ gladys, stocks, now = () => new Date() }) {
 
   gladys.onDeviceCreated(async () => {
     // The device may be added long after the last movement: publish its
-    // states now instead of waiting for the next change.
+    // states now instead of waiting for the next change (Gladys drops the
+    // states of a feature that does not exist yet). The widgets list the
+    // stocks by their device: refetch them too.
     await stocks.publishStates({ force: true });
+    stocks.refreshWidgets();
   });
 
   gladys.onSetValue(async () => {

@@ -232,3 +232,15 @@ test('handlers: the devices offered on Discovery are named in the configured lan
     ['Pelletvorrat', 'Pelletsilo – Chalet des Écrins'],
   );
 });
+
+test('handlers: a device added, or a silo added, refreshes both widgets', async () => {
+  const { gladys, h } = await setup();
+  gladys.refreshes.length = 0;
+  await h.action.add_stock({ house: 'chalet', type: 'bulk' });
+  assert.ok(gladys.refreshes.includes(SILO), 'the silo widget, no longer "No silo yet"');
+  gladys.refreshes.length = 0;
+  gladys.publishedStates.length = 0;
+  await gladys.handlers.deviceCreated({ external_id: CHALET_SILO });
+  assert.deepEqual([...new Set(gladys.refreshes)].sort(), [SILO, BAGS]);
+  assert.ok(gladys.publishedStates.length > 0, 'the states are published again');
+});

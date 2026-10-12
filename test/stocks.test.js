@@ -1,7 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createStocks, ledgerKeyOf, parseStocks, readHouse } from '../src/stocks.js';
-import { DEFAULTS, LEDGER_CONFIG_KEY, STOCKS_CONFIG_KEY, WIDGET_KEY } from '../src/constants.js';
+import {
+  DEFAULTS,
+  LEDGER_CONFIG_KEY,
+  SILO_WIDGET_KEY,
+  STOCKS_CONFIG_KEY,
+  WIDGET_KEY,
+} from '../src/constants.js';
 import { parseLedger, serializeLedger } from '../src/ledger.js';
 import { NOW, buildLedger, createFakeGladys, silentLogger } from './helpers/fixtures.js';
 
@@ -62,7 +68,7 @@ test('stocks: a stock added for a house has its own ledger and device, named aft
   assert.deepEqual(JSON.parse(gladys.storedConfig[STOCKS_CONFIG_KEY]), [
     { id: 'chalet:bags', type: 'bags', house: 'chalet', ledger: '0000000a' },
   ]);
-  assert.deepEqual(gladys.refreshes, [WIDGET_KEY]);
+  assert.deepEqual(gladys.refreshes, [WIDGET_KEY, SILO_WIDGET_KEY]);
 
   await stocks.storeOf(CHALET).record({ type: 'delivery', bags: 20 });
   assert.equal(stocks.storeOf(CHALET).getStats().stock, 20);

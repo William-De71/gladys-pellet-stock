@@ -4,7 +4,7 @@ Cette intégration suit votre **stock de pellets** (granulés de bois), en sacs 
 
 Aucun matériel ni compte en ligne n'est nécessaire : l'intégration tient un registre des mouvements de sacs et en déduit tout le reste.
 
-![Deux widgets « Stock de pellets » : l'évolution du stock avec ses boutons, et les sacs utilisés par jour](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/widget-example.png)
+![Deux widgets « Stock de pellets » : l'évolution du stock avec ses boutons, et les sacs utilisés par jour (illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-stock.fr.png)
 
 ## Premiers pas
 
@@ -84,6 +84,8 @@ Pour lire le nom des maisons, l'intégration demande l'accès aux maisons de Gla
 **« Supprimer un stock »** retire un stock ajouté et son historique ; le stock principal ne peut pas être supprimé.
 
 ## Silo (pellets en vrac)
+
+![Le formulaire « Palette livrée » ouvert sur le widget « Stock de pellets », à côté du widget « Silo de pellets » (illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-silo.fr.png)
 
 Pour une chaudière alimentée par un silo, lancez **« Ajouter un stock »** avec le type **Silo (vrac)** et la maison. Un silo compte en **kg** et a son propre widget, **« Silo de pellets »**, et son propre appareil, **« Silo de pellets – Maison »** (niveau en kg, remplissage en %, autonomie). Une maison peut avoir un stock de sacs et un silo.
 

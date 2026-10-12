@@ -14,10 +14,11 @@ et coût du chauffage, avec des **widgets** de tableau de bord, des actions et d
 
 Ni matériel ni compte en ligne : l'intégration tient un registre des mouvements et en déduit tout le reste.
 
-![Deux widgets « Stock de pellets » : l'évolution du stock avec ses boutons rapides, et les sacs utilisés par jour](docs/widget-example.png)
+![Deux widgets « Stock de pellets » : l'évolution du stock avec ses boutons, et les sacs utilisés par jour (illustration)](docs/assets/widget-stock.fr.png)
 
-_Deux instances du widget (capture d'écran d'une version précédente) : l'évolution du stock avec les boutons rapides (à gauche), les sacs
-utilisés par jour, boutons masqués (à droite)._
+![Le formulaire « Palette livrée » ouvert sur le widget « Stock de pellets », à côté du widget « Silo de pellets » (illustration)](docs/assets/widget-silo.fr.png)
+
+_Illustrations générées, pas des captures d'écran : les contenus viennent du code de l'intégration, dessinés comme les widgets de Gladys (mode sombre). L'évolution du stock avec ses boutons, et les sacs utilisés par jour, boutons masqués ; en dessous, le formulaire « Palette livrée » et un silo._
 
 Documentation utilisateur : [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch](docs/de.md) ·
 [Español](docs/es.md).
@@ -229,6 +230,10 @@ cœur supprimerait.
 - `test/i18n.test.js` vérifie les quatre langues (manifeste, messages, docs, README) et valide les contenus de widget
   dans chacune ;
 - `test/release.test.js` couvre le script de release (version, changelog, mise à jour des versions).
+
+`docs/illustrations/render.sh` régénère les illustrations des widgets de `docs/assets/` dans les quatre langues, à
+partir du code de l'intégration, dessinées comme le front de Gladys (Chrome ou Chromium, ImageMagick et Pillow
+requis).
 
 | Chemin               | Rôle                                                                |
 | -------------------- | ------------------------------------------------------------------- |

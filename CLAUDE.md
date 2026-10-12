@@ -44,6 +44,7 @@ src/i18n.js             runtime texts, en / fr / de / es
 gladys-assistant-integration.json   manifest
 docs/{en,fr,de,es}.md   user documentation, re-hosted by the store
 .github/scripts/release.mjs         version, changelog, bump (tested in test/)
+docs/illustrations/render.sh        regenerates the widget illustrations (docs/assets)
 ```
 
 ## Rules

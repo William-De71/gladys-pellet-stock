@@ -14,10 +14,11 @@ Tagesverbrauch, Reichweite und Heizkosten, mit **Dashboard-Widgets**, Szenenakti
 
 Weder Hardware noch Online-Konto: Die Integration führt ein Buch über die Bewegungen und leitet alles daraus ab.
 
-![Zwei Widgets „Pelletvorrat“: der Vorrat im Zeitverlauf mit seinen Schnelltasten und die verbrauchten Säcke pro Tag](docs/widget-example.png)
+![Zwei Widgets „Pelletvorrat“: der Vorrat im Zeitverlauf mit seinen Schaltflächen und die verbrauchten Säcke pro Tag (Illustration)](docs/assets/widget-stock.de.png)
 
-_Zwei Instanzen des Widgets (Bildschirmfoto einer früheren Version, französische Oberfläche): der Vorrat im Zeitverlauf mit den
-Schnelltasten (links), die verbrauchten Säcke pro Tag mit ausgeblendeten Schaltflächen (rechts)._
+![Das Formular „Palette geliefert“, geöffnet im Widget „Pelletvorrat“, neben dem Widget „Pelletsilo“ (Illustration)](docs/assets/widget-silo.de.png)
+
+_Erzeugte Illustrationen, keine Bildschirmfotos: Die Inhalte stammen aus dem Code der Integration und sind wie die Widgets von Gladys gezeichnet (dunkler Modus). Der Vorrat im Zeitverlauf mit seinen Schaltflächen und die verbrauchten Säcke pro Tag mit ausgeblendeten Schaltflächen; darunter das Formular „Palette geliefert“ und ein Silo._
 
 Benutzerdokumentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch](docs/de.md) ·
 [Español](docs/es.md).
@@ -232,6 +233,9 @@ verwerfen würde.
 - `test/i18n.test.js` prüft die vier Sprachen (Manifest, Laufzeittexte, Dokumentation, README) und validiert die
   Widget-Inhalte in jeder;
 - `test/release.test.js` deckt das Release-Skript ab (Version, Changelog, Versionsanhebung).
+
+`docs/illustrations/render.sh` erzeugt die Widget-Illustrationen in `docs/assets/` in den vier Sprachen neu, aus dem
+Code der Integration, gezeichnet wie das Gladys-Frontend (Chrome oder Chromium, ImageMagick und Pillow nötig).
 
 | Pfad                 | Rolle                                                                      |
 | -------------------- | -------------------------------------------------------------------------- |

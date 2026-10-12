@@ -4,7 +4,7 @@ This integration tracks your **wood pellet stock**, in bags or in a bulk silo, o
 
 No hardware and no online account are needed: the integration keeps a ledger of bag movements and derives everything from it.
 
-![Two "Pellet stock" widgets: the stock over time with its buttons, and the bags used per day](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/widget-example.png)
+![Two "Pellet stock" widgets: the stock over time with its buttons, and the bags used per day (illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-stock.en.png)
 
 ## Getting started
 
@@ -84,6 +84,8 @@ To read the names of the houses, the integration asks for access to the houses o
 **"Remove a stock"** removes an added stock and its history; the main stock cannot be removed.
 
 ## Silo (bulk pellets)
+
+![The "Pallet delivered" form open on the "Pellet stock" widget, next to the "Pellet silo" widget (illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-silo.en.png)
 
 For a boiler fed from a silo, run **"Add a stock"** with the **Silo (bulk)** type and the house. A silo counts in **kg** and has its own widget, **"Pellet silo"**, and its own device, **"Pellet silo – House"** (level in kg, fill in %, autonomy). A house may have a stock of bags and a silo.
 

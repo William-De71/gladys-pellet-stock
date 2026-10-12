@@ -14,10 +14,11 @@ calefacción, con **widgets** para el panel, acciones y disparadores de escena, 
 
 Sin hardware ni cuenta en línea: la integración lleva un registro de movimientos y deduce todo lo demás.
 
-![Dos widgets «Stock de pellets»: la evolución del stock con sus botones rápidos, y los sacos usados por día](docs/widget-example.png)
+![Dos widgets «Stock de pellets»: la evolución del stock con sus botones, y los sacos usados por día (ilustración)](docs/assets/widget-stock.es.png)
 
-_Dos instancias del widget (captura de pantalla de una versión anterior, interfaz en francés): la evolución del
-stock con los botones rápidos (izquierda), los sacos usados por día con los botones ocultos (derecha)._
+![El formulario «Palé entregado» abierto en el widget «Stock de pellets», junto al widget «Silo de pellets» (ilustración)](docs/assets/widget-silo.es.png)
+
+_Ilustraciones generadas, no capturas de pantalla: los contenidos salen del código de la integración, dibujados como los widgets de Gladys (modo oscuro). La evolución del stock con sus botones, y los sacos usados por día con los botones ocultos; debajo, el formulario «Palé entregado» y un silo._
 
 Documentación de usuario: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch](docs/de.md) ·
 [Español](docs/es.md).
@@ -230,6 +231,10 @@ descartaría.
 - `test/i18n.test.js` comprueba los cuatro idiomas (manifiesto, textos en ejecución, documentación, README) y valida
   los contenidos de widget en cada uno;
 - `test/release.test.js` cubre el script de release (versión, changelog, actualización de versiones).
+
+`docs/illustrations/render.sh` regenera las ilustraciones de los widgets de `docs/assets/` en los cuatro idiomas, a
+partir del código de la integración, dibujadas como el front de Gladys (se necesitan Chrome o Chromium, ImageMagick y
+Pillow).
 
 | Ruta                 | Función                                                                 |
 | -------------------- | ----------------------------------------------------------------------- |

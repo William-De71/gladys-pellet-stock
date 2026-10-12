@@ -4,7 +4,7 @@ Esta integración sigue su **stock de pellets**, en sacos o en un silo a granel,
 
 No se necesita ningún hardware ni cuenta en línea: la integración lleva un registro de los movimientos de sacos y deduce todo lo demás a partir de él.
 
-![Dos widgets «Stock de pellets»: la evolución del stock con sus botones, y los sacos usados por día](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/widget-example.png)
+![Dos widgets «Stock de pellets»: la evolución del stock con sus botones, y los sacos usados por día (ilustración)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-stock.es.png)
 
 ## Primeros pasos
 
@@ -84,6 +84,8 @@ Para leer los nombres de las casas, la integración pide acceso a las casas de G
 **«Eliminar un stock»** elimina un stock añadido y su historial; el stock principal no se puede eliminar.
 
 ## Silo (pellets a granel)
+
+![El formulario «Palé entregado» abierto en el widget «Stock de pellets», junto al widget «Silo de pellets» (ilustración)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-silo.es.png)
 
 Para una caldera alimentada desde un silo, ejecute **«Añadir un stock»** con el tipo **Silo (granel)** y la casa. Un silo cuenta en **kg** y tiene su propio widget, **«Silo de pellets»**, y su propio dispositivo, **«Silo de pellets – Casa»** (nivel en kg, llenado en %, autonomía). Una casa puede tener un stock de sacos y un silo.
 

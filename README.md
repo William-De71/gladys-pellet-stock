@@ -13,10 +13,11 @@ with **dashboard widgets**, scene actions and triggers, built on `@gladysassista
 
 No hardware and no cloud account: the integration keeps a ledger of movements and derives everything from it.
 
-![Two "Pellet stock" widgets: the stock over time with its quick buttons, and the bags used per day](docs/widget-example.png)
+![Two "Pellet stock" widgets: the stock over time with its buttons, and the bags used per day (illustration)](docs/assets/widget-stock.en.png)
 
-_Two instances of the widget (screenshot of an earlier version, French interface): the stock over time with the quick buttons (left), the bags used per day
-with the buttons hidden (right)._
+![The "Pallet delivered" form open on the "Pellet stock" widget, next to the "Pellet silo" widget (illustration)](docs/assets/widget-silo.en.png)
+
+_Generated illustrations, not screenshots: the contents come from the integration's code, drawn like the Gladys widgets (dark mode). Left, the stock over time with its buttons, and the bags used per day with the buttons hidden; below, the "Pallet delivered" form and a silo._
 
 User documentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch](docs/de.md) · [Español](docs/es.md).
 
@@ -216,6 +217,9 @@ validate every widget content against the core vocabulary and budget, and log wh
 - `test/i18n.test.js` checks the four languages (manifest, runtime texts, docs, READMEs) and validates the widget
   contents in each;
 - `test/release.test.js` covers the release script (version, changelog, bump).
+
+`docs/illustrations/render.sh` regenerates the widget illustrations of `docs/assets/` in the four languages, from
+the integration's code, drawn like the Gladys front (Chrome or Chromium, ImageMagick and Pillow needed).
 
 | Path                 | Role                                                           |
 | -------------------- | -------------------------------------------------------------- |

@@ -4,7 +4,7 @@ Diese Integration verfolgt Ihren **Pelletvorrat**, in Säcken oder in einem Silo
 
 Weder Hardware noch ein Online-Konto sind nötig: Die Integration führt ein Buch über die Bewegungen der Säcke und leitet alles Weitere daraus ab.
 
-![Zwei Widgets „Pelletvorrat“: der Vorrat im Zeitverlauf mit seinen Schaltflächen und die verbrauchten Säcke pro Tag](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/widget-example.png)
+![Zwei Widgets „Pelletvorrat“: der Vorrat im Zeitverlauf mit seinen Schaltflächen und die verbrauchten Säcke pro Tag (Illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-stock.de.png)
 
 ## Erste Schritte
 
@@ -84,6 +84,8 @@ Um die Namen der Häuser zu lesen, bittet die Integration um Zugriff auf die Hä
 **„Vorrat entfernen“** entfernt einen hinzugefügten Vorrat und seinen Verlauf; der Hauptvorrat kann nicht entfernt werden.
 
 ## Silo (lose Pellets)
+
+![Das Formular „Palette geliefert“, geöffnet im Widget „Pelletvorrat“, neben dem Widget „Pelletsilo“ (Illustration)](https://raw.githubusercontent.com/William-De71/gladys-pellet-stock/main/docs/assets/widget-silo.de.png)
 
 Für einen Kessel, der aus einem Silo gespeist wird, starten Sie **„Vorrat hinzufügen“** mit dem Typ **Silo (lose)** und dem Haus. Ein Silo zählt in **kg** und hat sein eigenes Widget, **„Pelletsilo“**, und sein eigenes Gerät, **„Pelletsilo – Haus“** (Füllstand in kg, Füllgrad in %, Reichweite). Ein Haus kann einen Sackvorrat und ein Silo haben.
 

@@ -1,3 +1,27 @@
+# Changelog
+
+All notable changes to this integration are documented in this file. The format
+follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions
+follow [Semantic Versioning](https://semver.org/). This file is generated at
+each release from the Conventional Commits: do not edit it by hand.
+
+## [1.3.0] - 2026-10-12
+
+### Added
+
+- **widget:** enter the bags and the price paid when a pallet is delivered ([2f5508e](https://github.com/William-De71/gladys-pellet-stock/commit/2f5508eb02b8a862cfe076ccaa475cece78bdd93))
+- **prices:** price per bag on "Add bag(s)", bag weight per delivery, price per kg ([a08a83c](https://github.com/William-De71/gladys-pellet-stock/commit/a08a83ce1ddbb18ab4dab89d3d166364813f4b96))
+- **stocks:** one stock per house of Gladys, with settings of its own ([53d8883](https://github.com/William-De71/gladys-pellet-stock/commit/53d888305636ed3a6d528cd4f5ce7bdaaaa9cb91))
+- **cost:** heating cost first in, first out, and the exact remaining weight ([394f582](https://github.com/William-De71/gladys-pellet-stock/commit/394f582c764d7ee4fd658d7ac4e55fc78483e31b))
+- **silo:** a silo of bulk pellets, counted in kg, with its widget and device ([a82e083](https://github.com/William-De71/gladys-pellet-stock/commit/a82e083f40c409faa8133f8efd813cac3a9c9e35))
+- **scenes:** bags bought on their own are never a delivery; season cost in scenes ([b31658f](https://github.com/William-De71/gladys-pellet-stock/commit/b31658f96e8749867d3a3a84c89a3c67aa6e6fda))
+- **i18n:** German and Spanish, and a setting for the language of the device names ([1b78919](https://github.com/William-De71/gladys-pellet-stock/commit/1b78919c00d214f51d7f1093817177c985309abe))
+
+### Fixed
+
+- **prices:** pre-fill a pallet at the last price per bag, price on "Record a delivery" ([8a925ab](https://github.com/William-De71/gladys-pellet-stock/commit/8a925ab425c780bf32f24fb0fa61ceaf03c15a2f))
+- **widgets:** refresh both widgets as soon as a stock or a device is added ([2a7be81](https://github.com/William-De71/gladys-pellet-stock/commit/2a7be819c2135105081d64e0b97f81edc6ddbd0c))
+
 ## [1.2.0](https://github.com/William-De71/gladys-pellet-stock/compare/v1.1.1...v1.2.0) (2026-10-09)
 
 ### Bug Fixes
@@ -39,3 +63,5 @@
 ### Documentation
 
 * enrich the README and add a widget example image ([bfd5023](https://github.com/William-De71/gladys-pellet-stock/commit/bfd5023f327eddedb9cf348cfb0646f5dcaf42f3))
+
+[1.3.0]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.2.0...v1.3.0

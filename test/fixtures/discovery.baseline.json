@@ -1,0 +1,480 @@
+{
+  "generated_from": "main b31658f (v1.2.0 + houses and silo, before the update)",
+  "devices": {
+    "bags_default": {
+      "external_id": "ext:pellet-stock:pellet:stock",
+      "should_poll": false,
+      "features": [
+        {
+          "external_id": "ext:pellet-stock:pellet:stock:bags",
+          "category": "counter-sensor",
+          "type": "integer",
+          "min": 0,
+          "max": 10000,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:pellet-stock:pellet:stock:autonomy",
+          "category": "duration",
+          "type": "integer",
+          "unit": "days",
+          "min": 0,
+          "max": 3650,
+          "read_only": true,
+          "has_feedback": false
+        }
+      ]
+    },
+    "bags_house": {
+      "external_id": "ext:pellet-stock:pellet:maison:bags",
+      "should_poll": false,
+      "features": [
+        {
+          "external_id": "ext:pellet-stock:pellet:maison:bags:bags",
+          "category": "counter-sensor",
+          "type": "integer",
+          "min": 0,
+          "max": 10000,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:pellet-stock:pellet:maison:bags:autonomy",
+          "category": "duration",
+          "type": "integer",
+          "unit": "days",
+          "min": 0,
+          "max": 3650,
+          "read_only": true,
+          "has_feedback": false
+        }
+      ]
+    },
+    "bulk_house": {
+      "external_id": "ext:pellet-stock:pellet:maison:bulk",
+      "should_poll": false,
+      "features": [
+        {
+          "external_id": "ext:pellet-stock:pellet:maison:bulk:level",
+          "category": "counter-sensor",
+          "type": "integer",
+          "min": 0,
+          "max": 100000,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:pellet-stock:pellet:maison:bulk:fill",
+          "category": "level-sensor",
+          "type": "liquid-level-percent",
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "read_only": true,
+          "has_feedback": false
+        },
+        {
+          "external_id": "ext:pellet-stock:pellet:maison:bulk:autonomy",
+          "category": "duration",
+          "type": "integer",
+          "unit": "days",
+          "min": 0,
+          "max": 3650,
+          "read_only": true,
+          "has_feedback": false
+        }
+      ]
+    }
+  },
+  "manifest": {
+    "config_schema": [
+      {
+        "key": "intro",
+        "type": "section"
+      },
+      {
+        "key": "defaults",
+        "type": "section"
+      },
+      {
+        "key": "bag_weight",
+        "type": "number"
+      },
+      {
+        "key": "pallet_size",
+        "type": "number"
+      },
+      {
+        "key": "low_stock_threshold",
+        "type": "number"
+      },
+      {
+        "key": "consumption_window",
+        "type": "number"
+      },
+      {
+        "key": "pallet_price",
+        "type": "number"
+      },
+      {
+        "key": "silo",
+        "type": "section"
+      },
+      {
+        "key": "bulk_capacity",
+        "type": "number"
+      },
+      {
+        "key": "bulk_low_threshold",
+        "type": "number"
+      },
+      {
+        "key": "bulk_delivery_default",
+        "type": "number"
+      },
+      {
+        "key": "bulk_tonne_price",
+        "type": "number"
+      },
+      {
+        "key": "bulk_reading_unit",
+        "type": "select",
+        "options": ["kg", "percent"]
+      }
+    ],
+    "actions": [
+      {
+        "key": "set_stock",
+        "fields": ["stock", "bags", "bag_price"]
+      },
+      {
+        "key": "add_delivery",
+        "fields": ["stock", "bags", "price", "bag_weight"]
+      },
+      {
+        "key": "consume",
+        "fields": ["stock", "bags"]
+      },
+      {
+        "key": "undo",
+        "fields": ["stock"]
+      },
+      {
+        "key": "analyze_cost",
+        "fields": ["stock", "start", "end"]
+      },
+      {
+        "key": "add_stock",
+        "fields": ["house", "type"]
+      },
+      {
+        "key": "attach_stock",
+        "fields": ["stock", "house"]
+      },
+      {
+        "key": "configure_stock",
+        "fields": [
+          "stock",
+          "consumption_window",
+          "bags_settings",
+          "bag_weight",
+          "pallet_size",
+          "low_stock_threshold",
+          "pallet_price",
+          "silo_settings",
+          "bulk_capacity",
+          "bulk_low_threshold",
+          "bulk_delivery_default",
+          "bulk_tonne_price",
+          "bulk_reading_unit",
+          "reset"
+        ]
+      },
+      {
+        "key": "remove_stock",
+        "fields": ["stock"]
+      }
+    ],
+    "scene_triggers": [
+      {
+        "key": "low_stock",
+        "fields": ["stock"],
+        "variables": [
+          {
+            "key": "bags_left",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          },
+          {
+            "key": "remaining_kg",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "stock_empty",
+        "fields": ["stock"],
+        "variables": [
+          {
+            "key": "bags_left",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          },
+          {
+            "key": "remaining_kg",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "pallet_delivered",
+        "fields": ["stock"],
+        "variables": [
+          {
+            "key": "bags_left",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          },
+          {
+            "key": "remaining_kg",
+            "type": "number"
+          },
+          {
+            "key": "bags_delivered",
+            "type": "number"
+          }
+        ]
+      }
+    ],
+    "scene_actions": [
+      {
+        "key": "consume_bags",
+        "fields": ["stock", "bags"],
+        "outputs": [
+          {
+            "key": "stock",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          },
+          {
+            "key": "remaining_kg",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "add_bags",
+        "fields": ["stock", "bags", "bag_price", "bag_weight", "delivery"],
+        "outputs": [
+          {
+            "key": "stock",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          },
+          {
+            "key": "remaining_kg",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "set_stock",
+        "fields": ["stock", "bags"],
+        "outputs": [
+          {
+            "key": "stock",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          },
+          {
+            "key": "remaining_kg",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "read_stock",
+        "fields": ["stock", "season_start"],
+        "outputs": [
+          {
+            "key": "stock",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          },
+          {
+            "key": "remaining_kg",
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "type": "string"
+          },
+          {
+            "key": "season_cost",
+            "type": "number"
+          },
+          {
+            "key": "season_used",
+            "type": "number"
+          },
+          {
+            "key": "season_kg",
+            "type": "number"
+          },
+          {
+            "key": "season_unpriced",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "silo_delivery",
+        "fields": ["stock", "kg", "price"],
+        "outputs": [
+          {
+            "key": "stock",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "key": "silo_reading",
+        "fields": ["stock", "kg", "percent"],
+        "outputs": [
+          {
+            "key": "stock",
+            "type": "number"
+          },
+          {
+            "key": "autonomy_days",
+            "type": "number"
+          },
+          {
+            "key": "daily_rate",
+            "type": "number"
+          },
+          {
+            "key": "days_before_order",
+            "type": "number"
+          }
+        ]
+      }
+    ],
+    "widgets": [
+      {
+        "key": "pellet_stock",
+        "settings": ["stock", "chart_view", "chart_period", "season_start", "show_buttons"],
+        "options": {
+          "chart_view": ["stock", "consumption"],
+          "chart_period": ["30", "90", "365"],
+          "season_start": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+        },
+        "actions": []
+      },
+      {
+        "key": "pellet_silo",
+        "settings": ["stock", "chart_view", "chart_period", "season_start", "show_buttons"],
+        "options": {
+          "chart_view": ["stock", "consumption"],
+          "chart_period": ["30", "90", "365"],
+          "season_start": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+        },
+        "actions": []
+      }
+    ]
+  }
+}

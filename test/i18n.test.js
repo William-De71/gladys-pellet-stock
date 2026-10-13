@@ -246,5 +246,6 @@ test('README: one per language, each linking to the three others', () => {
     for (const other of Object.values(files).filter((name) => name !== file)) {
       assert.ok(text.includes(`](${other})`), `${file} does not link to ${other}`);
     }
+    assert.ok(text.includes('](cover.jpg)'), `${file} does not show the cover`);
   }
 });

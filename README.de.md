@@ -7,6 +7,8 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/William-De71/gladys-pellet-stock/release.yml?branch=main&label=CI)](https://github.com/William-De71/gladys-pellet-stock/actions/workflows/release.yml)
 [![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.2.0-2f6fb5)](https://gladysassistant.com)
 
+![Pellet Stock für Gladys Assistant](cover.jpg)
+
 Externe Integration für [Gladys Assistant](https://gladysassistant.com), die einen **Pelletvorrat** verfolgt, in
 Säcken oder in einem Silo mit losen Pellets, einen pro Haus: Lieferungen, Verbrauch, durchschnittlicher
 Tagesverbrauch, Reichweite und Heizkosten, mit **Dashboard-Widgets**, Szenenaktionen und Szenenauslösern, gebaut auf

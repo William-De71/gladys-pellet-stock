@@ -7,6 +7,8 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/William-De71/gladys-pellet-stock/release.yml?branch=main&label=CI)](https://github.com/William-De71/gladys-pellet-stock/actions/workflows/release.yml)
 [![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.2.0-2f6fb5)](https://gladysassistant.com)
 
+![Pellet Stock for Gladys Assistant](cover.jpg)
+
 External [Gladys Assistant](https://gladysassistant.com) integration that tracks a **wood pellet stock**, in bags
 or in a bulk silo, one per house: deliveries, consumption, average daily consumption, autonomy and heating cost,
 with **dashboard widgets**, scene actions and triggers, built on `@gladysassistant/integration-sdk` 0.15.

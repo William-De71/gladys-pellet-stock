@@ -5,6 +5,12 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions
 follow [Semantic Versioning](https://semver.org/). This file is generated at
 each release from the Conventional Commits: do not edit it by hand.
 
+## [1.4.1] - 2026-10-24
+
+### Security
+
+- build the image on Node.js 24.22.1 or later ([4a5bef5](https://github.com/William-De71/gladys-pellet-stock/commit/4a5bef5daf399367150cd392fd6803b33f09c2a4))
+
 ## [1.4.0] - 2026-10-12
 
 ### Added
@@ -71,5 +77,6 @@ each release from the Conventional Commits: do not edit it by hand.
 
 * enrich the README and add a widget example image ([bfd5023](https://github.com/William-De71/gladys-pellet-stock/commit/bfd5023f327eddedb9cf348cfb0646f5dcaf42f3))
 
+[1.4.1]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.2.0...v1.3.0

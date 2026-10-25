@@ -5,14 +5,14 @@
 [![Lizenz: Apache-2.0](https://img.shields.io/badge/Lizenz-Apache--2.0-blue.svg)](LICENSE)
 [![Neueste Version](https://img.shields.io/github/v/release/William-De71/gladys-pellet-stock?sort=semver)](https://github.com/William-De71/gladys-pellet-stock/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/William-De71/gladys-pellet-stock/release.yml?branch=main&label=CI)](https://github.com/William-De71/gladys-pellet-stock/actions/workflows/release.yml)
-[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.2.0-2f6fb5)](https://gladysassistant.com)
+[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.3.0-2f6fb5)](https://gladysassistant.com)
 
 ![Pellet Stock für Gladys Assistant](cover.jpg)
 
 Externe Integration für [Gladys Assistant](https://gladysassistant.com), die einen **Pelletvorrat** verfolgt, in
 Säcken oder in einem Silo mit losen Pellets, einen pro Haus: Lieferungen, Verbrauch, durchschnittlicher
 Tagesverbrauch, Reichweite und Heizkosten, mit **Dashboard-Widgets**, Szenenaktionen und Szenenauslösern, gebaut auf
-`@gladysassistant/integration-sdk` 0.15.
+`@gladysassistant/integration-sdk` 0.16.
 
 Weder Hardware noch Online-Konto: Die Integration führt ein Buch über die Bewegungen und leitet alles daraus ab.
 
@@ -262,8 +262,9 @@ Code der Integration, gezeichnet wie das Gladys-Frontend (Chrome oder Chromium, 
 | `src/scene.js`        | Outputs der Szenenaktionen und Erkennung der Auslöser                      |
 | `src/i18n.js`         | Laufzeittexte, en / fr / de / es                                           |
 
-`gladys_version` ist `>=5.2.0` (Formulare der Widget-Schaltflächen, Hauslisten). Gladys 5.1 behält Version 1.2.0
-der Integration und erhält die späteren Versionen nicht.
+`gladys_version` ist `>=5.3.0` (Formulare der Widget-Schaltflächen und Hauslisten aus 5.2, Katalog-Schlüsselwörter
+aus Gladys 5.3). Gladys 5.1 behält Version 1.2.0 der Integration, Gladys 5.2 Version 1.4.1; sie erhalten die späteren
+Versionen nicht.
 
 ## Release und Commit-Konvention
 
@@ -300,7 +301,7 @@ flowchart LR
 | Ein hinzugefügter Vorrat fehlt in der Widget-Liste     | sein Gerät wurde noch nicht im Tab „Entdecken“ hinzugefügt                                       |
 | Gerätenamen auf Englisch                               | noch kein Widget angezeigt: eines öffnen oder **Sprache der Gerätenamen** erzwingen              |
 | Die Schaltflächen fügen einen Sack ohne Formular hinzu | die Gladys-Version hat keine Widget-Formulare (5.2.0 oder neuer nötig)                           |
-| Das Update wird nicht angeboten                        | Gladys älter als 5.2.0, oder der Store hat die Version noch nicht indexiert (im Laufe des Tages) |
+| Das Update wird nicht angeboten                        | Gladys älter als 5.3.0, oder der Store hat die Version noch nicht indexiert (im Laufe des Tages) |
 
 Ausführliche Protokolle: Setzen Sie die Umgebungsvariable `DEBUG=gladys-integration-sdk` am Container.
 

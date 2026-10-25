@@ -5,14 +5,14 @@
 [![Licencia: Apache-2.0](https://img.shields.io/badge/licencia-Apache--2.0-blue.svg)](LICENSE)
 [![Última versión](https://img.shields.io/github/v/release/William-De71/gladys-pellet-stock?sort=semver)](https://github.com/William-De71/gladys-pellet-stock/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/William-De71/gladys-pellet-stock/release.yml?branch=main&label=CI)](https://github.com/William-De71/gladys-pellet-stock/actions/workflows/release.yml)
-[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.2.0-2f6fb5)](https://gladysassistant.com)
+[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.3.0-2f6fb5)](https://gladysassistant.com)
 
 ![Pellet Stock para Gladys Assistant](cover.jpg)
 
 Integración externa para [Gladys Assistant](https://gladysassistant.com) que sigue un **stock de pellets**, en
 sacos o en un silo a granel, uno por casa: entregas, consumo, consumo medio diario, autonomía y coste de la
 calefacción, con **widgets** para el panel, acciones y disparadores de escena, construida sobre
-`@gladysassistant/integration-sdk` 0.15.
+`@gladysassistant/integration-sdk` 0.16.
 
 Sin hardware ni cuenta en línea: la integración lleva un registro de movimientos y deduce todo lo demás.
 
@@ -260,8 +260,9 @@ Pillow).
 | `src/scene.js`        | Outputs de las acciones de escena y detección de los disparadores       |
 | `src/i18n.js`         | Textos en ejecución, en / fr / de / es                                  |
 
-`gladys_version` es `>=5.2.0` (formularios de los botones de widget, listas de casas). Gladys 5.1 conserva la
-versión 1.2.0 de la integración y no recibe las versiones siguientes.
+`gladys_version` es `>=5.3.0` (formularios de los botones de widget y listas de casas de la 5.2, palabras clave del
+catálogo de Gladys 5.3). Gladys 5.1 conserva la versión 1.2.0 de la integración, Gladys 5.2 la versión 1.4.1; no
+reciben las versiones siguientes.
 
 ## Release y convención de commits
 
@@ -298,7 +299,7 @@ flowchart LR
 | Falta un stock añadido en la lista del widget | su dispositivo todavía no se ha añadido desde la pestaña «Descubrir»                |
 | Nombres de dispositivos en inglés             | aún no se ha mostrado ningún widget: abra uno, o imponga el idioma en el ajuste     |
 | Los botones añaden un saco sin formulario     | la versión de Gladys no tiene formularios de widget (se necesita 5.2.0 o posterior) |
-| No se propone la actualización                | Gladys anterior a 5.2.0, o el store aún no ha indexado la versión (en el día)       |
+| No se propone la actualización                | Gladys anterior a 5.3.0, o el store aún no ha indexado la versión (en el día)       |
 
 Registros detallados: defina la variable de entorno `DEBUG=gladys-integration-sdk` en el contenedor.
 

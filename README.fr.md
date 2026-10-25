@@ -5,14 +5,14 @@
 [![Licence : Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-blue.svg)](LICENSE)
 [![Dernière version](https://img.shields.io/github/v/release/William-De71/gladys-pellet-stock?sort=semver)](https://github.com/William-De71/gladys-pellet-stock/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/William-De71/gladys-pellet-stock/release.yml?branch=main&label=CI)](https://github.com/William-De71/gladys-pellet-stock/actions/workflows/release.yml)
-[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.2.0-2f6fb5)](https://gladysassistant.com)
+[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.3.0-2f6fb5)](https://gladysassistant.com)
 
 ![Pellet Stock pour Gladys Assistant](cover.jpg)
 
 Intégration externe pour [Gladys Assistant](https://gladysassistant.com) qui suit un **stock de pellets** (granulés
 de bois), en sacs ou en silo vrac, un par maison : livraisons, consommation, consommation moyenne par jour, autonomie
 et coût du chauffage, avec des **widgets** de tableau de bord, des actions et des déclencheurs de scène, construite sur
-`@gladysassistant/integration-sdk` 0.15.
+`@gladysassistant/integration-sdk` 0.16.
 
 Ni matériel ni compte en ligne : l'intégration tient un registre des mouvements et en déduit tout le reste.
 
@@ -260,8 +260,9 @@ requis).
 | `src/scene.js`        | Outputs des actions de scène et détection des déclencheurs          |
 | `src/i18n.js`         | Textes à l'exécution, en / fr / de / es                             |
 
-`gladys_version` est `>=5.2.0` (formulaires des boutons de widget, listes de maisons). Gladys 5.1 garde la
-version 1.2.0 de l'intégration et ne reçoit pas les versions suivantes.
+`gladys_version` est `>=5.3.0` (formulaires des boutons de widget et listes de maisons de la 5.2, mots-clés du
+catalogue de Gladys 5.3). Gladys 5.1 garde la version 1.2.0 de l'intégration, Gladys 5.2 la version 1.4.1 ; ils ne
+reçoivent pas les versions suivantes.
 
 ## Release et convention de commits
 
@@ -298,7 +299,7 @@ flowchart LR
 | Un stock ajouté manque dans la liste du widget | son appareil n'a pas encore été ajouté depuis l'onglet Découverte                        |
 | Noms d'appareils en anglais                    | aucun widget encore affiché : ouvrez-en un, ou imposez **Langue des noms d'appareils**   |
 | Les boutons ajoutent un sac sans formulaire    | la version de Gladys n'a pas les formulaires de widget (5.2.0 ou plus requis)            |
-| La mise à jour n'est pas proposée              | Gladys antérieur à 5.2.0, ou le store n'a pas encore indexé la version (dans la journée) |
+| La mise à jour n'est pas proposée              | Gladys antérieur à 5.3.0, ou le store n'a pas encore indexé la version (dans la journée) |
 
 Journaux détaillés : définissez la variable d'environnement `DEBUG=gladys-integration-sdk` sur le conteneur.
 

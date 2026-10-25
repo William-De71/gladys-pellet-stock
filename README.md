@@ -5,13 +5,13 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/William-De71/gladys-pellet-stock?sort=semver)](https://github.com/William-De71/gladys-pellet-stock/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/William-De71/gladys-pellet-stock/release.yml?branch=main&label=CI)](https://github.com/William-De71/gladys-pellet-stock/actions/workflows/release.yml)
-[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.2.0-2f6fb5)](https://gladysassistant.com)
+[![Gladys](https://img.shields.io/badge/Gladys-%E2%89%A5%205.3.0-2f6fb5)](https://gladysassistant.com)
 
 ![Pellet Stock for Gladys Assistant](cover.jpg)
 
 External [Gladys Assistant](https://gladysassistant.com) integration that tracks a **wood pellet stock**, in bags
 or in a bulk silo, one per house: deliveries, consumption, average daily consumption, autonomy and heating cost,
-with **dashboard widgets**, scene actions and triggers, built on `@gladysassistant/integration-sdk` 0.15.
+with **dashboard widgets**, scene actions and triggers, built on `@gladysassistant/integration-sdk` 0.16.
 
 No hardware and no cloud account: the integration keeps a ledger of movements and derives everything from it.
 
@@ -244,8 +244,8 @@ the integration's code, drawn like the Gladys front (Chrome or Chromium, ImageMa
 | `src/scene.js`        | Scene action outputs and trigger detection                     |
 | `src/i18n.js`         | Runtime texts, en / fr / de / es                               |
 
-`gladys_version` is `>=5.2.0` (widget action forms, house selects). Gladys 5.1 keeps version 1.2.0 of the
-integration and does not receive the later versions.
+`gladys_version` is `>=5.3.0` (widget action forms and house selects of 5.2, store catalog keywords of Gladys 5.3).
+Gladys 5.1 keeps version 1.2.0 of the integration, Gladys 5.2 version 1.4.1; they do not receive the later versions.
 
 ## Release and commit convention
 
@@ -282,7 +282,7 @@ CHANGE:` → major.
 | An added stock is missing from the widget list | its device was not added from the Discover tab yet                               |
 | Device names in English                        | no widget looked at yet: open one, or force **Language of the device names**     |
 | The buttons add one bag without a form         | the Gladys version has no widget action forms (5.2.0 or later needed)            |
-| The update is not offered                      | Gladys older than 5.2.0, or the store has not indexed the version yet (same day) |
+| The update is not offered                      | Gladys older than 5.3.0, or the store has not indexed the version yet (same day) |
 
 Detailed logs: set the environment variable `DEBUG=gladys-integration-sdk` on the container.
 

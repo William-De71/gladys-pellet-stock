@@ -399,11 +399,10 @@ function isPalletDelivery(movement) {
  * @returns {{stock: number, dailyRate: number|null, autonomyDays: number|null,
  *   emptyDate: Date|null, orderDate: Date|null, lastDelivery: object|null,
  *   lastConsumption: object|null, consumedSinceDelivery: number|null, referenceStock: number,
- *   consumedInWindow: number, bagPrice: number|null, pricedBagWeight: number|null,
+ *   consumedInWindow: number, bagPrice: number|null,
  *   remainingKg: number, usedKgSinceDelivery: number|null, hasHistory: boolean}} The
  *   stock figures. `bagPrice` is the price per bag of the last bags entered
- *   with a price, `pricedBagWeight` the weight of those bags when it was
- *   entered. The weights come from the lots (see src/cost.js).
+ *   with a price. The weights come from the lots (see src/cost.js).
  * @example
  * const stats = computeStats(ledger, new Date(), { consumptionWindow: 14 });
  */
@@ -498,7 +497,6 @@ function computeStats(
     referenceStock,
     consumedInWindow,
     bagPrice,
-    pricedBagWeight: lastPriced?.bagWeight ?? null,
     remainingKg,
     usedKgSinceDelivery,
     hasHistory: movements.length > 0,

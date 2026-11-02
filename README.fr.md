@@ -50,7 +50,7 @@ Documentation utilisateur : [English](docs/en.md) · [Français](docs/fr.md) · 
 - **Graphique**, choisi par widget : l'**évolution du stock** (courbe en escalier, livraisons repérées) ou les **sacs
   utilisés par jour** (barres ; par semaine sur un an). Période : 1 mois, 3 mois ou 1 an.
 - **Lignes d'état** : sacs par jour, dernier sac utilisé (« il y a 2 heures »), poids restant, valeur du stock avec le
-  prix au sac et au kg, coût par mois et coût de la saison (dès qu'un prix est connu), dernière livraison et sacs
+  prix au sac, coût par mois et coût de la saison (dès qu'un prix est connu), dernière livraison et sacs
   utilisés depuis, date avant laquelle commander et date estimée où le stock sera vide.
 - **Boutons** : **Enlever sac(s)** (un formulaire pour les sacs), **Ajouter sac(s)** (les sacs et le prix au sac),
   **Palette livrée** (les sacs, le prix payé et le poids d'un sac) et **Annuler**. Ils peuvent être masqués par

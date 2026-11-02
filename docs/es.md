@@ -30,7 +30,7 @@ No hace falta pulsar por cada saco: basta con **recontar el stock** de vez en cu
 - Un **gráfico**, elegido en la configuración del widget: la **evolución del stock**, con las entregas señaladas, o los **sacos usados por día** en barras (por semana sobre 1 año). Periodo: 1 mes, 3 meses, 1 año. Para ver ambos, ponga dos widgets uno al lado del otro. Los sacos que faltan en un recuento se cuentan el día del recuento.
 - El **consumo medio por día**, el **último saco usado** («hace 2 días»), el **peso restante**, la **última entrega** y el **uso desde entonces** (en sacos y kg).
 - La fecha **antes de la que pedir** (cuando el stock alcance el umbral de stock bajo) y la **fecha estimada** en la que se agotará el stock.
-- En cuanto se conoce un precio: el **valor del stock**, con el **precio por saco y por kg**, y el **coste mensual**. Cuenta el precio pagado en la última entrega o, si no, el **precio de un palé** de la configuración. El precio por kg sigue el peso de los sacos de esa entrega.
+- En cuanto se conoce un precio: el **valor del stock**, con el **precio por saco**, y el **coste mensual**. Cuenta el precio pagado en la última entrega o, si no, el **precio de un palé** de la configuración.
 - El **coste de la temporada**: lo que han costado los sacos usados desde el inicio de la temporada de calefacción (octubre por defecto, ajustable en la configuración del widget), con su número.
 
 Solo las entregas («Palé entregado», la acción «Registrar una entrega») cuentan como entregas: los sacos añadidos con «Añadir sacos», aunque sean varios a la vez, no se señalan en el gráfico ni se usan para «Última entrega» y el uso desde entonces. Sí entran en el stock y en su coste.

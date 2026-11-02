@@ -475,7 +475,7 @@ test('computeStats: the price is the one of the last delivery entered with one',
   assert.equal(stats.bagPrice, 7);
 });
 
-test('computeStats: the price comes with the weight of the bags it was paid for', () => {
+test('computeStats: the price of the last bags entered with one', () => {
   const ledger = recordMovement(
     buildLedger([[10, 'delivery', 66, 462]]),
     { type: 'delivery', bags: 96, price: 600, bagWeight: 10 },
@@ -483,11 +483,6 @@ test('computeStats: the price comes with the weight of the bags it was paid for'
   );
   const stats = computeStats(ledger, NOW, WINDOW);
   assert.equal(stats.bagPrice, 6.25);
-  assert.equal(stats.pricedBagWeight, 10);
-  assert.equal(
-    computeStats(buildLedger([[3, 'delivery', 66, 462]]), NOW, WINDOW).pricedBagWeight,
-    null,
-  );
 });
 
 test('computeStats: undoing a priced delivery brings the previous price back', () => {

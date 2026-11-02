@@ -115,7 +115,7 @@ test('prices: a full content fits the core vocabulary in every language', () => 
   const [status] = byType(content, 'status');
   assert.equal(status.items[0].label, '2025-26');
   assert.equal(status.items[0].color, 'info');
-  assert.match(plain(status.items[0].value), /^\d[\d ]* € · \d+ sacs · \d+,\d\d €\/sac$/);
+  assert.match(plain(status.items[0].value), /^\d[\d ]*(,\d\d)? € · \d+ sacs · \d+,\d\d €\/sac$/);
   assert.equal(status.items[1].label, '2024-25');
 });
 

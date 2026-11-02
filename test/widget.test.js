@@ -291,16 +291,16 @@ test('widget: the price of the last delivery wins over the configured one', () =
     [10, 'delivery', 72, 504],
     [5, 'consumption', 3],
   ]);
-  const value = '483\u00a0€ · 7,00\u00a0€/sac · 0,47\u00a0€/kg';
+  const value = '483\u00a0€ · 7,00\u00a0€/sac';
   assert.equal(rows(ledger, { bagPrice: 10 })['Valeur du stock'], value);
   assert.equal(rows(ledger, {})['Valeur du stock'], value);
-  // The price per kg uses the weight of the bags the price was paid for.
+  // The last price paid counts, whatever the weight of its bags.
   const light = recordMovement(
     ledger,
     { type: 'delivery', bags: 10, price: 70, bagWeight: 10 },
     daysAgo(4),
   );
-  assert.equal(rows(light, {})['Valeur du stock'], '553\u00a0€ · 7,00\u00a0€/sac · 0,70\u00a0€/kg');
+  assert.equal(rows(light, {})['Valeur du stock'], '553\u00a0€ · 7,00\u00a0€/sac');
 });
 
 test('widget: the chart is a step line over the period, reaching now', () => {
@@ -390,7 +390,7 @@ test('widget: a bag price adds the stock value and the monthly cost', () => {
     );
   // 94 bags at 7 €, 2 bags a day.
   const priced = rows({ bagPrice: 7 });
-  assert.equal(priced['Valeur du stock'], '658\u00a0€ · 7,00\u00a0€/sac · 0,47\u00a0€/kg');
+  assert.equal(priced['Valeur du stock'], '658\u00a0€ · 7,00\u00a0€/sac');
   assert.equal(priced['Coût par mois'], '420\u00a0€');
   const free = rows({});
   assert.equal(free['Valeur du stock'], undefined);
@@ -438,6 +438,12 @@ test('widget: the season cost, first in first out, from the month the season sta
   assert.equal(rows(ledger, {})['Coût de la saison'], '108\u00a0€ · 16 sacs');
   // A September season started on 1 Sept 2026: the last 4 bags, at 8 €.
   assert.equal(rows(ledger, { season_start: '9' })['Coût de la saison'], '32\u00a0€ · 4 sacs');
+  // To the cent: 2 bags at 5.45 € are 10.90 €, not 11 €.
+  const cheap = buildLedger([
+    [100, 'delivery', 10, 54.5],
+    [10, 'consumption', 2],
+  ]);
+  assert.equal(rows(cheap, {})['Coût de la saison'], '10,90\u00a0€ · 2 sacs');
   // A first stock counted without a price: told apart, valued at the
   // configured price when there is one.
   const counted = buildLedger([

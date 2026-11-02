@@ -30,7 +30,7 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 - A **chart**, picked in the widget settings: the **stock over time**, with the deliveries marked, or the **bags used per day** as bars (per week over 1 year). Period: 1 month, 3 months, 1 year. To see both, put two widgets side by side. The bags found missing by a recount are counted on the day of the recount.
 - The **average consumption per day**, the **last bag used** ("2 days ago"), the **remaining weight**, the **last delivery** and the **use since** (in bags and kg).
 - The date to **order by** (when the stock will reach the low stock threshold) and the **estimated date** the stock runs out.
-- Once a price is known: the **stock value**, with the **price per bag and per kg**, and the **cost per month**. The price paid for the last delivery counts, or else the **pallet price** of the configuration. The price per kg follows the weight of the bags of that delivery.
+- Once a price is known: the **stock value**, with the **price per bag**, and the **cost per month**. The price paid for the last delivery counts, or else the **pallet price** of the configuration.
 - The **season cost**: what the bags used since the heating season started cost (October by default, set in the widget settings), with their count.
 
 Only deliveries ("Pallet delivered", the "Record a delivery" action) count as deliveries: bags added with "Add bag(s)", even several at once, are neither marked on the chart nor used for "Last delivery" and the use since. They do enter the stock and its cost.

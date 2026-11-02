@@ -51,7 +51,7 @@ Benutzerdokumentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deut
 - **Diagramm**, pro Widget gewählt: der **Vorrat im Zeitverlauf** (Stufenlinie, Lieferungen markiert) oder die
   **verbrauchten Säcke pro Tag** (Balken; wöchentlich über ein Jahr). Zeitraum: 1 Monat, 3 Monate oder 1 Jahr.
 - **Statuszeilen**: Säcke pro Tag, letzter verbrauchter Sack („vor 2 Stunden“), Restgewicht, Wert des Vorrats mit
-  Preis pro Sack und pro kg, Kosten pro Monat und Kosten der Saison (sobald ein Preis bekannt ist), letzte Lieferung
+  Preis pro Sack, Kosten pro Monat und Kosten der Saison (sobald ein Preis bekannt ist), letzte Lieferung
   und seitdem verbrauchte Säcke, das Datum, vor dem bestellt werden sollte, und das voraussichtliche Leerdatum.
 - **Schaltflächen**: **Säcke entnehmen** (ein Formular für die Säcke), **Säcke hinzufügen** (die Säcke und der Preis
   pro Sack), **Palette geliefert** (die Säcke, der bezahlte Preis und das Sackgewicht) und **Rückgängig**. Sie lassen

@@ -110,18 +110,22 @@ function formatNumber(value, language) {
 }
 
 /**
- * @description Format an amount in euros, rounded to the euro.
+ * @description Format an amount in euros, to the cent (2 bags at 5.45 € must
+ * read 10.90 €, not 11 €), without decimals when it is a whole amount.
  * @param {number} value - The amount.
  * @param {string} language - `fr` or `en`.
  * @returns {string} The formatted amount.
  * @example
- * formatEuros(1234.4, 'fr'); // -> '1 234 €'
+ * formatEuros(1234.4, 'fr'); // -> '1 234,40 €'
+ * formatEuros(32, 'fr'); // -> '32 €'
  */
 function formatEuros(value, language) {
   return new Intl.NumberFormat(language, {
     style: 'currency',
     currency: 'EUR',
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    trailingZeroDisplay: 'stripIfInteger',
   }).format(value);
 }
 
@@ -347,8 +351,6 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
   // Pre-filled for the bags pre-filled next to it: the last delivery may have
   // been half a pallet, whose total would halve the price of a bag.
   const palletPrice = bagPrice === null ? null : roundCents(bagPrice * config.palletSize);
-  // The weight of the bags the price was paid for, to give the price per kg.
-  const pricedBagWeight = stats.pricedBagWeight ?? config.bagWeight;
 
   // Every button opens a form on a Gladys with widget action forms. Without
   // them, the core drops `fields` and sends `params`: one bag, or the
@@ -521,13 +523,13 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     color,
   });
   if (bagPrice !== null) {
-    // One row for the value and the prices: the status is nearly full.
+    // One row for the value and the bag price: the status is nearly full, and
+    // with the price per kg too the row was cut on a phone.
     statusItems.push({
       label: t('stock_value'),
       value: t('stock_value_detail', {
         value: formatEuros(stats.stock * bagPrice, lang),
         bag: formatUnitPrice(bagPrice, lang),
-        kg: formatUnitPrice(bagPrice / pricedBagWeight, lang),
       }),
       icon: 'tag',
     });

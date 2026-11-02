@@ -51,7 +51,7 @@ Documentación de usuario: [English](docs/en.md) · [Français](docs/fr.md) · [
 - **Gráfico**, elegido por widget: la **evolución del stock** (línea escalonada, entregas señaladas) o los **sacos
   usados por día** (barras; por semana sobre un año). Periodo: 1 mes, 3 meses o 1 año.
 - **Filas de estado**: sacos por día, último saco usado («hace 2 horas»), peso restante, valor del stock con el
-  precio por saco y por kg, coste mensual y coste de la temporada (en cuanto se conoce un precio), última entrega y
+  precio por saco, coste mensual y coste de la temporada (en cuanto se conoce un precio), última entrega y
   sacos usados desde entonces, la fecha antes de la que pedir y la fecha estimada en que se vaciará.
 - **Botones**: **Quitar sacos** (un formulario para los sacos), **Añadir sacos** (los sacos y el precio por saco),
   **Palé entregado** (los sacos, el precio pagado y el peso de un saco) y **Deshacer**. Se pueden ocultar por

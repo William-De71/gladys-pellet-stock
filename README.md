@@ -47,8 +47,8 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md) · [Deutsch
 - **Tiles**: the stock in bags (green, orange under the low-stock threshold, red at zero) and the autonomy in days.
 - **Chart**, picked per widget: the **stock over time** (step line, deliveries marked) or the **bags used per day**
   (bars; weekly over one year). Period: 1 month, 3 months or 1 year.
-- **Status rows**: bags per day, last bag used ("2 hours ago"), remaining weight, stock value with the price per bag
-  and per kg, cost per month and season cost (once a price is known), last delivery and bags used since, the date to
+- **Status rows**: bags per day, last bag used ("2 hours ago"), remaining weight, stock value with the price per bag,
+  cost per month and season cost (once a price is known), last delivery and bags used since, the date to
   order by and the estimated empty date.
 - **Buttons**: **Remove bag(s)** (a form for the bags), **Add bag(s)** (the bags and the price per bag),
   **Pallet delivered** (the bags, the price paid and the bag weight) and **Undo**. They can be hidden per widget,

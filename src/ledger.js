@@ -34,7 +34,7 @@ import {
   MOVEMENT_TYPES,
   STOCK_TYPES,
 } from './constants.js';
-import { pricePerBag, valueBags, walkLots } from './cost.js';
+import { pricePerBag, toCents, valueBags, walkLots } from './cost.js';
 
 /**
  * Error of a refused stock operation, carrying a message code translated by
@@ -394,22 +394,23 @@ function isPalletDelivery(movement) {
  * without a threshold, or once the stock is already at or below it.
  * @param {{movements: Array<object>}} ledger - The ledger.
  * @param {Date} now - The current time.
- * @param {{consumptionWindow: number, lowStockThreshold?: number, bagWeight?: number}} config - The
- *   effective config of the stock.
+ * @param {{consumptionWindow: number, lowStockThreshold?: number, bagWeight?: number,
+ *   centsPerBag?: boolean}} config - The effective config of the stock.
  * @returns {{stock: number, dailyRate: number|null, autonomyDays: number|null,
  *   emptyDate: Date|null, orderDate: Date|null, lastDelivery: object|null,
  *   lastConsumption: object|null, consumedSinceDelivery: number|null, referenceStock: number,
- *   consumedInWindow: number, bagPrice: number|null,
+ *   consumedInWindow: number, bagPrice: number|null, lastPriced: object|null,
  *   remainingKg: number, usedKgSinceDelivery: number|null, hasHistory: boolean}} The
  *   stock figures. `bagPrice` is the price per bag of the last bags entered
- *   with a price. The weights come from the lots (see src/cost.js).
+ *   with a price (to the cent for bags), `lastPriced` the movement that
+ *   entered them. The weights come from the lots (see src/cost.js).
  * @example
  * const stats = computeStats(ledger, new Date(), { consumptionWindow: 14 });
  */
 function computeStats(
   ledger,
   now,
-  { consumptionWindow, lowStockThreshold = 0, bagWeight = DEFAULTS.bagWeight },
+  { consumptionWindow, lowStockThreshold = 0, bagWeight = DEFAULTS.bagWeight, centsPerBag = false },
 ) {
   const { movements } = ledger;
   const stock = currentStock(ledger);
@@ -467,11 +468,14 @@ function computeStats(
 
   // The price of the last bags bought: what the next ones will likely cost.
   // Past a compaction, the opening movement still knows it.
-  const lastPriced = [...movements].reverse().find((movement) => pricePerBag(movement) !== null);
+  const lastPriced =
+    [...movements].reverse().find((movement) => pricePerBag(movement) !== null) || null;
   const opening = movements[0]?.type === MOVEMENT_TYPES.OPENING ? movements[0] : null;
   let bagPrice = opening?.bagPrice ?? null;
   if (lastPriced) {
-    bagPrice = pricePerBag(lastPriced);
+    bagPrice = pricePerBag(lastPriced, centsPerBag);
+  } else if (bagPrice !== null && centsPerBag) {
+    bagPrice = toCents(bagPrice);
   }
 
   // The weights, lot by lot: bags of 10 and 15 kg may share the stock.
@@ -497,6 +501,7 @@ function computeStats(
     referenceStock,
     consumedInWindow,
     bagPrice,
+    lastPriced,
     remainingKg,
     usedKgSinceDelivery,
     hasHistory: movements.length > 0,

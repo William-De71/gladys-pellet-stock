@@ -62,6 +62,8 @@ const DEFAULTS = {
   // of the last delivery entered with one wins over this configured one.
   palletPrice: null,
   bagPrice: null,
+  // A bag costs a whole number of cents (see src/cost.js); a silo does not.
+  centsPerBag: true,
   // Unknown until the user enters it: no fill rate, no reading in %.
   bulkCapacity: null,
   bulkLowThreshold: 500,

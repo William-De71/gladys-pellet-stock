@@ -19,6 +19,7 @@ import {
   READING_UNITS,
   STOCK_TYPES,
 } from './constants.js';
+import { toCents } from './cost.js';
 import { LANGUAGES } from './i18n.js';
 import { StockError } from './ledger.js';
 
@@ -117,12 +118,12 @@ function readNumber(raw, fallback, { min, max }) {
  * @param {object} [raw] - The config as received from Gladys.
  * @returns {{bagWeight: number, palletSize: number, lowStockThreshold: number,
  *   consumptionWindow: number, palletPrice: number|null, bagPrice: number|null,
- *   bulkCapacity: number|null, bulkLowThreshold: number, bulkDelivery: number,
- *   bulkTonnePrice: number|null, bulkReadingUnit: string, language: string,
+ *   centsPerBag: boolean, bulkCapacity: number|null, bulkLowThreshold: number,
+ *   bulkDelivery: number, bulkTonnePrice: number|null, bulkReadingUnit: string, language: string,
  *   lastLanguage: string|null}} The
  *   normalized config.
- *   The bag price is the pallet price divided by the bags per pallet; a price
- *   (or a capacity) of 0 counts as none.
+ *   The bag price is the pallet price divided by the bags per pallet, to the
+ *   cent (see src/cost.js); a price (or a capacity) of 0 counts as none.
  * @example
  * normalizeConfig({ bag_weight: 15 });
  */
@@ -151,7 +152,8 @@ function normalizeConfig(raw = {}) {
       ),
     ),
     palletPrice: palletPrice > 0 ? palletPrice : DEFAULTS.palletPrice,
-    bagPrice: palletPrice > 0 ? palletPrice / palletSize : DEFAULTS.bagPrice,
+    bagPrice: palletPrice > 0 ? toCents(palletPrice / palletSize) : DEFAULTS.bagPrice,
+    centsPerBag: DEFAULTS.centsPerBag,
     ...normalizeBulkConfig(raw),
     // Gladys tells an integration the language of its users in the widget
     // requests only: `auto` names the devices in the language of the last
@@ -314,10 +316,13 @@ function withStockSettings(config, settings = {}, type = BAGS) {
       lowStockThreshold: effective.bulkLowThreshold,
       palletPrice: null,
       bagPrice: effective.bulkTonnePrice > 0 ? effective.bulkTonnePrice / 1000 : null,
+      centsPerBag: false,
     };
   }
   effective.bagPrice =
-    effective.palletPrice > 0 ? effective.palletPrice / effective.palletSize : DEFAULTS.bagPrice;
+    effective.palletPrice > 0
+      ? toCents(effective.palletPrice / effective.palletSize)
+      : DEFAULTS.bagPrice;
   return effective;
 }
 

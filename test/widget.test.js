@@ -204,8 +204,13 @@ test('widget: the delivery button opens a form with the bags and the price', () 
   // A pallet at the price per bag of the last delivery, even half a pallet:
   // its total would halve the price of a bag.
   const half = buildLedger([[10, 'delivery', 33, 240]]);
-  assert.equal(delivery(half, { palletSize: 66 }).fields[1].default, 480);
-  assert.equal(delivery(half, { palletSize: 70 }).fields[1].default, 509.09);
+  // 240 € / 33 bags = 7,27 € a bag, to the cent.
+  assert.equal(delivery(half, { palletSize: 66 }).fields[1].default, 479.82);
+  assert.equal(delivery(half, { palletSize: 70 }).fields[1].default, 508.9);
+  // A whole pallet keeps the total paid: 360 €, not 66 × 5,45 € = 359,70 €.
+  const whole = buildLedger([[10, 'delivery', 66, 360]]);
+  assert.equal(delivery(whole, {}).fields[1].default, 360);
+  assert.equal(delivery(SEASON, { palletPrice: 360, bagPrice: 5.45 }).fields[1].default, 360);
   // The empty state offers the same form.
   assert.equal(delivery(createLedger(), {}).fields.length, 3);
 });
@@ -444,6 +449,15 @@ test('widget: the season cost, first in first out, from the month the season sta
     [10, 'consumption', 2],
   ]);
   assert.equal(rows(cheap, {})['Coût de la saison'], '10,90\u00a0€ · 2 sacs');
+  // Forum: a pallet of 66 bags at 360 € makes bags at 5,45 €; 9 bags used
+  // cost 49,05 € (not 49,09 €) and 30 left are worth 163,50 € (not 163,64 €).
+  const forum = buildLedger([
+    [100, 'delivery', 66, 360],
+    [50, 'consumption', 27],
+    [10, 'consumption', 9],
+  ]);
+  assert.equal(rows(forum, { season_start: '9' })['Coût de la saison'], '49,05\u00a0€ · 9 sacs');
+  assert.equal(rows(forum, {})['Valeur du stock'], '163,50\u00a0€ · 5,45\u00a0€/sac');
   // A first stock counted without a price: told apart, valued at the
   // configured price when there is one.
   const counted = buildLedger([

@@ -17,7 +17,7 @@
 
 import { DAY_MS, LIMITS, MOVEMENT_TYPES, WIDGET_ACTIONS } from './constants.js';
 import { message, resolveLanguage, translate } from './i18n.js';
-import { costOver, seasonStart } from './cost.js';
+import { addedBags, costOver, seasonStart } from './cost.js';
 import { consumedBags, isPalletDelivery } from './ledger.js';
 
 // The two views of the chart, picked per widget instance.
@@ -349,8 +349,17 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
   // follows the market without a trip to the Configuration screen.
   const bagPrice = stats.bagPrice ?? config.bagPrice;
   // Pre-filled for the bags pre-filled next to it: the last delivery may have
-  // been half a pallet, whose total would halve the price of a bag.
-  const palletPrice = bagPrice === null ? null : roundCents(bagPrice * config.palletSize);
+  // been half a pallet, whose total would halve the price of a bag. The total
+  // of a whole pallet is taken as it was paid (or configured): the bag price
+  // is rounded to the cent, 66 × 5,45 € would turn 360 € into 359,70 €.
+  let palletPrice = bagPrice === null ? null : roundCents(bagPrice * config.palletSize);
+  if (stats.lastPriced) {
+    if (addedBags(stats.lastPriced) === config.palletSize) {
+      palletPrice = stats.lastPriced.price;
+    }
+  } else if (stats.bagPrice === null) {
+    palletPrice = config.palletPrice ?? palletPrice;
+  }
 
   // Every button opens a form on a Gladys with widget action forms. Without
   // them, the core drops `fields` and sends `params`: one bag, or the

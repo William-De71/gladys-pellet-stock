@@ -5,6 +5,12 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions
 follow [Semantic Versioning](https://semver.org/). This file is generated at
 each release from the Conventional Commits: do not edit it by hand.
 
+## [1.5.2] - 2026-11-18
+
+### Fixed
+
+- **cost:** round the price per bag to the cent in every calculation ([d9cb481](https://github.com/William-De71/gladys-pellet-stock/commit/d9cb4813b8069b53c9c69f32baef16248c20ae88))
+
 ## [1.5.1] - 2026-11-02
 
 ### Fixed
@@ -89,6 +95,7 @@ each release from the Conventional Commits: do not edit it by hand.
 
 * enrich the README and add a widget example image ([bfd5023](https://github.com/William-De71/gladys-pellet-stock/commit/bfd5023f327eddedb9cf348cfb0646f5dcaf42f3))
 
+[1.5.2]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/William-De71/gladys-pellet-stock/compare/v1.4.0...v1.4.1

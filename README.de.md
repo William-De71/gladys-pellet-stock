@@ -219,6 +219,11 @@ Gladys-Sicherungen und übersteht einen Neuaufbau des Containers.
   Saison** (Saisonbeginn pro Widget) und die Aktion **„Kosten analysieren“** zählen die in einem Zeitraum verbrauchten
   Säcke zum Preis ihres Postens zusammen; das Restgewicht folgt dem Sackgewicht jedes Postens. Säcke ohne Preis werden
   gesondert ausgewiesen.
+- Der **Wert des Vorrats** ist die Summe der verbleibenden Posten zu ihrem bezahlten Preis (`stockValue()` in
+  `src/cost.js`); der daneben angezeigte Sackpreis ist ihr Durchschnitt und dient den Kosten pro Monat. Ein Posten
+  ohne Preis zählt zum zuletzt bekannten Preis.
+- Der **Sackpreis** wird nur für die Anzeige auf den Cent gerundet: Die Berechnungen (Kosten, Vorratswert) behalten
+  den genauen Preis (360 € / 66 Säcke = 5,4545… €, angezeigt 5,45 €; 9 Säcke kosten 49,09 €).
 - Nur **Lieferungen** zählen als Lieferungen (Markierungen im Diagramm, „Letzte Lieferung“, „Seit Lieferung
   verbraucht“, der Auslöser): „Palette geliefert“, „Lieferung erfassen“, eine Silolieferung. Mit „Säcke hinzufügen“
   hinzugefügte Säcke, egal wie viele, sind ein Kauf.

@@ -30,7 +30,7 @@ You do not have to tap for every bag: **counting the stock** from time to time w
 - A **chart**, picked in the widget settings: the **stock over time**, with the deliveries marked, or the **bags used per day** as bars (per week over 1 year). Period: 1 month, 3 months, 1 year. To see both, put two widgets side by side. The bags found missing by a recount are counted on the day of the recount.
 - The **average consumption per day**, the **last bag used** ("2 days ago"), the **remaining weight**, the **last delivery** and the **use since** (in bags and kg).
 - The date to **order by** (when the stock will reach the low stock threshold) and the **estimated date** the stock runs out.
-- Once a price is known: the **stock value**, with the **price per bag**, and the **cost per month**. The price paid for the last delivery counts, or else the **pallet price** of the configuration.
+- Once a price is known: the **stock value**, with the **price per bag**, and the **cost per month**. The stock value is what you actually paid for the bags left, delivery by delivery: 20 bags at €5.45 and 66 bags at €6 are worth €505.09. The price per bag shown is their average (€5.87), and the cost per month uses it. Bags without a price count at the last price paid, or else at the **pallet price** of the configuration.
 - The **season cost**: what the bags used since the heating season started cost (October by default, set in the widget settings), with their count.
 
 Only deliveries ("Pallet delivered", the "Record a delivery" action) count as deliveries: bags added with "Add bag(s)", even several at once, are neither marked on the chart nor used for "Last delivery" and the use since. They do enter the stock and its cost.
@@ -44,6 +44,7 @@ The oldest bags go first ("first in, first out"): each bag used costs the price 
 - A delivery entered without a price takes the **last price per bag known**.
 - The stock entered at first with "Correct the stock" has no price: it takes the **pallet price** of the configuration or, without one, is told apart ("12 unpriced"). "Correct the stock" takes an optional **price per bag** for the bags counted above the recorded stock.
 - The **remaining weight** and the use in kg follow the weight of the bags of each delivery.
+- The **price per bag** shown is rounded to the cent, but the calculations keep the exact price: a pallet of 66 bags paid €360 shows €5.45 a bag (€5.4545…), and 9 bags cost €49.09, not 9 × 5.45 = €49.05.
 
 For a given period, run the **"Analyze the cost"** action with a start and an end date (DD/MM/YYYY): "From 01/10/2026 to 01/06/2027: 100 bags, 1,500 kg, €712 (€0.47/kg)".
 

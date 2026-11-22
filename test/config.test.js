@@ -29,7 +29,6 @@ test('normalizeConfig: reads numbers sent as strings', () => {
     consumptionWindow: 30,
     palletPrice: 504,
     bagPrice: 7,
-    centsPerBag: true,
     bulkCapacity: DEFAULTS.bulkCapacity,
     bulkLowThreshold: DEFAULTS.bulkLowThreshold,
     bulkDelivery: DEFAULTS.bulkDelivery,
@@ -77,12 +76,9 @@ test('normalizeConfig: no price, or a price of 0, hides the cost', () => {
   assert.equal(normalizeConfig({ pallet_price: 99999, pallet_size: 50 }).bagPrice, 100);
 });
 
-test('normalizeConfig: the bag price is the pallet price split over its bags, to the cent', () => {
-  assert.equal(normalizeConfig({ pallet_price: 481 }).bagPrice, 7.29);
-  assert.equal(normalizeConfig({ pallet_price: 525, pallet_size: 72 }).bagPrice, 7.29);
-  // Forum: a pallet of 66 bags at 360 € makes bags at 5,45 €, not 5,4545… €.
-  assert.equal(normalizeConfig({ pallet_price: 360 }).bagPrice, 5.45);
-  assert.equal(normalizeConfig({ pallet_price: 360 }).palletPrice, 360);
+test('normalizeConfig: the bag price is the pallet price split over its bags', () => {
+  assert.equal(normalizeConfig({ pallet_price: 481 }).bagPrice, 481 / 66);
+  assert.equal(normalizeConfig({ pallet_price: 525, pallet_size: 72 }).bagPrice, 525 / 72);
 });
 
 test('stock settings: read from the action, an empty field left out', () => {

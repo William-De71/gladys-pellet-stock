@@ -204,6 +204,11 @@ settings). It lives in the Gladys database: it is part of the Gladys backups and
   known), each bag used is taken from the oldest lot. The **season cost** row (season start set per widget) and the
   **"Analyze the cost"** action add up the bags used over a period at the price of their lot; the remaining weight
   follows the bag weight of each lot. Bags without any price are told apart.
+- The **stock value** is the sum of the lots left at the price paid for them (`stockValue()` in `src/cost.js`); the
+  price per bag shown next to it is their average and drives the cost per month. A lot without a price counts at the
+  last price known.
+- The **price per bag** is rounded to the cent for display only: the calculations (cost, stock value) keep the exact
+  price (€360 / 66 bags = €5.4545…, shown €5.45; 9 bags cost €49.09).
 - Only **deliveries** count as deliveries (chart markers, "last delivery", "used since", the trigger): "Pallet
   delivered", "Record a delivery", a silo delivery. Bags added with "Add bag(s)", however many, are a purchase.
 

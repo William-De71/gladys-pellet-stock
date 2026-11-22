@@ -20,11 +20,6 @@
 //     with the count, else the last price per bag known;
 //   - the stock before the first movement kept (a long history compacted
 //     away, or a first count): no price, unless the opening movement kept it.
-//
-// A bag costs a whole number of cents, as on a price tag: a pallet of 66 bags
-// paid 360 € makes bags at 5,45 €, so that 9 bags cost the 49,05 € anyone
-// would work out from the price shown (not 49,09 €). A silo keeps its exact
-// price per kg (0,385 €/kg): rounded, it would be off by more than 1 %.
 // -----------------------------------------------------------------------------
 
 import { MOVEMENT_TYPES } from './constants.js';
@@ -47,30 +42,15 @@ function addedBags(movement) {
 }
 
 /**
- * @description Round a price to the cent.
- * @param {number} value - The price, in euros.
- * @returns {number} The rounded price.
- * @example
- * toCents(360 / 66); // -> 5.45
- */
-function toCents(value) {
-  return Math.round(value * 100) / 100;
-}
-
-/**
  * @description The price per bag a movement was entered with.
  * @param {object} movement - A ledger movement.
- * @param {boolean} [cents] - Round it to the cent (bags), or keep it exact (a silo, per kg).
  * @returns {number|null} The price of one of the bags it added, or null.
  * @example
- * pricePerBag({ type: 'delivery', bags: 66, price: 360 }, true); // -> 5.45
+ * pricePerBag({ type: 'delivery', bags: 66, price: 462 }); // -> 7
  */
-function pricePerBag(movement, cents = false) {
+function pricePerBag(movement) {
   const added = addedBags(movement);
-  if (movement.price === undefined || added === 0) {
-    return null;
-  }
-  return cents ? toCents(movement.price / added) : movement.price / added;
+  return movement.price !== undefined && added > 0 ? movement.price / added : null;
 }
 
 /**
@@ -97,16 +77,13 @@ function takeOldest(lots, bags, t, used) {
 /**
  * @description Walk the ledger, lot by lot.
  * @param {Array<object>} movements - The ledger movements, oldest first.
- * @param {{cents?: boolean}} [options] - `cents`: prices per bag to the cent (see pricePerBag()).
  * @returns {{lots: Array<object>, used: Array<object>, lastBagPrice: number|null}}
  *   The lots left in stock (oldest first), the bags used (per movement and
  *   lot, `{ t, units, unitPrice, unitWeight }`) and the last price per bag known.
  * @example
  * const { lots, used } = walkLots(ledger.movements);
  */
-function walkLots(movements, { cents = false } = {}) {
-  const round = (price) =>
-    cents && price !== null && price !== undefined ? toCents(price) : price;
+function walkLots(movements) {
   let lots = [];
   const used = [];
   let lastBagPrice = null;
@@ -114,9 +91,8 @@ function walkLots(movements, { cents = false } = {}) {
 
   movements.forEach((movement) => {
     if (movement.type === MOVEMENT_TYPES.OPENING) {
-      // Its prices are exact: a compaction keeps them as they were.
-      lots = movement.lots.map((lot) => ({ ...lot, unitPrice: round(lot.unitPrice) }));
-      lastBagPrice = round(movement.bagPrice) ?? lastBagPrice;
+      lots = movement.lots.map((lot) => ({ ...lot }));
+      lastBagPrice = movement.bagPrice ?? lastBagPrice;
       return;
     }
     // The lots always hold the stock before the movement: what the history
@@ -130,7 +106,7 @@ function walkLots(movements, { cents = false } = {}) {
 
     const added = addedBags(movement);
     if (added > 0) {
-      const ownPrice = pricePerBag(movement, cents);
+      const ownPrice = pricePerBag(movement);
       lots.push({
         t: movement.t,
         units: added,
@@ -173,13 +149,25 @@ function valueBags(parts, config) {
 }
 
 /**
+ * @description What the stock left is worth, at the price paid for each lot.
+ * @param {Array<object>} movements - The ledger movements, oldest first.
+ * @param {{bagPrice: number|null, bagWeight: number}} config - The defaults for
+ *   what a lot does not know (its price: the last one known, else the configured one).
+ * @returns {{bags: number, kg: number, cost: number, unpricedBags: number}} See valueBags().
+ * @example
+ * stockValue(ledger.movements, { bagPrice: 7, bagWeight: 15 }); // 20 bags at 5,45 € + 66 at 6 € -> cost 505
+ */
+function stockValue(movements, config) {
+  return valueBags(walkLots(movements).lots, config);
+}
+
+/**
  * @description The bags used over a period, their weight and their cost.
  * @param {Array<object>} movements - The ledger movements, oldest first.
  * @param {Date} start - The start of the period (included).
  * @param {Date|null} end - The end of the period (excluded); null for "until now",
  *   the movements just recorded included.
- * @param {{bagPrice: number|null, bagWeight: number, centsPerBag?: boolean}} config - The
- *   effective config of the stock.
+ * @param {{bagPrice: number|null, bagWeight: number}} config - The effective config of the stock.
  * @returns {{bags: number, kg: number, cost: number, unpricedBags: number}} See valueBags().
  * @example
  * costOver(ledger.movements, new Date('2026-10-01'), new Date(), config);
@@ -187,7 +175,7 @@ function valueBags(parts, config) {
 function costOver(movements, start, end, config) {
   const from = start.getTime();
   const to = end ? end.getTime() : Infinity;
-  const { used } = walkLots(movements, { cents: config.centsPerBag });
+  const { used } = walkLots(movements);
   return valueBags(
     used.filter((part) => {
       const t = Date.parse(part.t);
@@ -247,11 +235,11 @@ function nextDay(date) {
 }
 
 export {
-  toCents,
   addedBags,
   pricePerBag,
   walkLots,
   valueBags,
+  stockValue,
   costOver,
   seasonStart,
   parseDay,

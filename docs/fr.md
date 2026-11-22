@@ -30,7 +30,7 @@ Vous n'êtes pas obligé d'appuyer à chaque sac : **recompter le stock** de tem
 - Un **graphique**, au choix dans les réglages du widget : l'**évolution du stock**, avec les livraisons repérées, ou les **sacs utilisés par jour** en barres (par semaine sur 1 an). Période réglable : 1 mois, 3 mois, 1 an. Pour voir les deux, mettez deux widgets côte à côte. Les sacs manquants trouvés lors d'un recomptage sont comptés le jour du recomptage.
 - La **consommation moyenne par jour**, le **dernier sac utilisé** (« il y a 2 jours »), le **poids restant**, la **dernière livraison** et la **consommation depuis** (en sacs et en kg).
 - La date à laquelle **commander** (quand le stock atteindra le seuil de stock bas) et la **date estimée** à laquelle le stock sera vide.
-- Dès qu'un prix est connu : la **valeur du stock**, avec le **prix au sac**, et le **coût par mois**. C'est le prix payé lors de la dernière livraison qui compte, ou, à défaut, le **prix d'une palette** de la configuration.
+- Dès qu'un prix est connu : la **valeur du stock**, avec le **prix au sac**, et le **coût par mois**. La valeur du stock est ce que vous avez réellement payé pour les sacs qui restent, livraison par livraison : 20 sacs à 5,45 € et 66 sacs à 6 € valent 505,09 €. Le prix au sac affiché en est la moyenne (5,87 €), et c'est lui qui sert au coût par mois. Les sacs sans prix comptent au dernier prix payé, ou, à défaut, au **prix d'une palette** de la configuration.
 - Le **coût de la saison** : ce qu'ont coûté les sacs utilisés depuis le début de la saison de chauffe (octobre par défaut, réglable dans les réglages du widget), avec leur nombre.
 
 Seules les livraisons (« Palette livrée », l'action « Enregistrer une livraison ») comptent comme livraisons : les sacs ajoutés avec « Ajouter sac(s) », même plusieurs à la fois, ne sont ni repérés sur le graphique, ni pris en compte pour « Dernière livraison » et la consommation depuis. Ils entrent bien dans le stock et dans le coût.
@@ -44,6 +44,7 @@ Les sacs les plus anciens partent en premier (« premier entré, premier sorti �
 - Une livraison saisie sans prix prend le **dernier prix au sac connu**.
 - Le stock indiqué au départ avec « Corriger le stock » n'a pas de prix : il prend le **prix d'une palette** de la configuration, ou, sans lui, il est signalé à part (« 12 sans prix »). « Corriger le stock » accepte un **prix au sac** facultatif pour les sacs comptés en plus du stock enregistré.
 - Le **poids restant** et la consommation en kg tiennent compte du poids des sacs de chaque livraison.
+- Le **prix au sac** affiché est arrondi au centime, mais les calculs gardent le prix exact : une palette de 66 sacs payée 360 € affiche 5,45 € le sac (5,4545… €), et 9 sacs coûtent 49,09 €, pas 9 × 5,45 = 49,05 €.
 
 Pour une période précise, lancez l'action **« Analyser le coût »** avec une date de début et de fin (JJ/MM/AAAA) : « Du 01/10/2026 au 01/06/2027 : 100 sacs, 1 500 kg, 712 € (0,47 €/kg) ».
 

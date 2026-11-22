@@ -216,6 +216,10 @@ sauvegardes Gladys et survit à une reconstruction du conteneur.
   prix au sac connu), chaque sac utilisé est pris dans le lot le plus ancien. La ligne **coût de la saison** (début de
   saison réglé par widget) et l'action **« Analyser le coût »** additionnent les sacs utilisés sur une période au prix
   de leur lot ; le poids restant suit le poids des sacs de chaque lot. Les sacs sans prix sont indiqués à part.
+- La **valeur du stock** est la somme des lots restants à leur prix payé (`stockValue()` de `src/cost.js`) ; le prix
+  au sac affiché à côté en est la moyenne et sert au coût par mois. Un lot sans prix compte au dernier prix connu.
+- Le **prix au sac** n'est arrondi au centime qu'à l'affichage : les calculs (coût, valeur du stock) gardent le prix
+  exact (360 € / 66 sacs = 5,4545… €, affiché 5,45 € ; 9 sacs coûtent 49,09 €).
 - Seules les **livraisons** comptent comme livraisons (repères du graphique, « dernière livraison », « conso depuis
   livraison », le déclencheur) : « Palette livrée », « Enregistrer une livraison », une livraison du silo. Les sacs
   ajoutés avec « Ajouter sac(s) », quel que soit leur nombre, sont un achat.

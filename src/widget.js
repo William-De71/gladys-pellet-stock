@@ -17,7 +17,7 @@
 
 import { DAY_MS, LIMITS, MOVEMENT_TYPES, WIDGET_ACTIONS } from './constants.js';
 import { message, resolveLanguage, translate } from './i18n.js';
-import { addedBags, costOver, seasonStart } from './cost.js';
+import { costOver, seasonStart, stockValue } from './cost.js';
 import { consumedBags, isPalletDelivery } from './ledger.js';
 
 // The two views of the chart, picked per widget instance.
@@ -349,17 +349,8 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
   // follows the market without a trip to the Configuration screen.
   const bagPrice = stats.bagPrice ?? config.bagPrice;
   // Pre-filled for the bags pre-filled next to it: the last delivery may have
-  // been half a pallet, whose total would halve the price of a bag. The total
-  // of a whole pallet is taken as it was paid (or configured): the bag price
-  // is rounded to the cent, 66 × 5,45 € would turn 360 € into 359,70 €.
-  let palletPrice = bagPrice === null ? null : roundCents(bagPrice * config.palletSize);
-  if (stats.lastPriced) {
-    if (addedBags(stats.lastPriced) === config.palletSize) {
-      palletPrice = stats.lastPriced.price;
-    }
-  } else if (stats.bagPrice === null) {
-    palletPrice = config.palletPrice ?? palletPrice;
-  }
+  // been half a pallet, whose total would halve the price of a bag.
+  const palletPrice = bagPrice === null ? null : roundCents(bagPrice * config.palletSize);
 
   // Every button opens a form on a Gladys with widget action forms. Without
   // them, the core drops `fields` and sends `params`: one bag, or the
@@ -532,20 +523,26 @@ function buildWidgetContent({ ledger, stats, config, settings = {}, language, st
     color,
   });
   if (bagPrice !== null) {
+    // The stock is worth what was paid for it, lot by lot (bags of an older,
+    // cheaper delivery still count at their price); the bag price shown is its
+    // average. A lot of unknown price counts at the last price known.
+    const held = stockValue(ledger.movements, { bagPrice, bagWeight: config.bagWeight });
+    const averagePrice = held.bags > 0 ? held.cost / held.bags : bagPrice;
     // One row for the value and the bag price: the status is nearly full, and
     // with the price per kg too the row was cut on a phone.
     statusItems.push({
       label: t('stock_value'),
       value: t('stock_value_detail', {
-        value: formatEuros(stats.stock * bagPrice, lang),
-        bag: formatUnitPrice(bagPrice, lang),
+        value: formatEuros(held.cost, lang),
+        bag: formatUnitPrice(averagePrice, lang),
       }),
       icon: 'tag',
     });
     if (stats.dailyRate > 0) {
+      // The next bags burnt are those in stock (first in, first out).
       statusItems.push({
         label: t('monthly_cost'),
-        value: formatEuros(stats.dailyRate * DAYS_PER_MONTH * bagPrice, lang),
+        value: formatEuros(stats.dailyRate * DAYS_PER_MONTH * averagePrice, lang),
         icon: 'credit-card',
       });
     }

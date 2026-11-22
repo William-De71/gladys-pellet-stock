@@ -30,7 +30,7 @@ No hace falta pulsar por cada saco: basta con **recontar el stock** de vez en cu
 - Un **gráfico**, elegido en la configuración del widget: la **evolución del stock**, con las entregas señaladas, o los **sacos usados por día** en barras (por semana sobre 1 año). Periodo: 1 mes, 3 meses, 1 año. Para ver ambos, ponga dos widgets uno al lado del otro. Los sacos que faltan en un recuento se cuentan el día del recuento.
 - El **consumo medio por día**, el **último saco usado** («hace 2 días»), el **peso restante**, la **última entrega** y el **uso desde entonces** (en sacos y kg).
 - La fecha **antes de la que pedir** (cuando el stock alcance el umbral de stock bajo) y la **fecha estimada** en la que se agotará el stock.
-- En cuanto se conoce un precio: el **valor del stock**, con el **precio por saco**, y el **coste mensual**. Cuenta el precio pagado en la última entrega o, si no, el **precio de un palé** de la configuración.
+- En cuanto se conoce un precio: el **valor del stock**, con el **precio por saco**, y el **coste mensual**. El valor del stock es lo que realmente pagó por los sacos que quedan, entrega por entrega: 20 sacos a 5,45 € y 66 sacos a 6 € valen 505,09 €. El precio por saco mostrado es su media (5,87 €), y el coste mensual lo usa. Los sacos sin precio cuentan al último precio pagado o, si no, al **precio de un palé** de la configuración.
 - El **coste de la temporada**: lo que han costado los sacos usados desde el inicio de la temporada de calefacción (octubre por defecto, ajustable en la configuración del widget), con su número.
 
 Solo las entregas («Palé entregado», la acción «Registrar una entrega») cuentan como entregas: los sacos añadidos con «Añadir sacos», aunque sean varios a la vez, no se señalan en el gráfico ni se usan para «Última entrega» y el uso desde entonces. Sí entran en el stock y en su coste.
@@ -44,6 +44,7 @@ Los sacos más antiguos se gastan primero («primero en entrar, primero en salir
 - Una entrega introducida sin precio toma el **último precio por saco conocido**.
 - El stock introducido al principio con «Corregir el stock» no tiene precio: toma el **precio de un palé** de la configuración o, sin él, se indica aparte («12 sin precio»). «Corregir el stock» acepta un **precio por saco** opcional para los sacos contados por encima del stock registrado.
 - El **peso restante** y el uso en kg siguen el peso de los sacos de cada entrega.
+- El **precio por saco** mostrado se redondea al céntimo, pero los cálculos conservan el precio exacto: un palé de 66 sacos pagado a 360 € muestra 5,45 € el saco (5,4545… €), y 9 sacos cuestan 49,09 €, no 9 × 5,45 = 49,05 €.
 
 Para un periodo concreto, ejecute la acción **«Analizar el coste»** con una fecha de inicio y una de fin (DD/MM/AAAA): «Del 01/10/2026 al 01/06/2027: 100 saco(s), 1500 kg, 712 € (0,47 €/kg)».
 

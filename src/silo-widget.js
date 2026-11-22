@@ -13,7 +13,7 @@
 // -----------------------------------------------------------------------------
 
 import { LIMITS, MOVEMENT_TYPES, READING_UNITS, SILO_ACTIONS } from './constants.js';
-import { costOver, seasonStart } from './cost.js';
+import { costOver, seasonStart, stockValue } from './cost.js';
 import { fillPercent } from './device.js';
 import { message, resolveLanguage, translate } from './i18n.js';
 import { StockError } from './ledger.js';
@@ -270,10 +270,14 @@ function buildSiloContent({ ledger, stats, config, settings = {}, language, stoc
     });
   }
   if (config.bagPrice !== null || stats.bagPrice !== null) {
-    const kgPrice = stats.bagPrice ?? config.bagPrice;
+    // Worth what was paid for it, delivery by delivery; the price per kg shown
+    // is its average (see the bags widget).
+    const lastPrice = stats.bagPrice ?? config.bagPrice;
+    const held = stockValue(ledger.movements, { bagPrice: lastPrice, bagWeight: 1 });
+    const kgPrice = held.bags > 0 ? held.cost / held.bags : lastPrice;
     statusItems.push({
       label: t('stock_value'),
-      value: `${formatEuros(stats.stock * kgPrice, lang)} · ${formatUnitPrice(kgPrice, lang)}/kg`,
+      value: `${formatEuros(held.cost, lang)} · ${formatUnitPrice(kgPrice, lang)}/kg`,
       icon: 'tag',
     });
     if (stats.dailyRate > 0) {

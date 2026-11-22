@@ -30,7 +30,7 @@ Sie müssen nicht für jeden Sack tippen: Es genügt, den **Vorrat** ab und zu m
 - Ein **Diagramm**, in den Widget-Einstellungen gewählt: der **Vorrat im Zeitverlauf** mit markierten Lieferungen, oder die **verbrauchten Säcke pro Tag** als Balken (pro Woche über 1 Jahr). Zeitraum: 1 Monat, 3 Monate, 1 Jahr. Um beides zu sehen, stellen Sie zwei Widgets nebeneinander. Die bei einer Nachzählung fehlenden Säcke werden am Tag der Nachzählung gezählt.
 - Den **durchschnittlichen Verbrauch pro Tag**, den **letzten verbrauchten Sack** („vor 2 Tagen“), das **Restgewicht**, die **letzte Lieferung** und den **Verbrauch seitdem** (in Säcken und kg).
 - Das Datum, **vor dem bestellt werden sollte** (wenn der Vorrat die Schwelle für niedrigen Vorrat erreicht), und das **voraussichtliche Datum**, an dem der Vorrat aufgebraucht ist.
-- Sobald ein Preis bekannt ist: den **Wert des Vorrats** mit dem **Preis pro Sack** und die **Kosten pro Monat**. Es zählt der für die letzte Lieferung bezahlte Preis, sonst der **Palettenpreis** der Konfiguration.
+- Sobald ein Preis bekannt ist: den **Wert des Vorrats** mit dem **Preis pro Sack** und die **Kosten pro Monat**. Der Wert des Vorrats ist das, was Sie für die verbleibenden Säcke tatsächlich bezahlt haben, Lieferung für Lieferung: 20 Säcke zu 5,45 € und 66 Säcke zu 6 € sind 505,09 € wert. Der angezeigte Preis pro Sack ist ihr Durchschnitt (5,87 €), und die Kosten pro Monat beruhen darauf. Säcke ohne Preis zählen zum zuletzt bezahlten Preis, sonst zum **Palettenpreis** der Konfiguration.
 - Die **Kosten der Saison**: was die seit Beginn der Heizsaison verbrauchten Säcke gekostet haben (standardmäßig Oktober, in den Widget-Einstellungen festgelegt), mit ihrer Anzahl.
 
 Nur Lieferungen („Palette geliefert“, die Aktion „Lieferung erfassen“) zählen als Lieferungen: Mit „Säcke hinzufügen“ hinzugefügte Säcke, auch mehrere auf einmal, werden weder im Diagramm markiert noch für „Letzte Lieferung“ und den Verbrauch seitdem verwendet. Sie gehen aber in den Vorrat und seine Kosten ein.
@@ -44,6 +44,7 @@ Die ältesten Säcke werden zuerst verbraucht („first in, first out“): Jeder
 - Eine ohne Preis eingegebene Lieferung übernimmt den **zuletzt bekannten Sackpreis**.
 - Der anfangs mit „Vorrat korrigieren“ eingegebene Vorrat hat keinen Preis: Er übernimmt den **Palettenpreis** der Konfiguration oder wird, ohne ihn, gesondert ausgewiesen („12 ohne Preis“). „Vorrat korrigieren“ nimmt einen optionalen **Preis pro Sack** für die Säcke an, die über den erfassten Vorrat hinaus gezählt wurden.
 - Das **Restgewicht** und der Verbrauch in kg folgen dem Gewicht der Säcke jeder Lieferung.
+- Der angezeigte **Sackpreis** ist auf den Cent gerundet, die Berechnungen behalten aber den genauen Preis: Eine Palette mit 66 Säcken für 360 € zeigt 5,45 € pro Sack (5,4545… €), und 9 Säcke kosten 49,09 €, nicht 9 × 5,45 = 49,05 €.
 
 Für einen bestimmten Zeitraum starten Sie die Aktion **„Kosten analysieren“** mit einem Start- und einem Enddatum (TT/MM/JJJJ): „Vom 01.10.2026 bis 01.06.2027: 100 Sack/Säcke, 1.500 kg, 712 € (0,47 €/kg)“.
 

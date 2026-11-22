@@ -66,10 +66,7 @@ function priceHistory(movements, type = STOCK_TYPES.BAGS) {
     .filter((movement) =>
       [MOVEMENT_TYPES.DELIVERY, MOVEMENT_TYPES.INVENTORY].includes(movement.type),
     )
-    .map((movement) => ({
-      t: Date.parse(movement.t),
-      price: pricePerBag(movement, type !== STOCK_TYPES.BULK),
-    }))
+    .map((movement) => ({ t: Date.parse(movement.t), price: pricePerBag(movement) }))
     .filter(({ price }) => price !== null)
     .map(({ t, price }) => ({ t, price: price * scale }));
 }

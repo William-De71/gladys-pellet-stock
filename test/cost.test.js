@@ -136,30 +136,10 @@ test('costOver: the bags used in the period, at the price of their lot', () => {
   assert.equal(costOver(ledger.movements, daysAgo(365), daysAgo(200), CONFIG).bags, 0);
 });
 
-test('costOver: bags at the price per bag to the cent', () => {
-  const movements = [
-    { t: '2026-09-01T00:00:00.000Z', type: 'delivery', bags: 66, before: 0, after: 66, price: 360 },
-    { t: '2026-09-10T00:00:00.000Z', type: 'consumption', bags: 9, before: 66, after: 57 },
-  ];
-  const start = new Date('2026-09-01T00:00:00.000Z');
-  const cents = (value) => Math.round(value * 100) / 100;
-  assert.equal(
-    cents(costOver(movements, start, null, { ...CONFIG, centsPerBag: true }).cost),
-    49.05,
-  );
-  assert.equal(cents(costOver(movements, start, null, CONFIG).cost), 49.09, 'exact, as a silo');
-});
-
 test('pricePerBag: of the bags a movement added', () => {
   assert.equal(pricePerBag({ type: 'delivery', bags: 66, before: 0, after: 66, price: 462 }), 7);
   assert.equal(pricePerBag({ type: 'inventory', bags: 14, before: 10, after: 14, price: 30 }), 7.5);
   assert.equal(pricePerBag({ type: 'delivery', bags: 66, before: 0, after: 66 }), null);
-  // Bags cost whole cents; a silo keeps its exact price per kg.
-  const pallet = { type: 'delivery', bags: 66, before: 0, after: 66, price: 360 };
-  assert.equal(pricePerBag(pallet, true), 5.45);
-  assert.equal(pricePerBag(pallet), 360 / 66);
-  const truck = { type: 'delivery', bags: 3000, before: 0, after: 3000, price: 1155 };
-  assert.equal(pricePerBag(truck), 0.385);
 });
 
 test('seasonStart: the first day of the month, this year or the last', () => {

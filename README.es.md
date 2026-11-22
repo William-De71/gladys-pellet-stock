@@ -216,6 +216,11 @@ y sobrevive a una reconstrucción del contenedor.
   temporada** (inicio de temporada ajustado por widget) y la acción **«Analizar el coste»** suman los sacos usados en
   un periodo al precio de su lote; el peso restante sigue el peso de los sacos de cada lote. Los sacos sin precio se
   indican aparte.
+- El **valor del stock** es la suma de los lotes restantes a su precio pagado (`stockValue()` de `src/cost.js`); el
+  precio por saco mostrado al lado es su media y sirve para el coste mensual. Un lote sin precio cuenta al último
+  precio conocido.
+- El **precio por saco** solo se redondea al céntimo al mostrarlo: los cálculos (coste, valor del stock) conservan el
+  precio exacto (360 € / 66 sacos = 5,4545… €, mostrado 5,45 €; 9 sacos cuestan 49,09 €).
 - Solo las **entregas** cuentan como entregas (marcas del gráfico, «última entrega», «usado desde la entrega», el
   disparador): «Palé entregado», «Registrar una entrega», una entrega del silo. Los sacos añadidos con «Añadir
   sacos», sean cuantos sean, son una compra.
